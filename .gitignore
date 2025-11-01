@@ -1,0 +1,6 @@
+# Ignore dotenv files
+.env
+
+# Ignore IDE-specific directories
+.idea/
+.vscode/
