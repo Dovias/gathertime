@@ -35,6 +35,6 @@ public class AuthenticationController {
 
     @GetMapping("/check-email/{email}")
     public ResponseEntity<UserResponseDTO> checkEmail(@PathVariable("email") String email){
-        return ResponseEntity.ok(UserMapper.toDto(userRepository.findByEmail(email).orElseThrow()));
+        return ResponseEntity.ofNullable(userRepository.findByEmail(email).map(UserMapper::toDto).orElse(null));
     }
 }
