@@ -96,7 +96,7 @@ function Registration() {
         };
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/registration`, registerCredentials);
+            const response = await axios.post("/auth/registration", registerCredentials);
             console.log(response);
             navigate(AppRoutes.LOG_IN);
         } catch (error) {
