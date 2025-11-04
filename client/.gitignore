@@ -1,3 +1,2 @@
 # Ignore artifact directories
 node_modules/
-dist/

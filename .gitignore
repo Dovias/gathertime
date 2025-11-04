@@ -1,5 +1,10 @@
 # Ignore dotenv files
 .env
+.env.*
+
+# Ignore build specific directories
+build/
+bin/
 
 # Ignore IDE-specific directories
 .idea/
