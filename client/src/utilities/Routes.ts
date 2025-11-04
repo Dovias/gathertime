@@ -1,10 +1,9 @@
 export const AppRoutes = {
+  LOG_IN: "/login",
+  SIGN_UP: "/signup",
+  CALENDAR: "/calendar",
 
-    LOG_IN: '/login',
-    SIGN_UP: '/signup',
-    CALENDAR: '/calendar',
-
-    ROOT: '/'
+  ROOT: "/",
 } as const;
 
-export type AppRoutes = typeof AppRoutes[keyof typeof AppRoutes];
+export type AppRoutes = (typeof AppRoutes)[keyof typeof AppRoutes];
