@@ -5,7 +5,6 @@ import Login from './components/authentication/Login'
 import Calendar from './components/main/Calendar'
 
 function App() {
-
   return (
     <BrowserRouter>
       <Routes>
