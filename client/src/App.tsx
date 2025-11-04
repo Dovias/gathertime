@@ -1,8 +1,8 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { AppRoutes } from './utilities/Routes'
-import Registration from './components/authentication/Registration'
-import Login from './components/authentication/Login'
-import Calendar from './components/main/Calendar'
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import Login from "./components/authentication/Login";
+import Registration from "./components/authentication/Registration";
+import Calendar from "./components/main/Calendar";
+import { AppRoutes } from "./utilities/Routes";
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
         <Route path={AppRoutes.CALENDAR} element={<Calendar />} />
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;

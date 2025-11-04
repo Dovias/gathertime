@@ -1,6 +1,7 @@
-import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
+import type React from "react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { AppRoutes } from "../../utilities/Routes";
 
 interface Credentials {
@@ -39,7 +40,7 @@ function Login() {
       } else {
         setError("Wrong email or password. Please try again.");
       }
-    } catch (error) {
+    } catch (_error) {
       setError("Wrong email or password. Please try again.");
     }
   };
@@ -51,12 +52,16 @@ function Login() {
           Welcome Back 👋
         </h1>
         <p className="text-gray-500 mb-6">
-          Log in to continue to <span className="text-blue-600 font-semibold">GatherTime</span>
+          Log in to continue to{" "}
+          <span className="text-blue-600 font-semibold">GatherTime</span>
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="text-left">
-            <label htmlFor="email" className="text-gray-700 text-sm font-medium">
+            <label
+              htmlFor="email"
+              className="text-gray-700 text-sm font-medium"
+            >
               Email
             </label>
             <input
@@ -70,7 +75,10 @@ function Login() {
           </div>
 
           <div className="text-left">
-            <label htmlFor="password" className="text-gray-700 text-sm font-medium">
+            <label
+              htmlFor="password"
+              className="text-gray-700 text-sm font-medium"
+            >
               Password
             </label>
             <input
