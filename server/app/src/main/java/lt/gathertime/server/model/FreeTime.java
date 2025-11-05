@@ -1,5 +1,7 @@
 package lt.gathertime.server.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,4 +29,16 @@ public class FreeTime extends TimeInterval {
 
     @Enumerated(EnumType.STRING)
     private FreeTimeStatus status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToMany
+    @JoinTable(
+        name = "momentary_interests",
+        joinColumns = @JoinColumn(name = "free_time_id"),
+        inverseJoinColumns = @JoinColumn(name = "activity_id")
+    )
+    private List<Activity> momentaryInterests;
 }
