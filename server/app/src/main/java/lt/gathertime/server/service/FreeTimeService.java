@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.freetimeDTOs.CreateFreeTimeRequestDTO;
 import lt.gathertime.server.mapper.FreeTimeMapper;
@@ -32,5 +34,15 @@ public class FreeTimeService {
 
         FreeTime newFreeTime = FreeTimeMapper.fromCreateRequestDto(requestDto, user, activities);
         freeTimeRepository.save(newFreeTime);
+    }
+
+    @Transactional
+    public void deleteFreeTime(Long id) {
+        FreeTime freeTime = freeTimeRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Not found"));
+
+        freeTime.getMomentaryInterests().clear();
+
+        freeTimeRepository.delete(freeTime);
     }
 }
