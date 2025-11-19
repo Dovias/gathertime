@@ -73,18 +73,18 @@ function Registration() {
     const { value } = event.target;
 
     try {
-      const response = await fetchUserByEmail(value);
+      const user = await fetchUserByEmail(value);
 
-      if (response) {
-        setEmailError({
-          message: "Email is already registered",
-          errorType: ErrorType.EmailRegistered,
-        });
+      if (user !== null) {
+          setEmailError({
+              message: "Email is already registered",
+              errorType: ErrorType.EmailRegistered,
+          });
       } else {
-        setEmailError({
-          message: "",
-          errorType: ErrorType.NoError,
-        });
+          setEmailError({
+              message: "",
+              errorType: ErrorType.NoError,
+          });
       }
     } catch (_error) {}
   };
@@ -97,26 +97,31 @@ function Registration() {
     setIsSubmitting(true);
     setError({ message: "", errorType: ErrorType.NoError });
 
-    const registerCredentials = {
-      email: credentials.email,
-      password: credentials.password,
-      firstName: credentials.firstName,
-      lastName: credentials.lastName,
-    };
-
     try {
-      const response = await axios.post(
-        "/auth/registration",
-        registerCredentials,
-      );
-      console.log(response);
-      navigate(AppRoutes.LOG_IN);
+      await axios.post(`${import.meta.env.VITE_API_URL}/auth/send-code`, {
+        email: credentials.email,
+      });
+
+      const params = new URLSearchParams({
+        email: credentials.email,
+        firstName: credentials.firstName,
+        lastName: credentials.lastName,
+        password: credentials.password,
+      });
+
+      navigate(`/verify-email?${params.toString()}`);
+
     } catch (error) {
       console.error(error);
+      setError({
+        message: "Could not send verification code",
+        errorType: ErrorType.Unknown,
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-blue-50 px-4">

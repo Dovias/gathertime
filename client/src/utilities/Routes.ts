@@ -2,6 +2,7 @@ export const AppRoutes = {
   LOG_IN: "/login",
   SIGN_UP: "/signup",
   CALENDAR: "/calendar",
+  VERIFY_EMAIL: "/verify-email",
 
   ROOT: "/",
 } as const;

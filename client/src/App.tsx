@@ -3,6 +3,7 @@ import Login from "./components/authentication/Login";
 import Registration from "./components/authentication/Registration";
 import Calendar from "./components/main/Calendar";
 import { AppRoutes } from "./utilities/Routes";
+import VerifyEmail from "./components/authentication/VerifyEmail";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path={AppRoutes.LOG_IN} element={<Login />} />
         <Route path={AppRoutes.SIGN_UP} element={<Registration />} />
         <Route path={AppRoutes.CALENDAR} element={<Calendar />} />
+        <Route path={AppRoutes.VERIFY_EMAIL} element={<VerifyEmail />} />
       </Routes>
     </BrowserRouter>
   );
