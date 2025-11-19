@@ -41,7 +41,7 @@ public class CreateFreeTimeRequestDTO {
     private PastimeType pastimeType = PastimeType.NEUTRAL;
 
     @Builder.Default
-    private List<Long> activityIds = new ArrayList<>();;
+    private List<Long> activityIds = new ArrayList<>();
 
     @AssertTrue(message = "End date and time must be after start date and time")
     public boolean isEndAfterStart() {
