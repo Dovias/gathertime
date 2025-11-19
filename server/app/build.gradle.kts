@@ -17,6 +17,7 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.13.0")
     implementation("me.paulschwarz:spring-dotenv:4.0.0")
     implementation("jakarta.validation:jakarta.validation-api:4.0.0-M1")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")

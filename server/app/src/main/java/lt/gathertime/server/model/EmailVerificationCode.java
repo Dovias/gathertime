@@ -1,0 +1,27 @@
+package lt.gathertime.server.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class EmailVerificationCode {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String email;
+
+    private String code;
+
+    private LocalDateTime expiresAt;
+
+    private boolean used;
+}
