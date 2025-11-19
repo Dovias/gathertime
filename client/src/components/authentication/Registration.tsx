@@ -114,7 +114,7 @@ function Registration() {
       console.error(error);
       setError({
         message: "Could not send verification code",
-        errorType: ErrorType.Unknown,
+        errorType: ErrorType.Other,
       });
     } finally {
       setIsSubmitting(false);

@@ -36,8 +36,8 @@ function VerifyEmail() {
       );
 
       navigate(AppRoutes.LOG_IN);
-    } catch (err: unknown) {
-      setError(err.response?.data?.message || "Invalid or expired code");
+    } catch (_err) {
+      setError("Invalid or expired code");
     } finally {
       setIsSubmitting(false);
     }
