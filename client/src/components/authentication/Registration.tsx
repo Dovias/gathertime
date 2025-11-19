@@ -76,15 +76,15 @@ function Registration() {
       const user = await fetchUserByEmail(value);
 
       if (user !== null) {
-          setEmailError({
-              message: "Email is already registered",
-              errorType: ErrorType.EmailRegistered,
-          });
+        setEmailError({
+          message: "Email is already registered",
+          errorType: ErrorType.EmailRegistered,
+        });
       } else {
-          setEmailError({
-              message: "",
-              errorType: ErrorType.NoError,
-          });
+        setEmailError({
+          message: "",
+          errorType: ErrorType.NoError,
+        });
       }
     } catch (_error) {}
   };
@@ -110,7 +110,6 @@ function Registration() {
       });
 
       navigate(`/verify-email?${params.toString()}`);
-
     } catch (error) {
       console.error(error);
       setError({
@@ -121,7 +120,6 @@ function Registration() {
       setIsSubmitting(false);
     }
   };
-
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-blue-50 px-4">
