@@ -25,7 +25,7 @@ function VerifyEmail() {
 
     try {
       await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/verify-code-and-register`,
+        `${import.meta.env.VITE_SERVER_URL}/auth/verify-code-and-register`,
         {
           email,
           firstName,
