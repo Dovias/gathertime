@@ -1,9 +1,11 @@
 package lt.gathertime.server.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.meetingDTOs.CreateMeetingRequestDTO;
 import lt.gathertime.server.mapper.MeetingMapper;
@@ -11,7 +13,9 @@ import lt.gathertime.server.model.FreeTime;
 import lt.gathertime.server.model.Invitation;
 import lt.gathertime.server.model.Meeting;
 import lt.gathertime.server.model.User;
+import lt.gathertime.server.model.enums.FreeTimeStatus;
 import lt.gathertime.server.model.enums.InvitationStatus;
+import lt.gathertime.server.model.enums.MeetingStatus;
 import lt.gathertime.server.repository.FreeTimeRepository;
 import lt.gathertime.server.repository.InvitationRepository;
 import lt.gathertime.server.repository.MeetingRepository;
@@ -26,7 +30,7 @@ public class MeetingService {
     private final MeetingRepository meetingRepository;
     private final InvitationRepository invitationRepository;
 
-
+    @Transactional
     public void createMeeting(CreateMeetingRequestDTO requestDto) {
         LocalDateTime createdDateTime = LocalDateTime.now();
 
@@ -53,4 +57,22 @@ public class MeetingService {
         invitationRepository.save(invitation);
     }
 
+    @Transactional
+    public void confirmMeeting(Long invitationId) {
+        Invitation invitation = invitationRepository.findById(invitationId)
+            .orElseThrow(() -> new RuntimeException("Invitation not found with ID: " + invitationId));
+        
+        Meeting meeting = invitation.getMeeting();
+
+        List<User> participants = meeting.getMeetingParticipants();
+        participants.add(invitation.getInvitee());
+        if(participants.size() > 1) {
+            meeting.setStatus(MeetingStatus.CONFIRMED);
+        }
+
+        meeting.getFreeTime().setStatus(FreeTimeStatus.PLANNED);
+
+        invitation.setStatus(InvitationStatus.CONFIRMED);
+        invitation.setModifiedDateTime(LocalDateTime.now());
+    }
 }
