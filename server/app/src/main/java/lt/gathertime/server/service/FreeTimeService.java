@@ -1,5 +1,6 @@
 package lt.gathertime.server.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.freetimeDTOs.CreateFreeTimeRequestDTO;
+import lt.gathertime.server.dto.freetimeDTOs.FreeTimeDTO;
 import lt.gathertime.server.mapper.FreeTimeMapper;
 import lt.gathertime.server.model.Activity;
 import lt.gathertime.server.model.FreeTime;
@@ -34,6 +36,18 @@ public class FreeTimeService {
 
         FreeTime newFreeTime = FreeTimeMapper.fromCreateRequestDto(requestDto, user, activities);
         freeTimeRepository.save(newFreeTime);
+    }
+
+    public List<FreeTimeDTO> getFreeTimes(Long userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        if(startDateTime.isAfter(endDateTime)) {
+            throw new RuntimeException("Start date must be before end date");
+        }
+
+        List<FreeTime> freeTimes = freeTimeRepository.getFreeTimes(userId, startDateTime, endDateTime);
+
+        return freeTimes.stream()
+                .map(FreeTimeMapper::toFreeTimeDTO)
+                .toList();
     }
 
     @Transactional
