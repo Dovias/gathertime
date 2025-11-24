@@ -32,7 +32,7 @@ function Login() {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_SERVER_URL}/auth/login`,
+        `/auth/login`,
         credentials,
       );
 
