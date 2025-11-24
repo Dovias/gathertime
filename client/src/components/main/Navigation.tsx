@@ -1,6 +1,8 @@
 import { AppRoutes } from "../../utilities/Routes";
 import logo from "../../assets/logo_nobg.png";
-import { FaCalendarAlt, FaSearch, FaPowerOff } from "react-icons/fa";
+import { FaCalendarAlt, FaSearch, FaPowerOff, FaUserFriends, FaCog } from "react-icons/fa";
+import { ImCheckmark } from "react-icons/im";
+import { CgProfile } from "react-icons/cg";
 import { NavMenuItem } from "./NavigationItem";
 import { NavMenuButton } from "./NavigationButton";
 
@@ -26,6 +28,29 @@ function Navigation({ onLogout }: NavMenuProps) {
                     to="/events"
                     icon={FaSearch}
                     label="Galimi susitikimai"
+                />
+                <NavMenuItem
+                    to="/planned_meets"
+                    icon={ImCheckmark}
+                    label="Suplanuoti susitikimai"
+                />
+                <NavMenuItem
+                    to="/friends"
+                    icon={FaUserFriends}
+                    label="Draugai ir grupės"
+                />
+            </nav>
+
+            <nav>
+                <NavMenuItem
+                    to={AppRoutes.CALENDAR}
+                    icon={CgProfile}
+                    label="Profilis"
+                />
+                <NavMenuItem
+                    to="/events"
+                    icon={FaCog}
+                    label="Nustatymai"
                 />
             </nav>
 
