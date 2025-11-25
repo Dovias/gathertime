@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.meetingDTOs.CreateMeetingRequestDTO;
+import lt.gathertime.server.dto.meetingDTOs.MeetingSummaryDTO;
 import lt.gathertime.server.mapper.MeetingMapper;
 import lt.gathertime.server.model.FreeTime;
 import lt.gathertime.server.model.Invitation;
@@ -36,24 +37,25 @@ public class MeetingService {
         LocalDateTime createdDateTime = LocalDateTime.now();
 
         User inviter = userRepository.findById(requestDto.getUserId())
-            .orElseThrow(() -> new RuntimeException("User not found with ID: " + requestDto.getUserId()));
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + requestDto.getUserId()));
 
         FreeTime freeTime = freeTimeRepository.findById(requestDto.getFreeTimeId())
-            .orElseThrow(() -> new RuntimeException("Free time not found with ID: " + requestDto.getFreeTimeId()));
+                .orElseThrow(() -> new RuntimeException("Free time not found with ID: " + requestDto.getFreeTimeId()));
 
-        Meeting meeting = MeetingMapper.fromCreateRequestDto(freeTime.getStartDateTime(), freeTime.getEndDateTime(), freeTime, inviter);
+        Meeting meeting = MeetingMapper.fromCreateRequestDto(freeTime.getStartDateTime(), freeTime.getEndDateTime(),
+                freeTime, inviter);
         meetingRepository.save(meeting);
 
         User invitee = freeTime.getUser();
 
         Invitation invitation = Invitation.builder()
-            .meeting(meeting)
-            .inviter(inviter)
-            .invitee(invitee)
-            .createdDateTime(createdDateTime)
-            .modifiedDateTime(createdDateTime)
-            .status(InvitationStatus.SENT)
-            .build();
+                .meeting(meeting)
+                .inviter(inviter)
+                .invitee(invitee)
+                .createdDateTime(createdDateTime)
+                .modifiedDateTime(createdDateTime)
+                .status(InvitationStatus.SENT)
+                .build();
 
         invitationRepository.save(invitation);
     }
@@ -61,13 +63,13 @@ public class MeetingService {
     @Transactional
     public void confirmMeeting(Long invitationId) {
         Invitation invitation = invitationRepository.findById(invitationId)
-            .orElseThrow(() -> new RuntimeException("Invitation not found with ID: " + invitationId));
-        
+                .orElseThrow(() -> new RuntimeException("Invitation not found with ID: " + invitationId));
+
         Meeting meeting = invitation.getMeeting();
 
         List<User> participants = meeting.getMeetingParticipants();
         participants.add(invitation.getInvitee());
-        if(participants.size() > 1) {
+        if (participants.size() > 1) {
             meeting.setStatus(MeetingStatus.CONFIRMED);
         }
 
@@ -84,4 +86,11 @@ public class MeetingService {
         return MeetingMapper.toResponse(meeting);
     }
 
+    public List<MeetingSummaryDTO> getUserMeetings(Long userId, LocalDateTime startDateTime,
+            LocalDateTime endDateTime) {
+        List<Meeting> meetings = meetingRepository.findUserMeetingsInRange(userId, startDateTime, endDateTime);
+        return meetings.stream()
+                .map(meeting -> MeetingMapper.toMeetingSummaryDTO(meeting, meeting.getMeetingParticipants()))
+                .toList();
+    }
 }
