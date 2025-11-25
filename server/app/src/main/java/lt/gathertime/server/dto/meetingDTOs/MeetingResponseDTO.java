@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lt.gathertime.server.dto.userDTOs.UserFullNameDTO;
 import lt.gathertime.server.model.enums.MeetingStatus;
 
 @Getter
@@ -28,8 +29,8 @@ public class MeetingResponseDTO {
     private MeetingStatus status;
 
     private Long freeTimeId;
-    private Long ownerId;
+    private UserFullNameDTO owner;
 
-    private List<Long> participantIds;
+    private List<UserFullNameDTO> participants;
     private List<Long> activityIds;
 }
