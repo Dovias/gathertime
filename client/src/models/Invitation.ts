@@ -1,4 +1,4 @@
-import { InvitationStatus } from "./InvitationStatus";
+import type { InvitationStatus } from "./InvitationStatus";
 
 export interface Invitation {
   id: number;

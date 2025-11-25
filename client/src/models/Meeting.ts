@@ -1,4 +1,4 @@
-import { MeetingStatus } from "./MeetingStatus";
+import type { MeetingStatus } from "./MeetingStatus";
 
 export interface MeetingResponse {
   id: number;
