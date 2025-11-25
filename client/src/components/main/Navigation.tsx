@@ -43,7 +43,7 @@ function Navigation({ onLogout }: NavMenuProps) {
 
             <nav>
                 <NavMenuItem
-                    to={AppRoutes.CALENDAR}
+                    to="/profile"
                     icon={CgProfile}
                     label="Profilis"
                 />
