@@ -1,13 +1,8 @@
 package lt.gathertime.server.controller;
 
+import lt.gathertime.server.dto.meetingDTOs.MeetingResponseDTO;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,4 +28,11 @@ public class MeetingController {
     public void confirmMeeting(@PathVariable Long invitationId) {
         meetingService.confirmMeeting(invitationId);
     }
+
+    @GetMapping("/{meetingId}")
+    @ResponseStatus(HttpStatus.OK)
+    public MeetingResponseDTO getMeeting(@PathVariable Long meetingId) {
+        return meetingService.getMeeting(meetingId);
+    }
+
 }

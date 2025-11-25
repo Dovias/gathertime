@@ -98,7 +98,7 @@ function Registration() {
     setError({ message: "", errorType: ErrorType.NoError });
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/auth/send-code`, {
+      await axios.post(`/auth/send-code`, {
         email: credentials.email,
       });
 

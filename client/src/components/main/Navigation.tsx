@@ -34,7 +34,7 @@ function Navigation({ onLogout }: NavMenuProps) {
                     Kalendorius
                 </Link>
                 <Link
-                    to="/events"
+                    to={AppRoutes.EVENTS}
                     className={`flex items-center gap-3 px-4 py-3 text-sm font-medium ${
                         isActive("/events")
                             ? "bg-blue-50 text-blue-700 border-r-4 border-blue-700"

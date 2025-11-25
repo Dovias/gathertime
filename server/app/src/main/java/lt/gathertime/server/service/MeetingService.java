@@ -3,6 +3,7 @@ package lt.gathertime.server.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import lt.gathertime.server.dto.meetingDTOs.MeetingResponseDTO;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -75,4 +76,12 @@ public class MeetingService {
         invitation.setStatus(InvitationStatus.CONFIRMED);
         invitation.setModifiedDateTime(LocalDateTime.now());
     }
+
+    public MeetingResponseDTO getMeeting(Long meetingId) {
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new RuntimeException("Meeting not found with ID: " + meetingId));
+
+        return MeetingMapper.toResponse(meeting);
+    }
+
 }
