@@ -25,7 +25,8 @@
     },
     "parser": {
       "cssModules": false,
-      "allowWrongLineComments": true
+      "allowWrongLineComments": true,
+      "tailwindDirectives": true
     }
   },
   "javascript": {
