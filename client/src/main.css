@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-    --color-navy: #1F263E;
-    --color-navy-light: #2a3350;
-    --color-navy-hover: #303750;
-    --color-gray-light: #D8D8D8;
-    --color-hover-indicator: #50B8E4;
+  --color-navy: #1f263e;
+  --color-navy-light: #2a3350;
+  --color-navy-hover: #303750;
+  --color-gray-light: #d8d8d8;
+  --color-hover-indicator: #50b8e4;
 }
