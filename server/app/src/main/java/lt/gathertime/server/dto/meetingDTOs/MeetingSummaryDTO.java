@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import lt.gathertime.server.dto.userDTOs.UserFullNameDTO;
+import lt.gathertime.server.model.enums.MeetingStatus;
 
 @Getter
 @NoArgsConstructor
@@ -31,6 +32,8 @@ public class MeetingSummaryDTO {
     private LocalDateTime endDateTime;
 
     private String summary;
+
+    private MeetingStatus status;
 
     private List<Long> meetingActivityIds;
 
