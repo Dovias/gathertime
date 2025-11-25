@@ -19,6 +19,16 @@
       "recommended": true
     }
   },
+  "css": {
+    "linter": {
+      "enabled": true
+    },
+    "parser": {
+      "cssModules": false,
+      "allowWrongLineComments": true,
+      "tailwindDirectives": true
+    }
+  },
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
