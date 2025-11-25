@@ -1,17 +1,15 @@
-import React from "react";
-
 interface User {
   name: string;
   avatar?: string;
 }
 
 interface UniversalCardProps {
-  title: string;              // e.g. "Po 1 valandos" or "Kaunas!"
-  subtitle?: string;          // e.g. "Rytoj"
-  time: string;               // e.g. "13:00–15:00"
-  users: User[];              // 1 or more users
-  icon?: string;              // emoji e.g. "🏀"
-  highlighted?: boolean;      // yellowish background for selected card
+  title: string; // e.g. "Po 1 valandos" or "Kaunas!"
+  subtitle?: string; // e.g. "Rytoj"
+  time: string; // e.g. "13:00–15:00"
+  users: User[]; // 1 or more users
+  icon?: string; // emoji e.g. "🏀"
+  highlighted?: boolean; // yellowish background for selected card
 }
 
 function EventCard({
@@ -20,21 +18,24 @@ function EventCard({
   time,
   users,
   icon,
-  highlighted
+  highlighted,
 }: UniversalCardProps) {
   return (
     <div
       className={
         "px-4 py-3 w-48 rounded-xl shadow flex flex-col gap-1 border transition " +
-        (highlighted ? "bg-yellow-50 border-yellow-200" : "bg-white border-gray-200")
+        (highlighted
+          ? "bg-yellow-50 border-yellow-200"
+          : "bg-white border-gray-200")
       }
     >
       <div className="flex items-center gap-2">
         {/* Avatar(s) */}
         <div className="flex -space-x-2">
-          {users.map((u, i) => (
+          {users.map((u) => (
             <img
-              key={i}
+              alt="User profile"
+              key={u.name}
               src={u.avatar || "/default-avatar.png"}
               className="w-6 h-6 rounded-full border border-white"
             />
@@ -42,9 +43,7 @@ function EventCard({
         </div>
 
         {/* Emoji */}
-        {icon && (
-          <span className="text-lg ml-auto">{icon}</span>
-        )}
+        {icon && <span className="text-lg ml-auto">{icon}</span>}
       </div>
 
       {/* Title + Time */}
@@ -56,7 +55,7 @@ function EventCard({
 
       {/* User list label */}
       <span className="text-xs text-gray-600 truncate">
-        {users.map(u => u.name).join(", ")}
+        {users.map((u) => u.name).join(", ")}
       </span>
     </div>
   );

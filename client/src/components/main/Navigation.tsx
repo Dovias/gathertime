@@ -10,16 +10,12 @@ import { ImCheckmark } from "react-icons/im";
 import logo from "../../assets/logo_nobg.png";
 import { AppRoutes } from "../../utilities/Routes";
 import { NavMenuItem } from "./NavigationItem";
-import { Link, useLocation } from "react-router-dom";
 
 interface NavMenuProps {
   onLogout: () => void;
 }
 
 function Navigation({ onLogout }: NavMenuProps) {
-  const location = useLocation();
-  const isActive = (path: string) => location.pathname === path;
-
   return (
       <aside className="w-64 bg-navy shadow-lg flex flex-col">
         <div className="px-6 pt-6 flex flex-col items-center gap-4">

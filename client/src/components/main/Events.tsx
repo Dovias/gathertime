@@ -1,11 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+<<<<<<< HEAD
 import { AppRoutes } from "../../utilities/Routes";
 import Navigation from "./Navigation";
 import EventCard from "../cards/EventCard";
 import { getInvitationsForUser } from "../../api/InvitationApi";
 import { getMeeting } from "../../api/MeetingApi";
 import type { Meeting } from "../../models/Meeting";
+=======
+import { getInvitationsForUser } from "../../api/InvitationApi";
+import { getMeeting } from "../../api/MeetingApi";
+import type { MeetingResponse } from "../../types/Meeting";
+import { AppRoutes } from "../../utilities/Routes";
+import EventCard from "../cards/EventCard";
+import Navigation from "./Navigation";
+>>>>>>> 935d6e8 (Fix various code smells)
 
 export default function Events() {
   const navigate = useNavigate();
@@ -45,7 +54,9 @@ export default function Events() {
       <Navigation onLogout={handleLogout} />
 
       <main className="flex-grow p-10">
-        <h1 className="text-2xl font-semibold mb-6">Lapkričio 9 d., Sekmadienis</h1>
+        <h1 className="text-2xl font-semibold mb-6">
+          Lapkričio 9 d., Sekmadienis
+        </h1>
 
         {/* ========== INVITATIONS SECTION ========== */}
         <h2 className="text-lg font-semibold mb-3">Kvietimai į susitikimus</h2>
@@ -56,7 +67,11 @@ export default function Events() {
               title={m.summary || "Susitikimas"}
               subtitle=""
               time={`${m.startDateTime.slice(11, 16)}–${m.endDateTime.slice(11, 16)}`}
+<<<<<<< HEAD
               users={[{ name: `Kvietėjas ${m.owner.firstName} ${m.owner.lastName}` }]}
+=======
+              users={[{ name: `Kvietėjas #${m.ownerId}` }]}
+>>>>>>> 935d6e8 (Fix various code smells)
             />
           ))}
         </div>
