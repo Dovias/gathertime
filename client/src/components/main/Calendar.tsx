@@ -15,20 +15,20 @@ function Calendar() {
   };
 
   return (
-      <div className="min-h-screen flex bg-gray-50">
-          <Navigation onLogout={handleLogout} />
+    <div className="min-h-screen flex bg-gray-50">
+      <Navigation onLogout={handleLogout} />
 
-          <main className="flex-grow flex items-center justify-center p-6">
-              <div className="text-center">
-                  <h2 className="text-3xl font-semibold text-gray-700 mb-4">
-                      Calendar
-                  </h2>
-                  <p className="text-gray-500">
-                      This is where calendar content will go.
-                  </p>
-              </div>
-          </main>
-      </div>
+      <main className="flex-grow flex items-center justify-center p-6">
+        <div className="text-center">
+          <h2 className="text-3xl font-semibold text-gray-700 mb-4">
+            Calendar
+          </h2>
+          <p className="text-gray-500">
+            This is where calendar content will go.
+          </p>
+        </div>
+      </main>
+    </div>
   );
 }
 
