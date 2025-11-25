@@ -33,8 +33,8 @@ function Calendar() {
     };
 
   return (
-      <div className="min-h-screen flex bg-gray-50">
-          <Navigation onLogout={handleLogout} />
+    <div className="min-h-screen flex bg-gray-50">
+      <Navigation onLogout={handleLogout} />
 
           <main className="flex-grow flex flex-col px-10 pt-6">
               <div className="w-full">

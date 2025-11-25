@@ -7,7 +7,7 @@ import { NavMenuItem } from "./NavigationItem";
 import { NavMenuButton } from "./NavigationButton";
 
 interface NavMenuProps {
-    onLogout: () => void;
+  onLogout: () => void;
 }
 
 function Navigation({ onLogout }: NavMenuProps) {
