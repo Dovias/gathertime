@@ -36,6 +36,7 @@ public class MeetingMapper {
                 .startDateTime(meeting.getStartDateTime())
                 .endDateTime(meeting.getEndDateTime())
                 .summary(meeting.getSummary())
+                .status(meeting.getStatus())
                 .meetingActivityIds(
                     meeting.getMeetingActivities() == null
                     ? List.of()
