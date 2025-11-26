@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { getInvitationsForUser } from "../../api/InvitationApi";
 import { getMeeting } from "../../api/MeetingApi";
 import type { Meeting } from "../../models/Meeting";
-import { AppRoutes } from "../../utilities/Routes";
+import { appRoutes } from "../../routes";
 import EventCard from "../cards/EventCard";
 import Navigation from "./Navigation";
 
@@ -13,7 +13,7 @@ export default function Events() {
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to log out?")) {
       localStorage.removeItem("user");
-      navigate(AppRoutes.LOG_IN);
+      navigate(appRoutes.auth.login);
     }
   };
 

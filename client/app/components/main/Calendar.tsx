@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaCircle } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { AppRoutes } from "../../utilities/Routes";
+import { useNavigate } from "react-router";
+import { appRoutes } from "../../routes";
 import Navigation from "./Navigation.tsx";
 
 interface CalendarEvent {
@@ -97,7 +97,7 @@ function Calendar() {
     const confirmed = window.confirm("Are you sure you want to log out?");
     if (confirmed) {
       localStorage.removeItem("user");
-      navigate(AppRoutes.LOG_IN);
+      navigate(appRoutes.auth.login);
     }
   };
 
