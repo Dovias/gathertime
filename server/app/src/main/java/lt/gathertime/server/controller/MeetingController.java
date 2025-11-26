@@ -1,6 +1,13 @@
 package lt.gathertime.server.controller;
 
 import lt.gathertime.server.dto.meetingDTOs.MeetingResponseDTO;
+import lt.gathertime.server.dto.meetingDTOs.MeetingSummaryDTO;
+import lt.gathertime.server.mapper.MeetingMapper;
+import lt.gathertime.server.model.Meeting;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +40,15 @@ public class MeetingController {
     @ResponseStatus(HttpStatus.OK)
     public MeetingResponseDTO getMeeting(@PathVariable Long meetingId) {
         return meetingService.getMeeting(meetingId);
+    }
+
+    @GetMapping("user/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<MeetingSummaryDTO> getUserMeetings(
+        @PathVariable Long userId, 
+        @RequestParam LocalDateTime startDateTime,  
+        @RequestParam LocalDateTime endDateTime) {
+            return meetingService.getUserMeetings(userId, startDateTime, endDateTime);
     }
 
 }

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import lt.gathertime.server.dto.meetingDTOs.MeetingResponseDTO;
+import lt.gathertime.server.dto.meetingDTOs.MeetingSummaryDTO;
+
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -83,6 +85,13 @@ public class MeetingService {
                 .orElseThrow(() -> new RuntimeException("Meeting not found with ID: " + meetingId));
 
         return MeetingMapper.toResponse(meeting);
+    }
+    
+    public List<MeetingSummaryDTO> getUserMeetings(Long userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        List<Meeting> meetings = meetingRepository.findUserMeetingsInRange(userId, startDateTime, endDateTime);
+        return meetings.stream()
+                .map(meeting -> MeetingMapper.toMeetingSummaryDTO(meeting, meeting.getMeetingParticipants()))
+                .toList();
     }
 
 }
