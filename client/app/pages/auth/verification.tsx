@@ -1,9 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { AppRoutes } from "../../utilities/Routes";
+import { useLocation, useNavigate } from "react-router";
+import { appRoutes } from "../../routes";
 
-function VerifyEmail() {
+export default function Verify() {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -24,18 +24,15 @@ function VerifyEmail() {
     setError("");
 
     try {
-      await axios.post(
-        `${import.meta.env.VITE_SERVER_URL}/auth/verify-code-and-register`,
-        {
-          email,
-          firstName,
-          lastName,
-          password,
-          code,
-        },
-      );
+      await axios.post(`/auth/verify-code-and-register`, {
+        email,
+        firstName,
+        lastName,
+        password,
+        code,
+      });
 
-      navigate(AppRoutes.LOG_IN);
+      navigate(appRoutes.auth.login);
     } catch (_err) {
       setError("Invalid or expired code");
     } finally {
@@ -80,5 +77,3 @@ function VerifyEmail() {
     </div>
   );
 }
-
-export default VerifyEmail;

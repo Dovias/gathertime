@@ -1,5 +1,6 @@
-# Ignore package manager directories
-node_modules/
+
+# Ignore library-specific directories
+.react-router/
 
 # Ignore artifact-specific directories
 build/

@@ -1,9 +1,9 @@
 import axios from "axios";
 import type React from "react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import { fetchUserByEmail } from "../../api/UserApi";
-import { AppRoutes } from "../../utilities/Routes";
+import { appRoutes } from "../../routes";
 import { ErrorType } from "../../utilities/validations/ErrorType";
 import { validatePasswords } from "../../utilities/validations/PasswordValidation";
 
@@ -20,7 +20,7 @@ interface Err {
   errorType: ErrorType;
 }
 
-function Registration() {
+export default function Register() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [credentials, setCredentials] = useState<Credentials>({
@@ -253,7 +253,7 @@ function Registration() {
           <p className="text-sm text-gray-600">
             Already have an account?{" "}
             <Link
-              to={AppRoutes.LOG_IN}
+              to={appRoutes.auth.login}
               className="text-indigo-600 hover:text-indigo-800 font-medium"
             >
               Log in
@@ -264,5 +264,3 @@ function Registration() {
     </div>
   );
 }
-
-export default Registration;
