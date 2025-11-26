@@ -32,10 +32,14 @@ const authMiddleware: Route.ClientMiddlewareFunction = async ({ context }) => {
 export const clientMiddleware = [authMiddleware];
 
 
-export default function Layout() {
+export function clientLoader({ context }: Route.ClientLoaderArgs) {
+  return context.get(userContext);
+}
+
+export default function Layout({ loaderData: user }: Route.ComponentProps) {
   return (
     <div className="min-h-screen flex bg-gray-50">
-      <Navigation />
+      <Navigation user={user} />
       <div className="flex-grow">
         <Outlet />
       </div>
