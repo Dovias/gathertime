@@ -1,15 +1,15 @@
 import axios from "axios";
 import type React from "react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { AppRoutes } from "../../utilities/Routes";
+import { Form, Link, useNavigate } from "react-router";
+import { appRoutes } from "../../routes";
 
 interface Credentials {
   email: string;
   password: string;
 }
 
-function Login() {
+export default function Login() {
   const navigate = useNavigate();
 
   const [credentials, setCredentials] = useState<Credentials>({
@@ -31,12 +31,12 @@ function Login() {
     setError(null);
 
     try {
-      const response = await axios.post(`/auth/login`, credentials);
+      const response = await axios.post("/auth/login", credentials);
 
       if (response.status === 200) {
         const data = response.data;
         localStorage.setItem("user", JSON.stringify(data));
-        navigate(AppRoutes.CALENDAR);
+        navigate(appRoutes.dashboard.calendar);
       } else {
         setError("Wrong email or password. Please try again.");
       }
@@ -56,7 +56,7 @@ function Login() {
           <span className="text-blue-600 font-semibold">GatherTime</span>
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <Form onSubmit={handleSubmit} className="space-y-5">
           <div className="text-left">
             <label
               htmlFor="email"
@@ -101,12 +101,12 @@ function Login() {
           >
             Log In
           </button>
-        </form>
+        </Form>
 
         <div className="mt-6 text-sm text-gray-600">
           Don’t have an account?{" "}
           <Link
-            to={AppRoutes.SIGN_UP}
+            to={appRoutes.auth.register}
             className="text-purple-600 font-semibold hover:underline"
           >
             Sign up
@@ -116,5 +116,3 @@ function Login() {
     </div>
   );
 }
-
-export default Login;
