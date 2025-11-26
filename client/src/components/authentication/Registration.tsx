@@ -98,7 +98,7 @@ function Registration() {
     setError({ message: "", errorType: ErrorType.NoError });
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/auth/send-code`, {
+      await axios.post(`/auth/send-code`, {
         email: credentials.email,
       });
 
@@ -172,7 +172,7 @@ function Registration() {
               value={credentials.firstName}
               onChange={handleInputChange}
               required
-              className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:rding-indigo-500 focus:border-indigo-500"
             />
           </div>
 

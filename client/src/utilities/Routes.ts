@@ -3,6 +3,7 @@ export const AppRoutes = {
   SIGN_UP: "/signup",
   CALENDAR: "/calendar",
   VERIFY_EMAIL: "/verify-email",
+  EVENTS: "/events",
 
   ROOT: "/",
 } as const;

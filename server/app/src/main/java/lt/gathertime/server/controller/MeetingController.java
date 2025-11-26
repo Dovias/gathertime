@@ -1,24 +1,13 @@
 package lt.gathertime.server.controller;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+import lt.gathertime.server.dto.meetingDTOs.MeetingResponseDTO;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import lt.gathertime.server.dto.meetingDTOs.CreateMeetingRequestDTO;
-import lt.gathertime.server.dto.meetingDTOs.MeetingSummaryDTO;
 import lt.gathertime.server.service.MeetingService;
 
 @RestController
@@ -40,12 +29,10 @@ public class MeetingController {
         meetingService.confirmMeeting(invitationId);
     }
 
-    @GetMapping("user/{userId}")
+    @GetMapping("/{meetingId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<MeetingSummaryDTO> getUserMeetings(
-        @PathVariable Long userId, 
-        @RequestParam LocalDateTime startDateTime,  
-        @RequestParam LocalDateTime endDateTime) {
-            return meetingService.getUserMeetings(userId, startDateTime, endDateTime);
+    public MeetingResponseDTO getMeeting(@PathVariable Long meetingId) {
+        return meetingService.getMeeting(meetingId);
     }
+
 }

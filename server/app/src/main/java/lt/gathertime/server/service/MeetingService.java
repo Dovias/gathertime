@@ -3,12 +3,12 @@ package lt.gathertime.server.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import lt.gathertime.server.dto.meetingDTOs.MeetingResponseDTO;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.meetingDTOs.CreateMeetingRequestDTO;
-import lt.gathertime.server.dto.meetingDTOs.MeetingSummaryDTO;
 import lt.gathertime.server.mapper.MeetingMapper;
 import lt.gathertime.server.model.FreeTime;
 import lt.gathertime.server.model.Invitation;
@@ -77,10 +77,11 @@ public class MeetingService {
         invitation.setModifiedDateTime(LocalDateTime.now());
     }
 
-    public List<MeetingSummaryDTO> getUserMeetings(Long userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        List<Meeting> meetings = meetingRepository.findUserMeetingsInRange(userId, startDateTime, endDateTime);
-        return meetings.stream()
-                .map(meeting -> MeetingMapper.toMeetingSummaryDTO(meeting, meeting.getMeetingParticipants()))
-                .toList();
+    public MeetingResponseDTO getMeeting(Long meetingId) {
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new RuntimeException("Meeting not found with ID: " + meetingId));
+
+        return MeetingMapper.toResponse(meeting);
     }
+
 }

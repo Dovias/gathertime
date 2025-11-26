@@ -1,0 +1,6 @@
+export enum MeetingStatus {
+  ARRANGED = "ARRANGED",
+  CONFIRMED = "CONFIRMED",
+  CANCELED = "CANCELED",
+  TIMEOUT = "TIMEOUT"
+}

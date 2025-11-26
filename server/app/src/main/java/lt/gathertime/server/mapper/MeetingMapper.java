@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lt.gathertime.server.dto.meetingDTOs.MeetingResponseDTO;
 import lt.gathertime.server.dto.meetingDTOs.MeetingSummaryDTO;
 import lt.gathertime.server.dto.userDTOs.UserFullNameDTO;
 import lt.gathertime.server.model.Activity;
@@ -27,6 +28,38 @@ public class MeetingMapper {
                 .freeTime(freeTime)
                 .owner(inviter)
                 .meetingParticipants(List.of(inviter))
+                .build();
+    }
+
+    public static MeetingResponseDTO toResponse(Meeting m) {
+        return MeetingResponseDTO.builder()
+                .id(m.getId())
+                .startDateTime(m.getStartDateTime())
+                .endDateTime(m.getEndDateTime())
+                .summary(m.getSummary())
+                .description(m.getDescription())
+                .location(m.getLocation())
+                .maxParticipants(m.getMaxParticipants())
+                .status(m.getStatus())
+                .freeTimeId(m.getFreeTime() != null ? m.getFreeTime().getId() : null)
+                .owner(UserFullNameDTO.builder()
+                    .id(m.getOwner().getId())
+                    .firstName(m.getOwner().getFirstName())
+                    .lastName(m.getOwner().getLastName())
+                    .build()
+                )
+                .participants(m.getMeetingParticipants().stream().map(participant -> UserFullNameDTO.builder()
+                    .id(participant.getId())
+                    .firstName(participant.getFirstName())
+                    .lastName(participant.getLastName())
+                    .build()
+                ).collect(Collectors.toList()))
+                .activityIds(
+                        m.getMeetingActivities() == null ? null :
+                                m.getMeetingActivities().stream()
+                                        .map(Activity::getId)
+                                        .collect(Collectors.toList())
+                )
                 .build();
     }
     
