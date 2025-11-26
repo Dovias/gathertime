@@ -1,7 +1,10 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> 94f21c6 (Port browser router pages to framework mode)
+=======
+>>>>>>> 1c79d62 (Remove unused method)
 # Ignore library-specific directories
 .react-router/
 
