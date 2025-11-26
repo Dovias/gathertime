@@ -1,6 +1,6 @@
-# Ignore library-specific directories
-.react-router/
-
 # Ignore artifact-specific directories
 build/
 dist/
+
+# Ignore library-specific directories
+.react-router/
