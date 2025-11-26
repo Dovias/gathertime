@@ -151,8 +151,6 @@ function Calendar() {
 
     return `${capitalizedMonthDay}, ${capitalizedWeekday}`;
   };
-<<<<<<< HEAD
-=======
 
   const isSameDay = (date1: Date, date2: Date) => {
     return (
@@ -206,27 +204,11 @@ function Calendar() {
   };
 
   const monthDays = getCurrentMonthDays();
->>>>>>> 68c2232 (Add calendar view)
 
   return (
     <div className="min-h-screen flex bg-gray-50">
       <Navigation onLogout={handleLogout} />
 
-<<<<<<< HEAD
-      <main className="flex-grow flex flex-col px-10 pt-6">
-        <div className="w-full">
-          <p className="text-2xl text-black mb-2">{formatDate()}</p>
-        </div>
-
-        <div className="flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-3xl font-semibold text-gray-700 mb-4">
-              Calendar
-            </h2>
-            <p className="text-gray-500">
-              This is where calendar content will go.
-            </p>
-=======
       <aside className="w-64 bg-white border-r border-gray-200 p-4 flex flex-col">
         <div className="mb-6">
           <div className="text-base font-semibold text-gray-800 mb-2">
@@ -497,7 +479,6 @@ function Calendar() {
                 </div>
               </div>
             </div>
->>>>>>> 68c2232 (Add calendar view)
           </div>
         </div>
       </main>
