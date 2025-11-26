@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> 94f21c6 (Port browser router pages to framework mode)
@@ -8,6 +9,11 @@
 # Ignore library-specific directories
 .react-router/
 
+=======
+>>>>>>> 29fe304 (Tweak .gitignore file)
 # Ignore artifact-specific directories
 build/
 dist/
+
+# Ignore library-specific directories
+.react-router/
