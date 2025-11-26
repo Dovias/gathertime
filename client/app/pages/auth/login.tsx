@@ -9,10 +9,6 @@ interface Credentials {
   password: string;
 }
 
-export async function clientAction() {
-  console.log();
-}
-
 export default function Login() {
   const navigate = useNavigate();
 
