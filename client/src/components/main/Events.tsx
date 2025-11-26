@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AppRoutes } from "../../utilities/Routes";
-import Navigation from "./Navigation";
-import EventCard from "../cards/EventCard";
 import { getInvitationsForUser } from "../../api/InvitationApi";
 import { getMeeting } from "../../api/MeetingApi";
 import type { Meeting } from "../../models/Meeting";
+import { AppRoutes } from "../../utilities/Routes";
+import EventCard from "../cards/EventCard";
+import Navigation from "./Navigation";
 
 export default function Events() {
   const navigate = useNavigate();
@@ -58,7 +58,9 @@ export default function Events() {
               title={m.summary || "Susitikimas"}
               subtitle=""
               time={`${m.startDateTime.slice(11, 16)}–${m.endDateTime.slice(11, 16)}`}
-              users={[{ name: `Kvietėjas ${m.owner.firstName} ${m.owner.lastName}` }]}
+              users={[
+                { name: `Kvietėjas ${m.owner.firstName} ${m.owner.lastName}` },
+              ]}
             />
           ))}
         </div>

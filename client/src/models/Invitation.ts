@@ -1,4 +1,4 @@
-import { InvitationStatus } from "./enums/InvitationStatus";
+import type { InvitationStatus } from "./enums/InvitationStatus";
 
 export interface Invitation {
   id: number;

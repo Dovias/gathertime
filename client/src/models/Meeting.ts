@@ -1,12 +1,12 @@
-import { MeetingStatus } from "./enums/MeetingStatus";
+import type { MeetingStatus } from "./enums/MeetingStatus";
 
 export type MeetingParticipant = {
   id: string;
   firstName: string;
   lastName: string;
-}
+};
 
-export type MeetingOwner = MeetingParticipant
+export type MeetingOwner = MeetingParticipant;
 
 export type Meeting = {
   id: number;
@@ -26,4 +26,4 @@ export type Meeting = {
 
   participants: MeetingParticipant[];
   activityIds: number[] | null;
-}
+};
