@@ -11,8 +11,13 @@ import { useNavigate } from "react-router";
 import logo from "../../assets/logo_nobg.png";
 import { appRoutes } from "../../routes";
 import { NavMenuItem } from "./NavigationItem";
+import { User } from "../../models/User";
 
-function Navigation() {
+export type NavigationProps = {
+  user: User
+}
+
+function Navigation({ user }: NavigationProps) {
   const navigate = useNavigate();
   const onLogout = () => {
     const confirmed = window.confirm("Are you sure you want to log out?");
@@ -56,7 +61,7 @@ function Navigation() {
         <NavMenuItem
           to={appRoutes.dashboard.profile}
           icon={CgProfile}
-          label="Profilis"
+          label={`${user.firstName} ${user.lastName}`}
         />
         <NavMenuItem
           to={appRoutes.dashboard.settings}
