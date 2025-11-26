@@ -358,17 +358,10 @@ function Calendar() {
             <div className="flex gap-3">
               <button
                 type="button"
-                className="px-4 py-2 border border-gray-300 rounded text-sm bg-white hover:bg-gray-50 flex items-center gap-2"
-              >
-                Savaitė
-                <span className="text-gray-400">▼</span>
-              </button>
-              <button
-                type="button"
                 className="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 flex items-center gap-2"
               >
                 Registruoti laiką
-                <span className="text-xl leading-none">+</span>
+                <span className="text-xl leading-none relative top-[-1px]">+</span>
               </button>
             </div>
           </div>
