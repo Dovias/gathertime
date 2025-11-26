@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { MeetingResponse } from "../types/Meeting";
+import type { MeetingResponse } from "../models/Meeting";
 
 export const getMeeting = async (
   meetingId: number,

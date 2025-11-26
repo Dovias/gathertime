@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Invitation } from "../types/Invitation";
+import type { Invitation } from "../models/Invitation";
 
 export const getInvitationsForUser = async (
   userId: number,
