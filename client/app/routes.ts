@@ -1,3 +1,4 @@
+<<<<<<< HEAD:client/app/routes.ts
 import {
   layout,
   prefix,
@@ -40,3 +41,9 @@ export default [
     ]),
   ]),
 ] satisfies RouteConfig;
+=======
+import type { RouteConfig } from "@react-router/dev/routes";
+import { flatRoutes } from "@react-router/fs-routes";
+
+export default flatRoutes() satisfies RouteConfig;
+>>>>>>> a044ffa (Add initial migration files):client/src/routes.ts
