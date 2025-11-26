@@ -7,44 +7,62 @@ import {
   FaUserFriends,
 } from "react-icons/fa";
 import { ImCheckmark } from "react-icons/im";
+import { useNavigate } from "react-router";
 import logo from "../../assets/logo_nobg.png";
-import { AppRoutes } from "../../utilities/Routes";
+import { appRoutes } from "../../routes";
 import { NavMenuItem } from "./NavigationItem";
 
-interface NavMenuProps {
-  onLogout: () => void;
-}
+function Navigation() {
+  const navigate = useNavigate();
+  const onLogout = () => {
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (confirmed) {
+      localStorage.removeItem("user");
+      navigate(appRoutes.auth.login);
+    }
+  };
 
-function Navigation({ onLogout }: NavMenuProps) {
   return (
     <aside className="w-64 bg-navy shadow-lg flex flex-col">
       <div className="px-6 pt-6 flex flex-col items-center gap-4">
-        <img src={logo} alt="GatherTime Logo" className="w-50 h-10" />
+        <img src={logo} alt="GatherTime logo" className="w-50 h-10" />
         <div className="w-50 border-b border-gray-light/20"></div>
       </div>
 
       <nav className="flex-grow py-4">
         <NavMenuItem
-          to={AppRoutes.CALENDAR}
+          to={appRoutes.dashboard.calendar}
           icon={FaCalendarAlt}
           label="Kalendorius"
         />
-        <NavMenuItem to="/events" icon={FaSearch} label="Galimi susitikimai" />
         <NavMenuItem
-          to="/planned_meets"
+          to={appRoutes.dashboard.feed}
+          icon={FaSearch}
+          label="Galimi susitikimai"
+        />
+        <NavMenuItem
+          to={appRoutes.dashboard.meetings}
           icon={ImCheckmark}
           label="Suplanuoti susitikimai"
         />
         <NavMenuItem
-          to="/friends"
+          to={appRoutes.dashboard.friends}
           icon={FaUserFriends}
           label="Draugai ir grupės"
         />
       </nav>
 
       <nav>
-        <NavMenuItem to="/profile" icon={CgProfile} label="Profilis" />
-        <NavMenuItem to="/settings" icon={FaCog} label="Nustatymai" />
+        <NavMenuItem
+          to={appRoutes.dashboard.profile}
+          icon={CgProfile}
+          label="Profilis"
+        />
+        <NavMenuItem
+          to={appRoutes.dashboard.settings}
+          icon={FaCog}
+          label="Nustatymai"
+        />
       </nav>
       <div className="border-t border-gray-light/20">
         <button

@@ -5,3 +5,6 @@
 # Ignore IDE-specific directories
 .idea/
 .vscode/
+
+# Ignore package manager directories
+node_modules/

@@ -1,5 +1,5 @@
 import type { IconType } from "react-icons";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router";
 
 interface NavMenuItemProps {
   to: string;

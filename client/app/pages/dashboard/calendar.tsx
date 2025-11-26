@@ -1,8 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaCircle } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { AppRoutes } from "../../utilities/Routes";
-import Navigation from "./Navigation.tsx";
 
 interface CalendarEvent {
   id: string;
@@ -15,8 +12,7 @@ interface CalendarEvent {
   textColor?: string;
 }
 
-function Calendar() {
-  const navigate = useNavigate();
+export default function Calendar() {
   const today = new Date();
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -90,14 +86,6 @@ function Calendar() {
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     if (timeLabelsRef.current) {
       timeLabelsRef.current.style.transform = `translateY(-${e.currentTarget.scrollTop}px)`;
-    }
-  };
-
-  const handleLogout = () => {
-    const confirmed = window.confirm("Are you sure you want to log out?");
-    if (confirmed) {
-      localStorage.removeItem("user");
-      navigate(AppRoutes.LOG_IN);
     }
   };
 
@@ -207,8 +195,6 @@ function Calendar() {
 
   return (
     <div className="min-h-screen flex bg-gray-50">
-      <Navigation onLogout={handleLogout} />
-
       <aside className="w-64 bg-white border-r border-gray-200 p-4 flex flex-col">
         <div className="mb-6">
           <div className="text-base font-semibold text-gray-800 mb-2">
@@ -478,5 +464,3 @@ function Calendar() {
     </div>
   );
 }
-
-export default Calendar;
