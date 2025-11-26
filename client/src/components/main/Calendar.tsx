@@ -134,23 +134,22 @@ function Calendar() {
   };
 
   const formatDate = () => {
-    const now = new Date();
-    const monthDay = new Intl.DateTimeFormat("lt-LT", {
-      month: "long",
-      day: "numeric",
-    }).format(now);
+      const now = new Date();
+      const monthDay = new Intl.DateTimeFormat('lt-LT', {
+          month: 'long',
+          day: 'numeric'
 
-    const weekday = new Intl.DateTimeFormat("lt-LT", {
-      weekday: "long",
-    }).format(now);
+      }).format(now);
 
-    const capitalizedMonthDay =
-      monthDay.charAt(0).toUpperCase() + monthDay.slice(1);
-    const capitalizedWeekday =
-      weekday.charAt(0).toUpperCase() + weekday.slice(1);
+      const weekday = new Intl.DateTimeFormat('lt-LT', {
+          weekday: 'long'
+      }).format(now);
 
-    return `${capitalizedMonthDay}, ${capitalizedWeekday}`;
-  };
+      const capitalizedMonthDay = monthDay.charAt(0).toUpperCase() + monthDay.slice(1);
+      const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+
+      return `${capitalizedMonthDay}, ${capitalizedWeekday}`;
+    };
 
   const isSameDay = (date1: Date, date2: Date) => {
     return (
