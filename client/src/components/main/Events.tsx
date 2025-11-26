@@ -67,7 +67,11 @@ export default function Events() {
 
       <main className="flex-grow p-10">
         <h1 className="text-2xl font-semibold mb-6">
-          Lapkričio 9 d., Sekmadienis
+          {new Date().toLocaleDateString("lt-LT", {
+            day: "numeric",
+            month: "long",
+            weekday: "long",
+          })}
         </h1>
 
         {/* ========== INVITATIONS SECTION ========== */}
