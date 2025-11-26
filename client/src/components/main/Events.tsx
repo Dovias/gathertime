@@ -1,32 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { AppRoutes } from "../../utilities/Routes";
 import Navigation from "./Navigation";
 import EventCard from "../cards/EventCard";
 import { getInvitationsForUser } from "../../api/InvitationApi";
 import { getMeeting } from "../../api/MeetingApi";
 import type { Meeting } from "../../models/Meeting";
-=======
-import { getInvitationsForUser } from "../../api/InvitationApi";
-import { getMeeting } from "../../api/MeetingApi";
-import type { MeetingResponse } from "../../types/Meeting";
-=======
-import { getInvitationsForUser } from "../../api/invitationApi";
-import { getMeeting } from "../../api/meetingApi";
-import type { InvitationResponse } from "../../models/Invitation";
-=======
-import { getInvitationsForUser } from "../../api/InvitationApi";
-import { getMeeting } from "../../api/MeetingApi";
->>>>>>> cbe3fdc (fixes)
-import type { MeetingResponse } from "../../models/Meeting";
->>>>>>> 3cfff02 (linting)
-import { AppRoutes } from "../../utilities/Routes";
-import EventCard from "../cards/EventCard";
-import Navigation from "./Navigation";
->>>>>>> 935d6e8 (Fix various code smells)
 
 export default function Events() {
   const navigate = useNavigate();
@@ -67,11 +46,7 @@ export default function Events() {
 
       <main className="flex-grow p-10">
         <h1 className="text-2xl font-semibold mb-6">
-          {new Date().toLocaleDateString("lt-LT", {
-            day: "numeric",
-            month: "long",
-            weekday: "long",
-          })}
+          Lapkričio 9 d., Sekmadienis
         </h1>
 
         {/* ========== INVITATIONS SECTION ========== */}
@@ -83,11 +58,7 @@ export default function Events() {
               title={m.summary || "Susitikimas"}
               subtitle=""
               time={`${m.startDateTime.slice(11, 16)}–${m.endDateTime.slice(11, 16)}`}
-<<<<<<< HEAD
               users={[{ name: `Kvietėjas ${m.owner.firstName} ${m.owner.lastName}` }]}
-=======
-              users={[{ name: `Kvietėjas #${m.ownerId}` }]}
->>>>>>> 935d6e8 (Fix various code smells)
             />
           ))}
         </div>
