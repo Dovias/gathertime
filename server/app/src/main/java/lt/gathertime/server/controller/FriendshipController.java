@@ -1,6 +1,10 @@
 package lt.gathertime.server.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.friendshipDTOs.CreateFriendshipRequestDTO;
+import lt.gathertime.server.dto.friendshipDTOs.FriendshipRequestDTO;
 import lt.gathertime.server.service.FriendshipService;
 
 @RestController
@@ -25,4 +30,9 @@ public class FriendshipController {
         friendshipService.createFriendship(payload);
     }
 
+    @GetMapping("/user/{userId}/requests") 
+    @ResponseStatus(HttpStatus.OK)
+    public List<FriendshipRequestDTO> getFriendshipRequests(@PathVariable Long userId) {
+        return friendshipService.getFriendshipRequests(userId);
+    }
 }
