@@ -44,7 +44,7 @@ function Navigation({ onLogout }: NavMenuProps) {
 
         <nav>
           <NavMenuItem to="/profile" icon={CgProfile} label="Profilis" />
-          <NavMenuItem to="/events" icon={FaCog} label="Nustatymai" />
+          <NavMenuItem to="/settings" icon={FaCog} label="Nustatymai" />
         </nav>
         <div className="border-t border-gray-light/20">
             <button
