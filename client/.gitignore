@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> 94f21c6 (Port browser router pages to framework mode)
 # Ignore library-specific directories
 .react-router/
 

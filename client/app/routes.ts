@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 <<<<<<< HEAD:client/app/routes.ts
+=======
+>>>>>>> 94f21c6 (Port browser router pages to framework mode)
 import {
   layout,
   prefix,
@@ -41,9 +44,12 @@ export default [
     ]),
   ]),
 ] satisfies RouteConfig;
+<<<<<<< HEAD
 =======
 import type { RouteConfig } from "@react-router/dev/routes";
 import { flatRoutes } from "@react-router/fs-routes";
 
 export default flatRoutes() satisfies RouteConfig;
 >>>>>>> a044ffa (Add initial migration files):client/src/routes.ts
+=======
+>>>>>>> 94f21c6 (Port browser router pages to framework mode)

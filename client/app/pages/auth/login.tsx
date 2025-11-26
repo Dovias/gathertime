@@ -9,6 +9,13 @@ interface Credentials {
   password: string;
 }
 
+<<<<<<< HEAD
+=======
+export async function clientAction() {
+  console.log();
+}
+
+>>>>>>> 94f21c6 (Port browser router pages to framework mode)
 export default function Login() {
   const navigate = useNavigate();
 
