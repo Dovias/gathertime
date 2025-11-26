@@ -1,5 +1,9 @@
 import axios from "axios";
+<<<<<<< HEAD
 import type { Meeting } from "../models/Meeting";
+=======
+import type { MeetingResponse } from "../models/Meeting";
+>>>>>>> 3cfff02 (linting)
 
 export const getMeeting = async (
   meetingId: number,

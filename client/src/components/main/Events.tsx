@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { AppRoutes } from "../../utilities/Routes";
 import Navigation from "./Navigation";
 import EventCard from "../cards/EventCard";
@@ -11,6 +12,12 @@ import type { Meeting } from "../../models/Meeting";
 import { getInvitationsForUser } from "../../api/InvitationApi";
 import { getMeeting } from "../../api/MeetingApi";
 import type { MeetingResponse } from "../../types/Meeting";
+=======
+import { getInvitationsForUser } from "../../api/invitationApi";
+import { getMeeting } from "../../api/meetingApi";
+import type { InvitationResponse } from "../../models/Invitation";
+import type { MeetingResponse } from "../../models/Meeting";
+>>>>>>> 3cfff02 (linting)
 import { AppRoutes } from "../../utilities/Routes";
 import EventCard from "../cards/EventCard";
 import Navigation from "./Navigation";

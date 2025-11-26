@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { MeetingStatus } from "./enums/MeetingStatus";
 =======
 import type { MeetingStatus } from "./MeetingStatus";
 >>>>>>> 935d6e8 (Fix various code smells)
+=======
+import type { MeetingStatus } from "./enums/MeetingStatus";
+>>>>>>> 3cfff02 (linting)
 
 export type MeetingParticipant = {
   id: string;

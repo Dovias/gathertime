@@ -1,3 +1,4 @@
+import logo from "../../assets/logo_nobg.png";
 import { CgProfile } from "react-icons/cg";
 import {
   FaCalendarAlt,
@@ -7,7 +8,6 @@ import {
   FaUserFriends,
 } from "react-icons/fa";
 import { ImCheckmark } from "react-icons/im";
-import logo from "../../assets/logo_nobg.png";
 import { AppRoutes } from "../../utilities/Routes";
 import { NavMenuItem } from "./NavigationItem";
 
