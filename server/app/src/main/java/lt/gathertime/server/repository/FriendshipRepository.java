@@ -19,4 +19,12 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     """)
     public List<Friendship> getFriendshipRequests(
         @Param("userId") Long userId);
+
+    @Query("""
+    SELECT f FROM Friendship f
+    WHERE f.user.id = :userId
+        AND f.isConfirmed = true
+    """)
+    public List<Friendship> getFriendships(
+        @Param("userId") Long userId);
 }

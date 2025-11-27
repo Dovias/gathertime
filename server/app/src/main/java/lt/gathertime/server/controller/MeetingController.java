@@ -2,8 +2,6 @@ package lt.gathertime.server.controller;
 
 import lt.gathertime.server.dto.meetingDTOs.MeetingResponseDTO;
 import lt.gathertime.server.dto.meetingDTOs.MeetingSummaryDTO;
-import lt.gathertime.server.mapper.MeetingMapper;
-import lt.gathertime.server.model.Meeting;
 
 import java.time.LocalDateTime;
 import java.util.List;
