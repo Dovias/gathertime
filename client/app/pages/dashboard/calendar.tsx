@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaCircle } from "react-icons/fa";
 import type { Meeting } from "../../models/Meeting.ts";
 import { authStorage } from "../../utilities/Auth.ts";
+import MeetingForm from "../../components/forms/MeetingForm.tsx";
 
 export default function Calendar() {
   const today = new Date();
@@ -12,6 +13,8 @@ export default function Calendar() {
   const [scrollbarWidth, setScrollbarWidth] = useState(0);
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [formType, setFormType] = useState<"meeting" | "free-time">("meeting");
 
   const user = authStorage.getUser();
   const userId = user?.id;
@@ -112,6 +115,59 @@ export default function Calendar() {
       document.removeEventListener("mousedown", handleClickOutSide);
     };
   }, [isDropdownOpen]);
+
+  const handleFormSubmit = async (meetingData: Omit<Meeting, 'id' | 'owner' | 'participants'>) => {
+      try {
+          //const token = authStorage.getToken();
+
+          const completeData = {
+              ...meetingData,
+              owner: {
+                  id: user!.id,
+                  firstName: user!.firstName,
+                  lastName: user!.lastName
+              },
+              participants: [],
+          };
+
+          const response = await fetch("http://localhost:8080/meeting", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  // 'Authorization': `Bearer ${token}`,
+              },
+              body: JSON.stringify(completeData)
+          });
+
+          if (!response.ok) {
+              const errorText = await response.text();
+              console.error("Error creating meeting:", errorText);
+          }
+
+          const startDate = weekDays[0];
+          const endDate = new Date(weekDays[6]);
+          endDate.setHours(23, 59, 59, 999);
+
+          const startDateTime = startDate.toISOString().slice(0, 19);
+          const endDateTime = endDate.toISOString().slice(0, 19);
+
+          const refreshResponse = await fetch(
+              `http://localhost:8080/meeting/user/${userId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`,
+              {
+                  headers: {
+                      "Content-Type": "application/json",
+                  },
+              }
+          );
+
+          if (refreshResponse.ok) {
+              const data: Meeting[] = await refreshResponse.json();
+              setMeetings(data);
+          }
+      } catch (error) {
+          console.error("Error creating meeting, error");
+      }
+  };
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     if (timeLabelsRef.current) {
@@ -448,7 +504,8 @@ export default function Calendar() {
                     type="button"
                     onClick={() => {
                       setIsDropdownOpen(false);
-                      console.log("Susitikimas clicked");
+                      setFormType("meeting");
+                      setIsFormOpen(true);
                     }}
                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
@@ -458,7 +515,8 @@ export default function Calendar() {
                     type="button"
                     onClick={() => {
                       setIsDropdownOpen(false);
-                      console.log("Laikas clicked");
+                      setFormType("free-time");
+                      setIsFormOpen(true);
                     }}
                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
@@ -575,6 +633,14 @@ export default function Calendar() {
           </div>
         </div>
       </main>
+        {isFormOpen && user && (
+            <MeetingForm
+                onClose={() => setIsFormOpen(false)}
+                onSubmit={handleFormSubmit}
+                formType={formType}
+                owner={{ id: user.id, firstName: user.firstName, lastName: user.lastName }}
+                />
+        )}
     </div>
   );
 }

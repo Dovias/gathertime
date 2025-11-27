@@ -1,7 +1,7 @@
 import type { MeetingStatus } from "./enums/MeetingStatus";
 
 export type MeetingParticipant = {
-  id: string;
+  id: number;
   firstName: string;
   lastName: string;
 };
