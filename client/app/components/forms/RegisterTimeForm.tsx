@@ -43,8 +43,8 @@ export default function RegisterTimeForm({
       onSubmit(freeTimeData);
     } else {
       const meetingData = {
-        startDateTime: formData.startDateTime.toISOString().slice(0, 19),
-        endDateTime: formData.endDateTime.toISOString().slice(0, 19),
+        startDateTime: formData.startDateTime.toISOString().slice(0, 16),
+        endDateTime: formData.endDateTime.toISOString().slice(0, 16),
         summary: formData.summary || null,
         description: formData.description || null,
         location: formData.location || null,
