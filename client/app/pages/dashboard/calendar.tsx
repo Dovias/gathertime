@@ -1,8 +1,15 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaCircle } from "react-icons/fa";
+import RegisterTimeForm from "../../components/forms/RegisterTimeForm.tsx";
+import type { FreeTime } from "../../models/FreeTime.ts";
 import type { Meeting } from "../../models/Meeting.ts";
+import type { RegisterTimeFormProps } from "../../models/RegisterTimeFormProps.ts";
 import { authStorage } from "../../utilities/Auth.ts";
-import { getFormattedDate } from "../../utilities/date.ts";
+import { getFormattedDate } from "../../utilities/date";
+
+type CalendarEntry =
+  | (Meeting & { type: "meeting" })
+  | (FreeTime & { type: "freetime" });
 
 export default function Calendar() {
   const today = new Date();
@@ -12,7 +19,10 @@ export default function Calendar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [scrollbarWidth, setScrollbarWidth] = useState(0);
   const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const [freeTimes, setFreeTimes] = useState<FreeTime[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [formType, setFormType] = useState<"meeting" | "free-time">("meeting");
 
   const user = authStorage.getUser();
   const userId = user?.id;
@@ -44,7 +54,7 @@ export default function Calendar() {
   }, [currentWeek]);
 
   useEffect(() => {
-    const fetchMeetings = async () => {
+    const fetchData = async () => {
       if (!userId) return;
 
       try {
@@ -55,16 +65,10 @@ export default function Calendar() {
         const startDateTime = startDate.toISOString().slice(0, 19);
         const endDateTime = endDate.toISOString().slice(0, 19);
 
-        console.log("Fetching meetings for:", {
-          userId,
-          startDateTime,
-          endDateTime,
-        });
+        // const token = authStorage.getToken();
 
-        const token = authStorage.getToken();
-        console.log("Token:", token ? "exists" : "missing");
-
-        const response = await fetch(
+        // Fetch meetings
+        const meetingsResponse = await fetch(
           `http://localhost:8080/meeting/user/${userId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`,
           {
             headers: {
@@ -74,25 +78,30 @@ export default function Calendar() {
           },
         );
 
-        console.log("Response status:", response.status);
-        console.log("Response ok:", response.ok);
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Error response:", errorText);
-          throw new Error(
-            `Failed to fetch meetings: ${response.status} - ${errorText}`,
-          );
+        if (meetingsResponse.ok) {
+          const meetingData: Meeting[] = await meetingsResponse.json();
+          setMeetings(meetingData);
         }
 
-        const data: Meeting[] = await response.json();
-        setMeetings(data);
+        const freeTimesResponse = await fetch(
+          `http://localhost:8080/freetime/user/${userId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        if (freeTimesResponse.ok) {
+          const freeTimesData: FreeTime[] = await freeTimesResponse.json();
+          setFreeTimes(freeTimesData);
+        }
       } catch (error) {
-        console.error(`Error fetching meetings:`, error);
+        console.error(`Error fetching data:`, error);
       }
     };
 
-    fetchMeetings();
+    fetchData();
   }, [weekDays, userId]);
 
   useEffect(() => {
@@ -114,6 +123,99 @@ export default function Calendar() {
     };
   }, [isDropdownOpen]);
 
+  type FormData = Parameters<RegisterTimeFormProps["onSubmit"]>[0];
+
+  const handleFormSubmit = async (data: FormData) => {
+    try {
+      //const token = authStorage.getToken();
+
+      if (formType === "free-time") {
+        const freeTimeData = {
+          userId: user?.id,
+          startDateTime: data.startDateTime,
+          endDateTime: data.endDateTime,
+        };
+
+
+        await fetch("http://localhost:8080/freetime", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(freeTimeData),
+        });
+
+      } else {
+        const completeData = {
+          ...data,
+          owner: {
+            id: user?.id,
+            firstName: user?.firstName,
+            lastName: user?.lastName,
+          },
+          participants: [],
+        };
+
+          console.log("Posting free time data:", completeData);
+
+        const response = await fetch("http://localhost:8080/meeting", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // 'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(completeData),
+        });
+
+
+          console.log("Free time response status:", response.status);
+          console.log("Free time response ok:", response.ok);
+
+
+          if (!response.ok) {
+              const errorText = await response.text();
+              console.error("Error creating free time:", errorText);
+          } else {
+              console.log("Free time created successfully");
+          }
+      }
+
+      const startDate = weekDays[0];
+      const endDate = new Date(weekDays[6]);
+      endDate.setHours(23, 59, 59, 999);
+
+      const startDateTime = startDate.toISOString().slice(0, 19);
+      const endDateTime = endDate.toISOString().slice(0, 19);
+
+      const [meetingsResponse, freeTimesResponse] = await Promise.all([
+        fetch(
+          `http://localhost:8080/meeting/user/${userId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`,
+          {
+            headers: { "Content-Type": "application/json" },
+          },
+        ),
+        fetch(
+          `http://localhost:8080/freetime/user/${userId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`,
+          {
+            headers: { "Content-Type": "application/json" },
+          },
+        ),
+      ]);
+
+      if (meetingsResponse.ok) {
+        const meetingsData: Meeting[] = await meetingsResponse.json();
+        setMeetings(meetingsData);
+      }
+
+      if (freeTimesResponse.ok) {
+        const freeTimesData: FreeTime[] = await freeTimesResponse.json();
+        setFreeTimes(freeTimesData);
+      }
+    } catch (error) {
+      console.error("Error at POST:", error);
+    }
+  };
+
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     if (timeLabelsRef.current) {
       timeLabelsRef.current.style.transform = `translateY(-${e.currentTarget.scrollTop}px)`;
@@ -128,14 +230,26 @@ export default function Calendar() {
     return `${start.getDate()}-${end.getDate()} ${start.toLocaleDateString("lt-LT", { month: "long" })} ${start.getFullYear()}`;
   };
 
-  const getEventPosition = (meeting: Meeting) => {
-    const startDate = new Date(meeting.startDateTime);
-    const endDate = new Date(meeting.endDateTime);
+  const getEventPosition = (entry: CalendarEntry, day: Date) => {
+    const entryStart = new Date(entry.startDateTime);
+    const entryEnd = new Date(entry.endDateTime);
+
+    const dayStart = new Date(day);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(day);
+    dayEnd.setHours(23, 59, 59, 999);
+
+    const displayStart = entryStart < dayStart ? dayStart : entryStart;
+    const displayEnd = entryEnd > dayEnd ? dayEnd : entryEnd;
 
     const pixelsPerHour = 64;
 
-    const startTotalHours = startDate.getHours() + startDate.getMinutes() / 60;
-    const endTotalHours = endDate.getHours() + endDate.getMinutes() / 60;
+    const startTotalHours =
+      displayStart.getHours() + displayStart.getMinutes() / 60;
+    const endTotalHours =
+      displayEnd.getHours() +
+      displayEnd.getMinutes() / 60 +
+      (displayEnd > dayEnd ? 1 : 0);
 
     const top = startTotalHours * pixelsPerHour;
     const height = (endTotalHours - startTotalHours) * pixelsPerHour;
@@ -143,8 +257,13 @@ export default function Calendar() {
     return { top: `${top}px`, height: `${height}px` };
   };
 
-  const getColorForMeeting = (meeting: Meeting): string => {
-    switch (meeting.status) {
+<<<<<<< HEAD
+  const getColorForEntry = (entry: CalendarEntry): string => {
+    if (entry.type === "freetime") {
+      return "bg-purple-400";
+    }
+
+    switch (entry.status) {
       case "ARRANGED":
         return "bg-yellow-400";
       case "CONFIRMED":
@@ -158,8 +277,12 @@ export default function Calendar() {
     }
   };
 
-  const getTextColorForMeeting = (meeting: Meeting): string => {
-    switch (meeting.status) {
+  const getTextColorForEntry = (entry: CalendarEntry): string => {
+    if (entry.type === "freetime") {
+      return "text-white";
+    }
+
+    switch (entry.status) {
       case "ARRANGED":
         return "text-amber-900";
       case "CONFIRMED":
@@ -173,6 +296,27 @@ export default function Calendar() {
     }
   };
 
+  const formatDate = () => {
+    const now = new Date();
+    const monthDay = new Intl.DateTimeFormat("lt-LT", {
+      month: "long",
+      day: "numeric",
+    }).format(now);
+
+    const weekday = new Intl.DateTimeFormat("lt-LT", {
+      weekday: "long",
+    }).format(now);
+
+    const capitalizedMonthDay =
+      monthDay.charAt(0).toUpperCase() + monthDay.slice(1);
+    const capitalizedWeekday =
+      weekday.charAt(0).toUpperCase() + weekday.slice(1);
+
+    return `${capitalizedMonthDay}, ${capitalizedWeekday}`;
+  };
+
+=======
+>>>>>>> main
   const isSameDay = (date1: Date, date2: Date) => {
     return (
       date1.getFullYear() === date2.getFullYear() &&
@@ -188,11 +332,34 @@ export default function Calendar() {
     return isSameDay(date, tomorrow);
   };
 
-  const getMeetingsForDay = (day: Date) => {
-    return meetings.filter((meeting) => {
-      const meetingDate = new Date(meeting.startDateTime);
-      return isSameDay(meetingDate, day);
-    });
+  const getEntriesForDay = (day: Date): CalendarEntry[] => {
+    const meetingEntries: CalendarEntry[] = meetings
+      .filter((meeting) => {
+        const meetingStart = new Date(meeting.startDateTime);
+        const meetingEnd = new Date(meeting.endDateTime);
+        const dayStart = new Date(day);
+        dayStart.setHours(0, 0, 0, 0);
+        const dayEnd = new Date(day);
+        dayEnd.setHours(23, 59, 59, 999);
+
+        return meetingStart <= dayEnd && meetingEnd >= dayStart;
+      })
+      .map((m) => ({ ...m, type: "meeting" as const }));
+
+    const freeTimeEntries: CalendarEntry[] = freeTimes
+      .filter((freeTime) => {
+        const freeTimeStart = new Date(freeTime.startDateTime);
+        const freeTimeEnd = new Date(freeTime.endDateTime);
+        const dayStart = new Date(day);
+        dayStart.setHours(0, 0, 0, 0);
+        const dayEnd = new Date(day);
+        dayEnd.setHours(23, 59, 59, 999);
+
+        return freeTimeStart <= dayEnd && freeTimeEnd >= dayStart;
+      })
+      .map((ft) => ({ ...ft, type: "freetime" as const }));
+
+    return [...meetingEntries, ...freeTimeEntries];
   };
 
   const getTodayMeetings = () => {
@@ -309,27 +476,30 @@ export default function Calendar() {
           </div>
           {getTodayMeetings().length > 0 ? (
             <div className="space-y-2">
-              {getTodayMeetings().map((meeting) => (
-                <div key={meeting.id} className="flex items-center text-xs">
-                  <span
-                    className={`${getColorForMeeting(meeting).replace("bg-", "text-")} text-xs mr-2`}
-                  >
-                    <FaCircle />
-                  </span>
-                  <span className="text-gray-700 flex-1 truncate">
-                    {meeting.summary}
-                  </span>
-                  <span className="ml-2 text-gray-500">
-                    {new Date(meeting.startDateTime).toLocaleDateString(
-                      "lt-LT",
-                      {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      },
-                    )}
-                  </span>
-                </div>
-              ))}
+              {getTodayMeetings().map((meeting) => {
+                const entry: CalendarEntry = { ...meeting, type: "meeting" };
+                return (
+                  <div key={meeting.id} className="flex items-center text-xs">
+                    <span
+                      className={`${getColorForEntry(entry).replace("bg-", "text-")} text-xs mr-2`}
+                    >
+                      <FaCircle />
+                    </span>
+                    <span className="text-gray-700 flex-1 truncate">
+                      {meeting.summary}
+                    </span>
+                    <span className="ml-2 text-gray-500">
+                      {new Date(meeting.startDateTime).toLocaleDateString(
+                        "lt-LT",
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        },
+                      )}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <p className="text-xs text-gray-500 italic">
@@ -347,27 +517,30 @@ export default function Calendar() {
           </div>
           {getTomorrowMeetings().length > 0 ? (
             <div className="space-y-2">
-              {getTomorrowMeetings().map((meeting) => (
-                <div key={meeting.id} className="flex items-center text-xs">
-                  <span
-                    className={`${getColorForMeeting(meeting).replace("bg-", "text-")} mr-2`}
-                  >
-                    <FaCircle size={8} />
-                  </span>
-                  <span className="text-gray-700 flex-1 truncate">
-                    {meeting.summary}
-                  </span>
-                  <span className="ml-2 text-gray-500">
-                    {new Date(meeting.startDateTime).toLocaleDateString(
-                      "lt-LT",
-                      {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      },
-                    )}
-                  </span>
-                </div>
-              ))}
+              {getTomorrowMeetings().map((meeting) => {
+                const entry: CalendarEntry = { ...meeting, type: "meeting" };
+                return (
+                  <div key={meeting.id} className="flex items-center text-xs">
+                    <span
+                      className={`${getColorForEntry(entry).replace("bg-", "text-")} mr-2`}
+                    >
+                      <FaCircle size={8} />
+                    </span>
+                    <span className="text-gray-700 flex-1 truncate">
+                      {meeting.summary}
+                    </span>
+                    <span className="ml-2 text-gray-500">
+                      {new Date(meeting.startDateTime).toLocaleDateString(
+                        "lt-LT",
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        },
+                      )}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <p className="text-xs text-gray-500 italic">
@@ -430,7 +603,8 @@ export default function Calendar() {
                     type="button"
                     onClick={() => {
                       setIsDropdownOpen(false);
-                      console.log("Susitikimas clicked");
+                      setFormType("meeting");
+                      setIsFormOpen(true);
                     }}
                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
@@ -440,7 +614,8 @@ export default function Calendar() {
                     type="button"
                     onClick={() => {
                       setIsDropdownOpen(false);
-                      console.log("Laikas clicked");
+                      setFormType("free-time");
+                      setIsFormOpen(true);
                     }}
                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
@@ -522,13 +697,13 @@ export default function Calendar() {
                           ></div>
                         ))}
 
-                        {getMeetingsForDay(day).map((meeting) => {
-                          const pos = getEventPosition(meeting);
-                          const color = getColorForMeeting(meeting);
-                          const textColor = getTextColorForMeeting(meeting);
+                        {getEntriesForDay(day).map((entry) => {
+                          const pos = getEventPosition(entry, day);
+                          const color = getColorForEntry(entry);
+                          const textColor = getTextColorForEntry(entry);
                           return (
                             <div
-                              key={meeting.id}
+                              key={`${entry.type}-${entry.id}`}
                               className={`absolute left-1 right-1 ${color} ${textColor} rounded shadow-sm p-2 text-xs overflow-hidden cursor-pointer hover:shadow-md transition-shadow`}
                               style={{ top: pos.top, height: pos.height }}
                             >
@@ -538,12 +713,17 @@ export default function Calendar() {
                                 </span>
                                 <div className="flex-1 min-w-0">
                                   <div className="font-semibold truncate">
-                                    {meeting.summary}
+                                    {entry.type === "meeting"
+                                      ? entry.summary
+                                      : "Laisvas laikas"}
                                   </div>
                                 </div>
-                                <div className="text-[10px] opacity-80 truncate mt-1">
-                                  {meeting.description}
-                                </div>
+                                {entry.type === "meeting" &&
+                                  entry.description && (
+                                    <div className="text-[10px] opacity-80 truncate mt-1">
+                                      {entry.description}
+                                    </div>
+                                  )}
                               </div>
                             </div>
                           );
@@ -557,6 +737,18 @@ export default function Calendar() {
           </div>
         </div>
       </main>
+      {isFormOpen && user && (
+        <RegisterTimeForm
+          onClose={() => setIsFormOpen(false)}
+          onSubmit={handleFormSubmit}
+          formType={formType}
+          owner={{
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          }}
+        />
+      )}
     </div>
   );
 }
