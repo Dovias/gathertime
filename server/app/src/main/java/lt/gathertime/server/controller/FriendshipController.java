@@ -30,6 +30,12 @@ public class FriendshipController {
         friendshipService.createFriendship(payload);
     }
 
+    @PostMapping("/{friendshipId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void confirmFriendship(@PathVariable Long friendshipId) {
+        friendshipService.confirmFriendship(friendshipId);
+    }
+
     @GetMapping("/user/{userId}/requests") 
     @ResponseStatus(HttpStatus.OK)
     public List<FriendshipRequestDTO> getFriendshipRequests(@PathVariable Long userId) {
