@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaCircle } from "react-icons/fa";
+import { getFormattedDate } from "../../utilities/date";
 
 interface CalendarEvent {
   id: string;
@@ -119,25 +120,6 @@ export default function Calendar() {
     const height =
       ((endHour - startHour) * 60 + (endMin - startMin)) * (60 / 60);
     return { top: `${top}px`, height: `${height}px` };
-  };
-
-  const formatDate = () => {
-    const now = new Date();
-    const monthDay = new Intl.DateTimeFormat("lt-LT", {
-      month: "long",
-      day: "numeric",
-    }).format(now);
-
-    const weekday = new Intl.DateTimeFormat("lt-LT", {
-      weekday: "long",
-    }).format(now);
-
-    const capitalizedMonthDay =
-      monthDay.charAt(0).toUpperCase() + monthDay.slice(1);
-    const capitalizedWeekday =
-      weekday.charAt(0).toUpperCase() + weekday.slice(1);
-
-    return `${capitalizedMonthDay}, ${capitalizedWeekday}`;
   };
 
   const isSameDay = (date1: Date, date2: Date) => {
@@ -306,7 +288,7 @@ export default function Calendar() {
 
       <main className="flex-grow flex flex-col h-screen overflow-hidden">
         <div className="w-full mb-4 px-6 pt-6">
-          <p className="text-2xl text-black">{formatDate()}</p>
+          <p className="text-2xl text-black">{getFormattedDate()}</p>
         </div>
 
         <div className="bg-white border-b border-gray-200 px-6 py-4">

@@ -9,6 +9,7 @@ import EventCard from "../../components/cards/EventCard";
 import EventDetails from "../../components/cards/EventDetails";
 import type { Meeting } from "../../models/Meeting";
 import type { Route } from "./+types/feed";
+import { getFormattedDate } from "../../utilities/date";
 
 export async function clientLoader() {
   const user = JSON.parse(localStorage.getItem("user") || "null");
@@ -34,18 +35,11 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
   >(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const today = new Date().toLocaleDateString("lt-LT", {
-    month: "long",
-    day: "numeric",
-    weekday: "long",
-  });
-  const formattedToday = today.charAt(0).toUpperCase() + today.slice(1);
-
   const safeData = Array.isArray(loaderData) ? loaderData : [];
 
   return (
     <main className="p-10">
-      <h1 className="text-2xl font-semibold mb-6">{formattedToday}</h1>
+      <h1 className="text-2xl font-semibold mb-6">{getFormattedDate()}</h1>
 
       <h2 className="text-lg font-semibold mb-3">Kvietimai į susitikimus</h2>
 
