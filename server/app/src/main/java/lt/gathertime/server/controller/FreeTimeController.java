@@ -49,6 +49,12 @@ public class FreeTimeController {
         return freeTimeService.getFreeTimesOfFriends(userId);
     }
 
+    @GetMapping("/user/{userId}/friends/overlapping")
+    @ResponseStatus(HttpStatus.OK)
+    public List<FriendFreeTimeDTO> getOverlappingFreeTimesOfFriends(@PathVariable Long userId) {
+        return freeTimeService.getOverlappingFreeTimesOfFriends(userId);
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteFreeTime(@PathVariable Long id) {
