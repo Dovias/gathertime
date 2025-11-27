@@ -1,22 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaCircle } from "react-icons/fa";
-<<<<<<< HEAD
-import { getFormattedDate } from "../../utilities/date";
-
-interface CalendarEvent {
-  id: string;
-  title: string;
-  subtitle?: string;
-  startTime: string;
-  endTime: string;
-  date: Date;
-  color: string;
-  textColor?: string;
-}
-=======
 import type { Meeting } from "../../models/Meeting.ts";
 import { authStorage } from "../../utilities/Auth.ts";
->>>>>>> 5ecabda (Connect calendar view frontend to the backend, add drop down menu to 'Registruoti laika' button)
+import { getFormattedDate } from "../../utilities/date.ts";
 
 export default function Calendar() {
   const today = new Date();
@@ -157,8 +143,6 @@ export default function Calendar() {
     return { top: `${top}px`, height: `${height}px` };
   };
 
-<<<<<<< HEAD
-=======
   const getColorForMeeting = (meeting: Meeting): string => {
     switch (meeting.status) {
       case "ARRANGED":
@@ -189,26 +173,6 @@ export default function Calendar() {
     }
   };
 
-  const formatDate = () => {
-    const now = new Date();
-    const monthDay = new Intl.DateTimeFormat("lt-LT", {
-      month: "long",
-      day: "numeric",
-    }).format(now);
-
-    const weekday = new Intl.DateTimeFormat("lt-LT", {
-      weekday: "long",
-    }).format(now);
-
-    const capitalizedMonthDay =
-      monthDay.charAt(0).toUpperCase() + monthDay.slice(1);
-    const capitalizedWeekday =
-      weekday.charAt(0).toUpperCase() + weekday.slice(1);
-
-    return `${capitalizedMonthDay}, ${capitalizedWeekday}`;
-  };
-
->>>>>>> 5ecabda (Connect calendar view frontend to the backend, add drop down menu to 'Registruoti laika' button)
   const isSameDay = (date1: Date, date2: Date) => {
     return (
       date1.getFullYear() === date2.getFullYear() &&
