@@ -1,6 +1,8 @@
 package lt.gathertime.server.service;
 
 import java.util.List;
+
+import lt.gathertime.server.model.enums.InvitationStatus;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -42,6 +44,7 @@ public class InvitationService {
         return invitationRepository.findAll()
                 .stream()
                 .filter(i -> i.getInvitee().getId().equals(userId))
+                .filter(i -> i.getStatus() == InvitationStatus.SENT)
                 .map(InvitationMapper::toResponse)
                 .toList();
     }
