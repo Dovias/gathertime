@@ -31,6 +31,27 @@ public interface FreeTimeRepository extends JpaRepository<FreeTime, Long> {
         @Param("friendIds") List<Long> friendIds);
 
     @Query("""
+            SELECT f
+            FROM FreeTime f
+            JOIN f.user friend
+            LEFT JOIN Friendship fs ON (fs.friend.id = friend.id AND fs.user.id = :userId)
+            JOIN FreeTime uft ON uft.user.id = :userId
+            WHERE f.status = 'FREE'
+                AND uft.status = 'FREE'
+                AND f.startDateTime >= CURRENT_TIMESTAMP
+                AND f.startDateTime < uft.endDateTime
+                AND f.endDateTime > uft.startDateTime
+                AND f.user.id IN :friendIds
+            ORDER BY
+                FUNCTION('DATE', f.startDateTime), 
+                CASE WHEN fs.isBestFriends = true THEN 0 ELSE 1 END,
+                f.startDateTime
+            """)
+    List<FreeTime> getOverlappingFutureFreeTimesOfFriends(
+        @Param("userId") Long userId,
+        @Param("friendIds") List<Long> friendIds);
+
+    @Query("""
             SELECT f FROM FreeTime f
             WHERE f.user.id = :userId
                 AND f.startDateTime <= :endDateTime
