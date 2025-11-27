@@ -135,9 +135,8 @@ export default function Calendar() {
           endDateTime: data.endDateTime,
         };
 
-        console.log("Posting free time data:", freeTimeData);
 
-        const response = await fetch("http://localhost:8080/freetime", {
+        await fetch("http://localhost:8080/freetime", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -145,15 +144,6 @@ export default function Calendar() {
           body: JSON.stringify(freeTimeData),
         });
 
-        console.log("Free time response status:", response.status);
-        console.log("Free time response ok:", response.ok);
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Error creating free time:", errorText);
-        } else {
-          console.log("Free time created successfully");
-        }
       } else {
         const completeData = {
           ...data,
@@ -165,7 +155,9 @@ export default function Calendar() {
           participants: [],
         };
 
-        await fetch("http://localhost:8080/meeting", {
+          console.log("Posting free time data:", completeData);
+
+        const response = await fetch("http://localhost:8080/meeting", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -173,6 +165,18 @@ export default function Calendar() {
           },
           body: JSON.stringify(completeData),
         });
+
+
+          console.log("Free time response status:", response.status);
+          console.log("Free time response ok:", response.ok);
+
+
+          if (!response.ok) {
+              const errorText = await response.text();
+              console.error("Error creating free time:", errorText);
+          } else {
+              console.log("Free time created successfully");
+          }
       }
 
       const startDate = weekDays[0];
