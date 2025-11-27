@@ -50,4 +50,24 @@ public class FriendshipService {
                 .map(FriendshipMapper::toFriendshipRequestDTO)
                 .toList();
     }
+
+    public void confirmFriendship(Long friendshipId) {
+        Friendship friendshipRequest = friendshipRepository.findById(friendshipId)
+            .orElseThrow(() -> new RuntimeException("Friendship not found with ID: " + friendshipId));
+
+        LocalDateTime startDateTime = LocalDateTime.now();
+
+        friendshipRequest.setIsConfirmed(true);
+        friendshipRequest.setStarDateTime(startDateTime);
+
+        Friendship friendship = Friendship.builder()
+                .user(friendshipRequest.getFriend())
+                .friend(friendshipRequest.getUser())
+                .starDateTime(startDateTime)
+                .isBestFriends(false)
+                .isConfirmed(true)
+                .build();
+
+        friendshipRepository.save(friendship);
+    }
 }
