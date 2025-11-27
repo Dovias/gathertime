@@ -13,8 +13,10 @@ import type { Route } from "./+types/layout";
 const authorizationMiddleware: Route.ClientMiddlewareFunction = async ({
   context,
 }) => {
-  if (context.get(userContext) === null) {
-    console.warn("Missing session token! Redirecting to authentication...");
+  try {
+    context.get(userContext);
+  } catch {
+    console.warn("Absent session token! Redirecting to authenticate...");
     throw redirect(appRoutes.auth.index);
   }
 };

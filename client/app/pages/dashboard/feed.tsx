@@ -10,10 +10,10 @@ import EventDetails from "../../components/cards/EventDetails";
 import type { Meeting } from "../../models/Meeting";
 import { getFormattedDate } from "../../utilities/date";
 import type { Route } from "./+types/feed";
+import { userContext } from "../../context";
 
-export async function clientLoader() {
-  const user = JSON.parse(localStorage.getItem("user") || "null");
-  if (!user) return [];
+export async function clientLoader({ context }: Route.ClientLoaderArgs) {
+  const user = context.get(userContext);
 
   const invites = await getInvitationsForUser(user.id);
   const validInvites = Array.isArray(invites) ? invites : [];

@@ -12,19 +12,19 @@ import type { Route } from "./+types/layout";
 const authorizationMiddleware: Route.ClientMiddlewareFunction = async ({
   context,
 }) => {
-  if (context.get(userContext) !== null) {
-    console.warn(
-      "User context has been already initialized! Redirecting to dashboard...",
-    );
-    throw redirect(appRoutes.dashboard.index);
+  try {
+    context.get(userContext);
+  } catch {
+    return;
   }
+
+  console.warn(
+    "User context has already been initialized! Redirecting to dashboard...",
+  );
+  throw redirect(appRoutes.dashboard.index);
 };
 
 export const clientMiddleware = [authorizationMiddleware];
-
-export function clientLoader({ context }: Route.ClientLoaderArgs) {
-  return context.get(userContext);
-}
 
 export default function Layout() {
   return (
