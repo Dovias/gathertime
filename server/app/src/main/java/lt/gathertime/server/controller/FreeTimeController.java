@@ -18,6 +18,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.freetimeDTOs.CreateFreeTimeRequestDTO;
 import lt.gathertime.server.dto.freetimeDTOs.FreeTimeDTO;
+import lt.gathertime.server.dto.freetimeDTOs.FriendFreeTimeDTO;
 import lt.gathertime.server.service.FreeTimeService;
 
 @RestController
@@ -40,6 +41,12 @@ public class FreeTimeController {
         @RequestParam LocalDateTime startDateTime,  
         @RequestParam LocalDateTime endDateTime) {
         return freeTimeService.getFreeTimes(userId, startDateTime, endDateTime);
+    }
+
+    @GetMapping("/user/{userId}/friends")
+    @ResponseStatus(HttpStatus.OK)
+    public List<FriendFreeTimeDTO> getFreeTimesOfFriends(@PathVariable Long userId) {
+        return freeTimeService.getFreeTimesOfFriends(userId);
     }
 
     @DeleteMapping("/{id}")

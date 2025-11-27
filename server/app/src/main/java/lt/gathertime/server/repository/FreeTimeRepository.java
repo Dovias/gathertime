@@ -14,14 +14,31 @@ import org.springframework.stereotype.Repository;
 public interface FreeTimeRepository extends JpaRepository<FreeTime, Long> {
 
     @Query("""
-    SELECT f FROM FreeTime f
-    WHERE f.user.id = :userId
-        AND f.startDateTime <= :endDateTime
-        AND f.endDateTime >= :startDateTime
-        AND f.status = 'FREE'
-    """)
-    public List<FreeTime> getFreeTimes(
-        @Param("userId") Long userId, 
-        @Param("startDateTime") LocalDateTime startDateTime, 
-        @Param("endDateTime") LocalDateTime endDateTime);
+            SELECT f 
+            FROM FreeTime f
+            JOIN f.user u
+            LEFT JOIN Friendship fs ON (fs.friend.id = u.id AND fs.user.id = :userId)
+            WHERE f.user.id IN :friendIds
+                AND f.status = 'FREE'
+                AND f.startDateTime >= CURRENT_TIMESTAMP
+            ORDER BY 
+                FUNCTION('DATE', f.startDateTime),
+                CASE WHEN fs.isBestFriends = true THEN 0 ELSE 1 END,
+                f.startDateTime
+            """)
+    List<FreeTime> getFutureFreeTimesOfFriends(
+        @Param("userId") Long userId,
+        @Param("friendIds") List<Long> friendIds);
+
+    @Query("""
+            SELECT f FROM FreeTime f
+            WHERE f.user.id = :userId
+                AND f.startDateTime <= :endDateTime
+                AND f.endDateTime >= :startDateTime
+                AND f.status = 'FREE'
+            """)
+    public List<FreeTime> getFreeTimesInRange(
+            @Param("userId") Long userId,
+            @Param("startDateTime") LocalDateTime startDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime);
 }

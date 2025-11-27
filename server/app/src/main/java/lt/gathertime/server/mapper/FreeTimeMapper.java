@@ -4,6 +4,7 @@ import java.util.List;
 
 import lt.gathertime.server.dto.freetimeDTOs.CreateFreeTimeRequestDTO;
 import lt.gathertime.server.dto.freetimeDTOs.FreeTimeDTO;
+import lt.gathertime.server.dto.freetimeDTOs.FriendFreeTimeDTO;
 import lt.gathertime.server.model.Activity;
 import lt.gathertime.server.model.FreeTime;
 import lt.gathertime.server.model.User;
@@ -37,6 +38,26 @@ public class FreeTimeMapper {
                         .map(Activity::getId)
                         .toList()
                 )
+                .build();
+    }
+
+    public static FriendFreeTimeDTO toFriendFreeTimeDTO(FreeTime freeTime) {
+        return FriendFreeTimeDTO.builder()
+                .id(freeTime.getId())
+                .startDateTime(freeTime.getStartDateTime())
+                .endDateTime(freeTime.getEndDateTime())
+                .pastimeType(freeTime.getPastimeType())
+                .momentaryInterestIds(
+                    freeTime.getMomentaryInterests() == null
+                    ? null
+                    : freeTime.getMomentaryInterests()
+                        .stream()
+                        .map(Activity::getId)
+                        .toList()
+                )
+                .friendId(freeTime.getUser().getId())
+                .firstName(freeTime.getUser().getFirstName())
+                .lastName(freeTime.getUser().getLastName())
                 .build();
     }
 }
