@@ -7,6 +7,13 @@ export default function EventCard({
   endDateTime,
   users,
   onClick,
+}: {
+  title: string;
+  subtitle?: string;
+  startDateTime: string;
+  endDateTime: string;
+  users: { name: string; avatar?: string | null }[];
+  onClick?: () => void;
 }) {
   const inviter = users[0];
 
@@ -14,7 +21,7 @@ export default function EventCard({
     <button
       type="button"
       onClick={onClick}
-      onKeyDown={(e) => e.key === "Enter" && onClick()}
+      onKeyDown={(e) => e.key === "Enter" && onClick?.()}
       className="px-4 py-3 w-64 rounded-xl shadow flex gap-4 border bg-white border-gray-200 cursor-pointer hover:shadow-lg transition text-left"
     >
       <div className="flex flex-col items-center w-16">

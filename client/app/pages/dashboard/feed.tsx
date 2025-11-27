@@ -7,6 +7,7 @@ import {
 } from "../../api/MeetingApi";
 import EventCard from "../../components/cards/EventCard";
 import EventDetails from "../../components/cards/EventDetails";
+import type { Meeting } from "../../models/Meeting";
 import type { Route } from "./+types/feed";
 
 export async function clientLoader() {
@@ -27,8 +28,10 @@ export async function clientLoader() {
 }
 
 export default function Feed({ loaderData }: Route.ComponentProps) {
-  const [selectedMeeting, setSelectedMeeting] = useState(null);
-  const [selectedInvitationId, setSelectedInvitationId] = useState(null);
+  const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
+  const [selectedInvitationId, setSelectedInvitationId] = useState<
+    number | null
+  >(null);
   const [isOpen, setIsOpen] = useState(false);
 
   const today = new Date().toLocaleDateString("lt-LT", {

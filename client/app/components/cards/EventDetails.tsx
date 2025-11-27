@@ -1,11 +1,33 @@
 import { X } from "react-feather";
 import { FaUserCircle } from "react-icons/fa";
 
+export interface Participant {
+  id: string;
+  firstName: string;
+  lastName: string;
+  avatar?: string | null;
+}
+
+export interface Meeting {
+  id: number;
+  summary: string | null;
+  description?: string | null;
+  startDateTime: string;
+  endDateTime: string;
+  location?: string | null;
+  participants?: Participant[];
+}
+
 export default function EventDetails({
   meeting,
   onClose,
   onConfirm,
   onDecline,
+}: {
+  meeting: Meeting;
+  onClose: () => void;
+  onConfirm: () => void;
+  onDecline: () => void;
 }) {
   if (!meeting) return null;
 
@@ -14,8 +36,9 @@ export default function EventDetails({
 
   const participants =
     meeting.participants?.map((p) => ({
+      id: p.id,
       name: `${p.firstName} ${p.lastName}`,
-      avatar: null,
+      avatar: p.avatar ?? null,
     })) || [];
 
   return (
@@ -40,7 +63,7 @@ export default function EventDetails({
       <div className="grid grid-cols-[150px_1fr_160px] gap-10">
         <div className="flex flex-col gap-10">
           {participants.map((p) => (
-            <div key={p.name} className="flex flex-col items-center gap-1">
+            <div key={p.id} className="flex flex-col items-center gap-1">
               {p.avatar ? (
                 <img
                   src={p.avatar}
