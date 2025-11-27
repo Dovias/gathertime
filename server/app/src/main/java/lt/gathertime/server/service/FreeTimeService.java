@@ -14,7 +14,6 @@ import lt.gathertime.server.dto.freetimeDTOs.FriendFreeTimeDTO;
 import lt.gathertime.server.mapper.FreeTimeMapper;
 import lt.gathertime.server.model.Activity;
 import lt.gathertime.server.model.FreeTime;
-import lt.gathertime.server.model.Friendship;
 import lt.gathertime.server.model.User;
 import lt.gathertime.server.repository.ActivityRepository;
 import lt.gathertime.server.repository.FreeTimeRepository;
@@ -62,6 +61,20 @@ public class FreeTimeService {
         if(friendIds.isEmpty()) return List.of();
 
         List<FreeTime> freeTimes = freeTimeRepository.getFutureFreeTimesOfFriends(userId, friendIds);
+
+        return freeTimes.stream()
+            .map(FreeTimeMapper::toFriendFreeTimeDTO)
+            .toList();
+    }
+
+    public List<FriendFreeTimeDTO> getOverlappingFreeTimesOfFriends(Long userId) {
+        List<Long> friendIds = friendshipRepository.getFriendships(userId).stream()
+            .map(friendship -> friendship.getFriend().getId())
+            .toList();
+
+        if(friendIds.isEmpty()) return List.of();
+
+        List<FreeTime> freeTimes = freeTimeRepository.getOverlappingFutureFreeTimesOfFriends(userId, friendIds);
 
         return freeTimes.stream()
             .map(FreeTimeMapper::toFriendFreeTimeDTO)
