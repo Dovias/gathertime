@@ -1,23 +1,20 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaCircle } from "react-icons/fa";
-
-interface CalendarEvent {
-  id: string;
-  title: string;
-  subtitle?: string;
-  startTime: string;
-  endTime: string;
-  date: Date;
-  color: string;
-  textColor?: string;
-}
+import type { Meeting } from "../../models/Meeting.ts";
+import { authStorage } from "../../utilities/Auth.ts";
 
 export default function Calendar() {
   const today = new Date();
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const timeLabelsRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [scrollbarWidth, setScrollbarWidth] = useState(0);
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const user = authStorage.getUser();
+  const userId = user?.id;
 
   useLayoutEffect(() => {
     const updateScrollbarWidth = () => {
@@ -31,65 +28,7 @@ export default function Calendar() {
     return () => window.removeEventListener("resize", updateScrollbarWidth);
   }, []);
 
-  const [events] = useState<CalendarEvent[]>([
-    {
-      id: "1",
-      title: "Susitikimas su Povilu",
-      subtitle: "Susitikimas",
-      startTime: "13:00",
-      endTime: "15:00",
-      date: new Date(2025, 10, 25),
-      color: "bg-green-300",
-      textColor: "text-green-900",
-    },
-    {
-      id: "2",
-      title: "Talk Lunch",
-      subtitle: "Pietų pokalbis su Arūnu",
-      startTime: "13:00",
-      endTime: "14:00",
-      date: new Date(2025, 10, 26),
-      color: "bg-purple-500",
-      textColor: "text-white",
-    },
-    {
-      id: "3",
-      title: "1 on 1",
-      subtitle: "Skombutis su Coach",
-      startTime: "15:00",
-      endTime: "16:00",
-      date: new Date(2025, 10, 25),
-      color: "bg-blue-600",
-      textColor: "text-white",
-    },
-    {
-      id: "4",
-      title: "Mokymai",
-      startTime: "16:00",
-      endTime: "17:00",
-      date: new Date(2025, 10, 25),
-      color: "bg-red-400",
-      textColor: "text-white",
-    },
-    {
-      id: "5",
-      title: "Susitikimas su Povilu",
-      subtitle: "Susitikimas",
-      startTime: "18:00",
-      endTime: "19:00",
-      date: new Date(2025, 10, 4),
-      color: "bg-green-300",
-      textColor: "text-green-900",
-    },
-  ]);
-
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    if (timeLabelsRef.current) {
-      timeLabelsRef.current.style.transform = `translateY(-${e.currentTarget.scrollTop}px)`;
-    }
-  };
-
-  const getWeekDays = () => {
+  const weekDays = useMemo(() => {
     const days = [];
     const start = new Date(currentWeek);
     start.setDate(start.getDate() - start.getDay() + 1);
@@ -101,9 +40,85 @@ export default function Calendar() {
     }
 
     return days;
+  }, [currentWeek]);
+
+  useEffect(() => {
+    const fetchMeetings = async () => {
+      if (!userId) return;
+
+      try {
+        const startDate = weekDays[0];
+        const endDate = new Date(weekDays[6]);
+        endDate.setHours(23, 59, 59, 999);
+
+        const startDateTime = startDate.toISOString().slice(0, 19);
+        const endDateTime = endDate.toISOString().slice(0, 19);
+
+        console.log("Fetching meetings for:", {
+          userId,
+          startDateTime,
+          endDateTime,
+        });
+
+        const token = authStorage.getToken();
+        console.log("Token:", token ? "exists" : "missing");
+
+        const response = await fetch(
+          `http://localhost:8080/meeting/user/${userId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`,
+          {
+            headers: {
+              // 'Authorization': `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        console.log("Response status:", response.status);
+        console.log("Response ok:", response.ok);
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Error response:", errorText);
+          throw new Error(
+            `Failed to fetch meetings: ${response.status} - ${errorText}`,
+          );
+        }
+
+        const data: Meeting[] = await response.json();
+        setMeetings(data);
+      } catch (error) {
+        console.error(`Error fetching meetings:`, error);
+      }
+    };
+
+    fetchMeetings();
+  }, [weekDays, userId]);
+
+  useEffect(() => {
+    const handleClickOutSide = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutSide);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutSide);
+    };
+  }, [isDropdownOpen]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    if (timeLabelsRef.current) {
+      timeLabelsRef.current.style.transform = `translateY(-${e.currentTarget.scrollTop}px)`;
+    }
   };
 
-  const weekDays = getWeekDays();
   const timeSlots = Array.from({ length: 24 }, (_, i) => i);
 
   const formatHeader = () => {
@@ -112,13 +127,49 @@ export default function Calendar() {
     return `${start.getDate()}-${end.getDate()} ${start.toLocaleDateString("lt-LT", { month: "long" })} ${start.getFullYear()}`;
   };
 
-  const getEventPosition = (event: CalendarEvent) => {
-    const [startHour, startMin] = event.startTime.split(":").map(Number);
-    const [endHour, endMin] = event.endTime.split(":").map(Number);
-    const top = (startHour * 60 + startMin) * (60 / 60);
-    const height =
-      ((endHour - startHour) * 60 + (endMin - startMin)) * (60 / 60);
+  const getEventPosition = (meeting: Meeting) => {
+    const startDate = new Date(meeting.startDateTime);
+    const endDate = new Date(meeting.endDateTime);
+
+    const pixelsPerHour = 64;
+
+    const startTotalHours = startDate.getHours() + startDate.getMinutes() / 60;
+    const endTotalHours = endDate.getHours() + endDate.getMinutes() / 60;
+
+    const top = startTotalHours * pixelsPerHour;
+    const height = (endTotalHours - startTotalHours) * pixelsPerHour;
+
     return { top: `${top}px`, height: `${height}px` };
+  };
+
+  const getColorForMeeting = (meeting: Meeting): string => {
+    switch (meeting.status) {
+      case "ARRANGED":
+        return "bg-yellow-400";
+      case "CONFIRMED":
+        return "bg-green-400";
+      case "CANCELED":
+        return "bg-red-400";
+      case "TIMEOUT":
+        return "bg-gray-400";
+      default:
+        return "bg-blue-400";
+    }
+  };
+
+  const getTextColorForMeeting = (meeting: Meeting): string => {
+    switch (meeting.status) {
+      case "ARRANGED":
+        return "text-amber-900";
+      case "CONFIRMED":
+        return "text-white";
+      case "CANCELED":
+        return "text-white";
+      case "TIMEOUT":
+        return "text-white";
+      default:
+        return "text-white";
+    }
   };
 
   const formatDate = () => {
@@ -155,11 +206,25 @@ export default function Calendar() {
     return isSameDay(date, tomorrow);
   };
 
-  const getTodayEvents = () => events.filter((e) => isToday(e.date));
-  const getTomorrowEvents = () => events.filter((e) => isTomorrow(e.date));
+  const getMeetingsForDay = (day: Date) => {
+    return meetings.filter((meeting) => {
+      const meetingDate = new Date(meeting.startDateTime);
+      return isSameDay(meetingDate, day);
+    });
+  };
 
-  const getEventsForDay = (day: Date) => {
-    return events.filter((event) => isSameDay(event.date, day));
+  const getTodayMeetings = () => {
+    return meetings.filter((meeting) => {
+      const meetingDate = new Date(meeting.startDateTime);
+      return isToday(meetingDate);
+    });
+  };
+
+  const getTomorrowMeetings = () => {
+    return meetings.filter((meeting) => {
+      const meetingDate = new Date(meeting.startDateTime);
+      return isTomorrow(meetingDate);
+    });
   };
 
   const navigateWeek = (direction: "prev" | "next") => {
@@ -192,6 +257,14 @@ export default function Calendar() {
   };
 
   const monthDays = getCurrentMonthDays();
+
+  if (!userId) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">Prašome prisijungti</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex bg-gray-50">
@@ -243,67 +316,84 @@ export default function Calendar() {
           </div>
         </div>
 
-        {getTodayEvents().length > 0 && (
-          <div className="mb-4">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-red-400 text-xs">
-                <FaCircle />
-              </span>
-              <span className="text-sm font-semibold text-gray-700">
-                Šiandien
-              </span>
-            </div>
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-red-400 text-xs">
+              <FaCircle />
+            </span>
+            <span className="text-sm font-semibold text-gray-700">
+              Šiandien
+            </span>
+          </div>
+          {getTodayMeetings().length > 0 ? (
             <div className="space-y-2">
-              {getTodayEvents().map((event) => (
-                <div key={event.id} className="flex items-center text-xs">
-                  <span className="text-green-300 text-xs mr-2">
+              {getTodayMeetings().map((meeting) => (
+                <div key={meeting.id} className="flex items-center text-xs">
+                  <span
+                    className={`${getColorForMeeting(meeting).replace("bg-", "text-")} text-xs mr-2`}
+                  >
                     <FaCircle />
                   </span>
                   <span className="text-gray-700 flex-1 truncate">
-                    {event.title}
+                    {meeting.summary}
                   </span>
-                  <span className="ml-2 text-gray-500">{event.startTime}</span>
+                  <span className="ml-2 text-gray-500">
+                    {new Date(meeting.startDateTime).toLocaleDateString(
+                      "lt-LT",
+                      {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      },
+                    )}
+                  </span>
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <p className="text-xs text-gray-500 italic">
+              Šiandien susitikimų nėra
+            </p>
+          )}
+        </div>
 
-        {getTomorrowEvents().length > 0 && (
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-blue-400 text-xs">
-                <FaCircle />
-              </span>
-              <span className="text-sm font-semibold text-gray-700">Rytoj</span>
-            </div>
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-blue-400 text-xs">
+              <FaCircle />
+            </span>
+            <span className="text-sm font-semibold text-gray-700">Rytoj</span>
+          </div>
+          {getTomorrowMeetings().length > 0 ? (
             <div className="space-y-2">
-              {getTomorrowEvents().map((event) => (
-                <div key={event.id} className="flex items-center text-xs">
+              {getTomorrowMeetings().map((meeting) => (
+                <div key={meeting.id} className="flex items-center text-xs">
                   <span
-                    className={`mr-2 ${
-                      event.color === "bg-purple-500"
-                        ? "text-purple-500"
-                        : event.color === "bg-blue-600"
-                          ? "text-blue-600"
-                          : event.color === "bg-red-400"
-                            ? "text-red-400"
-                            : "text-green-300"
-                    }`}
+                    className={`${getColorForMeeting(meeting).replace("bg-", "text-")} mr-2`}
                   >
                     <FaCircle size={8} />
                   </span>
                   <span className="text-gray-700 flex-1 truncate">
-                    {event.title}
+                    {meeting.summary}
                   </span>
-                  <span className="ml-2 text-gray-500">{event.startTime}</span>
+                  <span className="ml-2 text-gray-500">
+                    {new Date(meeting.startDateTime).toLocaleDateString(
+                      "lt-LT",
+                      {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      },
+                    )}
+                  </span>
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <p className="text-xs text-gray-500 italic">
+              Rytoj susitikimų nėra
+            </p>
+          )}
+        </div>
       </aside>
-
       <main className="flex-grow flex flex-col h-screen overflow-hidden">
         <div className="w-full mb-4 px-6 pt-6">
           <p className="text-2xl text-black">{formatDate()}</p>
@@ -341,14 +431,41 @@ export default function Calendar() {
                 </button>
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-3 relative" ref={dropdownRef}>
               <button
                 type="button"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 flex items-center gap-2"
               >
                 Registruoti laiką
-                <span className="text-xl leading-none relative top-[-1px]">+</span>
+                <span className="text-xl leading-none relative top-[-1px]">
+                  +
+                </span>
               </button>
+              {isDropdownOpen && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      console.log("Susitikimas clicked");
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Registruoti susitikimą
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      console.log("Laikas clicked");
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Registruoti laisvą laiką
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -423,12 +540,14 @@ export default function Calendar() {
                           ></div>
                         ))}
 
-                        {getEventsForDay(day).map((event) => {
-                          const pos = getEventPosition(event);
+                        {getMeetingsForDay(day).map((meeting) => {
+                          const pos = getEventPosition(meeting);
+                          const color = getColorForMeeting(meeting);
+                          const textColor = getTextColorForMeeting(meeting);
                           return (
                             <div
-                              key={event.id}
-                              className={`absolute left-1 right-1 ${event.color} ${event.textColor} rounded shadow-sm p-2 text-xs overflow-hidden cursor-pointer hover:shadow-md transition-shadow`}
+                              key={meeting.id}
+                              className={`absolute left-1 right-1 ${color} ${textColor} rounded shadow-sm p-2 text-xs overflow-hidden cursor-pointer hover:shadow-md transition-shadow`}
                               style={{ top: pos.top, height: pos.height }}
                             >
                               <div className="flex items-start gap-1">
@@ -437,16 +556,11 @@ export default function Calendar() {
                                 </span>
                                 <div className="flex-1 min-w-0">
                                   <div className="font-semibold truncate">
-                                    {event.title}
+                                    {meeting.summary}
                                   </div>
-                                  <div className="text-[10px] opacity-90">
-                                    {event.startTime}
-                                  </div>
-                                  {event.subtitle && (
-                                    <div className="text-[10px] opacity-80 truncate mt-1">
-                                      {event.subtitle}
-                                    </div>
-                                  )}
+                                </div>
+                                <div className="text-[10px] opacity-80 truncate mt-1">
+                                  {meeting.description}
                                 </div>
                               </div>
                             </div>

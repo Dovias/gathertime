@@ -2,7 +2,9 @@ import axios from "axios";
 import type React from "react";
 import { useState } from "react";
 import { Form, Link, useNavigate } from "react-router";
+import type { AuthenticationResponse } from "../../models/User.ts";
 import { appRoutes } from "../../routes";
+import { authStorage } from "../../utilities/Auth";
 
 interface Credentials {
   email: string;
@@ -31,11 +33,13 @@ export default function Login() {
     setError(null);
 
     try {
-      const response = await axios.post("/auth/login", credentials);
+      const response = await axios.post<AuthenticationResponse>(
+        "/auth/login",
+        credentials,
+      );
 
       if (response.status === 200) {
-        const data = response.data;
-        localStorage.setItem("user", JSON.stringify(data));
+        authStorage.setAuth(response.data);
         navigate(appRoutes.dashboard.calendar);
       } else {
         setError("Wrong email or password. Please try again.");
