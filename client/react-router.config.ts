@@ -5,5 +5,5 @@ export default {
     v8_middleware: true,
   },
   appDirectory: "app",
-  ssr: false
+  ssr: false,
 } satisfies Config;

@@ -1,4 +1,5 @@
 import {
+  index,
   layout,
   prefix,
   type RouteConfig,
@@ -6,12 +7,15 @@ import {
 } from "@react-router/dev/routes";
 
 export const appRoutes = {
+  index: "/",
   auth: {
+    index: "/auth",
     login: "/auth/login",
     register: "/auth/register",
     verify: "/auth/verification",
   },
   dashboard: {
+    index: "/dashboard",
     calendar: "/dashboard/calendar",
     feed: "/dashboard/feed",
     friends: "/dashboard/friends",
@@ -24,19 +28,27 @@ export const appRoutes = {
 export type AppRoutes = (typeof appRoutes)[keyof typeof appRoutes];
 
 export default [
+  index("./pages/index.tsx"),
   ...prefix("auth", [
-    route("login", "./pages/auth/login.tsx"),
-    route("register", "./pages/auth/register.tsx"),
-    route("verification", "./pages/auth/verification.tsx"),
+    layout("./pages/auth/layout.tsx", [
+      index("./pages/auth/index.tsx"),
+      route("login", "./pages/auth/login.tsx"),
+      route("register", "./pages/auth/register.tsx"),
+      route("verification", "./pages/auth/verification.tsx"),
+      route("*", "./pages/auth/error/notFound.tsx"),
+    ]),
   ]),
   ...prefix("dashboard", [
     layout("./pages/dashboard/layout.tsx", [
+      index("./pages/dashboard/index.tsx"),
       route("calendar", "./pages/dashboard/calendar.tsx"),
       route("feed", "./pages/dashboard/feed.tsx"),
       route("meetings", "./pages/dashboard/meetings.tsx"),
       route("friends", "./pages/dashboard/friends.tsx"),
       route("profile", "./pages/dashboard/profile.tsx"),
       route("settings", "./pages/dashboard/settings.tsx"),
+      route("*", "./pages/dashboard/error/notFound.tsx"),
     ]),
   ]),
+  route("*", "./pages/error/notFound.tsx"),
 ] satisfies RouteConfig;
