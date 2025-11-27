@@ -9,13 +9,13 @@ import {
 import { ImCheckmark } from "react-icons/im";
 import { useNavigate } from "react-router";
 import logo from "../../assets/logo_nobg.png";
+import type { User } from "../../models/User";
 import { appRoutes } from "../../routes";
 import { NavMenuItem } from "./NavigationItem";
-import { User } from "../../models/User";
 
 export type NavigationProps = {
-  user: User
-}
+  user: User;
+};
 
 function Navigation({ user }: NavigationProps) {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ function Navigation({ user }: NavigationProps) {
     const confirmed = window.confirm("Are you sure you want to log out?");
     if (confirmed) {
       localStorage.removeItem("user");
-      navigate(appRoutes.auth.login);
+      navigate(appRoutes.auth.index);
     }
   };
 
