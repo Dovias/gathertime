@@ -225,14 +225,26 @@ export default function Calendar() {
     return `${start.getDate()}-${end.getDate()} ${start.toLocaleDateString("lt-LT", { month: "long" })} ${start.getFullYear()}`;
   };
 
-  const getEventPosition = (entry: CalendarEntry) => {
-    const startDate = new Date(entry.startDateTime);
-    const endDate = new Date(entry.endDateTime);
+  const getEventPosition = (entry: CalendarEntry, day: Date) => {
+    const entryStart = new Date(entry.startDateTime);
+    const entryEnd = new Date(entry.endDateTime);
+
+    const dayStart = new Date(day);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(day);
+    dayEnd.setHours(23, 59, 59, 999);
+
+    const displayStart = entryStart < dayStart ? dayStart : entryStart;
+    const displayEnd = entryEnd > dayEnd ? dayEnd : entryEnd;
 
     const pixelsPerHour = 64;
 
-    const startTotalHours = startDate.getHours() + startDate.getMinutes() / 60;
-    const endTotalHours = endDate.getHours() + endDate.getMinutes() / 60;
+    const startTotalHours =
+      displayStart.getHours() + displayStart.getMinutes() / 60;
+    const endTotalHours =
+      displayEnd.getHours() +
+      displayEnd.getMinutes() / 60 +
+      (displayEnd > dayEnd ? 1 : 0);
 
     const top = startTotalHours * pixelsPerHour;
     const height = (endTotalHours - startTotalHours) * pixelsPerHour;
@@ -315,15 +327,27 @@ export default function Calendar() {
   const getEntriesForDay = (day: Date): CalendarEntry[] => {
     const meetingEntries: CalendarEntry[] = meetings
       .filter((meeting) => {
-        const meetingDate = new Date(meeting.startDateTime);
-        return isSameDay(meetingDate, day);
+        const meetingStart = new Date(meeting.startDateTime);
+        const meetingEnd = new Date(meeting.endDateTime);
+        const dayStart = new Date(day);
+        dayStart.setHours(0, 0, 0, 0);
+        const dayEnd = new Date(day);
+        dayEnd.setHours(23, 59, 59, 999);
+
+        return meetingStart <= dayEnd && meetingEnd >= dayStart;
       })
       .map((m) => ({ ...m, type: "meeting" as const }));
 
     const freeTimeEntries: CalendarEntry[] = freeTimes
       .filter((freeTime) => {
-        const freeTimeDate = new Date(freeTime.startDateTime);
-        return isSameDay(freeTimeDate, day);
+        const freeTimeStart = new Date(freeTime.startDateTime);
+        const freeTimeEnd = new Date(freeTime.endDateTime);
+        const dayStart = new Date(day);
+        dayStart.setHours(0, 0, 0, 0);
+        const dayEnd = new Date(day);
+        dayEnd.setHours(23, 59, 59, 999);
+
+        return freeTimeStart <= dayEnd && freeTimeEnd >= dayStart;
       })
       .map((ft) => ({ ...ft, type: "freetime" as const }));
 
@@ -666,7 +690,7 @@ export default function Calendar() {
                         ))}
 
                         {getEntriesForDay(day).map((entry) => {
-                          const pos = getEventPosition(entry);
+                          const pos = getEventPosition(entry, day);
                           const color = getColorForEntry(entry);
                           const textColor = getTextColorForEntry(entry);
                           return (
