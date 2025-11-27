@@ -12,9 +12,11 @@
   "dependencies": {
     "@react-router/node": "^7.9.6",
     "axios": "^1.13.1",
+    "date-fns": "^4.1.0",
     "isbot": "^5",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-feather": "^2.0.10",
     "react-icons": "^5.5.0",
     "tailwindcss": "^4.1.16"
   },
