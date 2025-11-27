@@ -25,7 +25,13 @@ export const appRoutes = {
   },
 } as const;
 
-export type AppRoutes = (typeof appRoutes)[keyof typeof appRoutes];
+type NestedRoute<T> = T extends string
+  ? T
+  : T extends object
+    ? NestedRoute<T[keyof T]>
+    : never;
+
+export type AppRoute = NestedRoute<typeof appRoutes>;
 
 export default [
   index("./pages/index.tsx"),
