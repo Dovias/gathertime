@@ -8,8 +8,8 @@ import {
 import EventCard from "../../components/cards/EventCard";
 import EventDetails from "../../components/cards/EventDetails";
 import type { Meeting } from "../../models/Meeting";
-import type { Route } from "./+types/feed";
 import { getFormattedDate } from "../../utilities/date";
+import type { Route } from "./+types/feed";
 
 export async function clientLoader() {
   const user = JSON.parse(localStorage.getItem("user") || "null");
