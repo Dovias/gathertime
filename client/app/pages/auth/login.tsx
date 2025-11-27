@@ -40,7 +40,7 @@ export default function Login() {
 
       if (response.status === 200) {
         authStorage.setAuth(response.data);
-        navigate(appRoutes.dashboard.calendar);
+        navigate(appRoutes.dashboard.index);
       } else {
         setError("Wrong email or password. Please try again.");
       }
@@ -50,72 +50,67 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-blue-50 to-purple-50">
-      <div className="bg-white shadow-lg rounded-2xl px-10 py-10 w-[400px] text-center">
-        <h1 className="text-3xl font-semibold mb-6 text-gray-800">
-          Welcome Back 👋
-        </h1>
-        <p className="text-gray-500 mb-6">
-          Log in to continue to{" "}
-          <span className="text-blue-600 font-semibold">GatherTime</span>
-        </p>
+    <div className="bg-white shadow-lg rounded-2xl px-10 py-10 w-[400px] text-center">
+      <h1 className="text-3xl font-semibold mb-6 text-gray-800">
+        Welcome Back 👋
+      </h1>
+      <p className="text-gray-500 mb-6">
+        Log in to continue to{" "}
+        <span className="text-blue-600 font-semibold">GatherTime</span>
+      </p>
 
-        <Form onSubmit={handleSubmit} className="space-y-5">
-          <div className="text-left">
-            <label
-              htmlFor="email"
-              className="text-gray-700 text-sm font-medium"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={credentials.email}
-              onChange={handleInputChange}
-              required
-              className="w-full border border-gray-300 rounded-lg mt-1 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-
-          <div className="text-left">
-            <label
-              htmlFor="password"
-              className="text-gray-700 text-sm font-medium"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={credentials.password}
-              onChange={handleInputChange}
-              required
-              className="w-full border border-gray-300 rounded-lg mt-1 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-
-          {error && (
-            <div className="text-red-500 text-sm text-center mt-2">{error}</div>
-          )}
-
-          <button
-            type="submit"
-            className="w-full py-2 mt-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-60"
-          >
-            Log In
-          </button>
-        </Form>
-
-        <div className="mt-6 text-sm text-gray-600">
-          Don’t have an account?{" "}
-          <Link
-            to={appRoutes.auth.register}
-            className="text-purple-600 font-semibold hover:underline"
-          >
-            Sign up
-          </Link>
+      <Form onSubmit={handleSubmit} className="space-y-5">
+        <div className="text-left">
+          <label htmlFor="email" className="text-gray-700 text-sm font-medium">
+            Email
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={credentials.email}
+            onChange={handleInputChange}
+            required
+            className="w-full border border-gray-300 rounded-lg mt-1 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
         </div>
+
+        <div className="text-left">
+          <label
+            htmlFor="password"
+            className="text-gray-700 text-sm font-medium"
+          >
+            Password
+          </label>
+          <input
+            type="password"
+            name="password"
+            value={credentials.password}
+            onChange={handleInputChange}
+            required
+            className="w-full border border-gray-300 rounded-lg mt-1 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+
+        {error && (
+          <div className="text-red-500 text-sm text-center mt-2">{error}</div>
+        )}
+
+        <button
+          type="submit"
+          className="w-full py-2 mt-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-60"
+        >
+          Log In
+        </button>
+      </Form>
+
+      <div className="mt-6 text-sm text-gray-600">
+        Don’t have an account?{" "}
+        <Link
+          to={appRoutes.auth.register}
+          className="text-purple-600 font-semibold hover:underline"
+        >
+          Sign up
+        </Link>
       </div>
     </div>
   );

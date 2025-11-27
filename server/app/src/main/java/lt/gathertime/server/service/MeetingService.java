@@ -80,6 +80,15 @@ public class MeetingService {
         invitation.setModifiedDateTime(LocalDateTime.now());
     }
 
+    @Transactional
+    public void declineMeeting(Long invitationId) {
+        Invitation invitation = invitationRepository.findById(invitationId)
+                .orElseThrow(() -> new RuntimeException("Invitation not found with ID: " + invitationId));
+
+        invitation.setStatus(InvitationStatus.DECLINED);
+        invitation.setModifiedDateTime(LocalDateTime.now());
+    }
+
     public MeetingResponseDTO getMeeting(Long meetingId) {
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new RuntimeException("Meeting not found with ID: " + meetingId));

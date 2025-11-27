@@ -36,6 +36,12 @@ public class MeetingController {
         meetingService.confirmMeeting(invitationId);
     }
 
+    @PutMapping("/invitation/{invitationId}/decline")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void declineMeeting(@PathVariable Long invitationId) {
+        meetingService.declineMeeting(invitationId);
+    }
+
     @GetMapping("/{meetingId}")
     @ResponseStatus(HttpStatus.OK)
     public MeetingResponseDTO getMeeting(@PathVariable Long meetingId) {

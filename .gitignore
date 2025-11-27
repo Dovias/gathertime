@@ -6,5 +6,8 @@
 .idea/
 .vscode/
 
+# Ignore IDE-specific files
+*.code-workspace
+
 # Ignore package manager directories
 node_modules/

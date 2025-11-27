@@ -1,11 +1,15 @@
 package lt.gathertime.server.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.friendshipDTOs.CreateFriendshipRequestDTO;
+import lt.gathertime.server.dto.friendshipDTOs.FriendshipRequestDTO;
+import lt.gathertime.server.mapper.FreeTimeMapper;
+import lt.gathertime.server.mapper.FriendshipMapper;
 import lt.gathertime.server.model.Friendship;
 import lt.gathertime.server.model.User;
 import lt.gathertime.server.repository.FriendshipRepository;
@@ -32,6 +36,37 @@ public class FriendshipService {
             .isBestFriends(false)
             .isConfirmed(false)
             .build();
+
+        friendshipRepository.save(friendship);
+    }
+
+    public List<FriendshipRequestDTO> getFriendshipRequests(Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+
+        List<Friendship> friendshipRequests = friendshipRepository.getFriendshipRequests(userId);
+
+        return friendshipRequests.stream()
+                .map(FriendshipMapper::toFriendshipRequestDTO)
+                .toList();
+    }
+
+    public void confirmFriendship(Long friendshipId) {
+        Friendship friendshipRequest = friendshipRepository.findById(friendshipId)
+            .orElseThrow(() -> new RuntimeException("Friendship not found with ID: " + friendshipId));
+
+        LocalDateTime startDateTime = LocalDateTime.now();
+
+        friendshipRequest.setIsConfirmed(true);
+        friendshipRequest.setStarDateTime(startDateTime);
+
+        Friendship friendship = Friendship.builder()
+                .user(friendshipRequest.getFriend())
+                .friend(friendshipRequest.getUser())
+                .starDateTime(startDateTime)
+                .isBestFriends(false)
+                .isConfirmed(true)
+                .build();
 
         friendshipRepository.save(friendship);
     }
