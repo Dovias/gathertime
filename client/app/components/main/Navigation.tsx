@@ -9,16 +9,21 @@ import {
 import { ImCheckmark } from "react-icons/im";
 import { useNavigate } from "react-router";
 import logo from "../../assets/logo_nobg.png";
+import type { User } from "../../models/User";
 import { appRoutes } from "../../routes";
 import { NavMenuItem } from "./NavigationItem";
 
-function Navigation() {
+export type NavigationProps = {
+  user: User;
+};
+
+function Navigation({ user }: NavigationProps) {
   const navigate = useNavigate();
   const onLogout = () => {
     const confirmed = window.confirm("Are you sure you want to log out?");
     if (confirmed) {
       localStorage.removeItem("user");
-      navigate(appRoutes.auth.login);
+      navigate(appRoutes.auth.index);
     }
   };
 
@@ -56,7 +61,7 @@ function Navigation() {
         <NavMenuItem
           to={appRoutes.dashboard.profile}
           icon={CgProfile}
-          label="Profilis"
+          label={`${user.firstName} ${user.lastName}`}
         />
         <NavMenuItem
           to={appRoutes.dashboard.settings}
