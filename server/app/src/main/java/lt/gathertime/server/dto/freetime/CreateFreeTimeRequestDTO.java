@@ -1,4 +1,4 @@
-package lt.gathertime.server.dto.freetimeDTOs;
+package lt.gathertime.server.dto.freetime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

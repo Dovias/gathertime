@@ -3,14 +3,13 @@ package lt.gathertime.server.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import lt.gathertime.server.dto.meetingDTOs.MeetingResponseDTO;
-import lt.gathertime.server.dto.meetingDTOs.MeetingSummaryDTO;
-
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lt.gathertime.server.dto.meetingDTOs.CreateMeetingRequestDTO;
+import lt.gathertime.server.dto.meeting.CreateMeetingRequestDTO;
+import lt.gathertime.server.dto.meeting.MeetingResponseDTO;
+import lt.gathertime.server.dto.meeting.MeetingSummaryDTO;
 import lt.gathertime.server.mapper.MeetingMapper;
 import lt.gathertime.server.model.FreeTime;
 import lt.gathertime.server.model.Invitation;

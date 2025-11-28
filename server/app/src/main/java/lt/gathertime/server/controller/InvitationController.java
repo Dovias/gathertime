@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lt.gathertime.server.dto.invitationDTOs.InvitationRequestDTO;
-import lt.gathertime.server.dto.invitationDTOs.InvitationResponseDTO;
+import lt.gathertime.server.dto.invitation.InvitationRequestDTO;
+import lt.gathertime.server.dto.invitation.InvitationResponseDTO;
 import lt.gathertime.server.service.InvitationService;
 
 @RestController

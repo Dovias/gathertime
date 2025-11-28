@@ -1,4 +1,4 @@
-package lt.gathertime.server.dto.meetingDTOs;
+package lt.gathertime.server.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,10 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class CreateMeetingRequestDTO {
-    
-    private Long userId;
+public class UserResponseDTO {
 
-    private Long freeTimeId;
+    private Long id;
+    private String email;
+    private String firstName;
+    private String lastName;
 }

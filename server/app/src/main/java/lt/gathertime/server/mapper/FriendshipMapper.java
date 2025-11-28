@@ -1,6 +1,6 @@
 package lt.gathertime.server.mapper;
 
-import lt.gathertime.server.dto.friendshipDTOs.FriendshipRequestDTO;
+import lt.gathertime.server.dto.friendship.FriendshipRequestDTO;
 import lt.gathertime.server.model.Friendship;
 import lt.gathertime.server.model.User;
 

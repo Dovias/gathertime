@@ -1,4 +1,4 @@
-package lt.gathertime.server.dto.meetingDTOs;
+package lt.gathertime.server.dto.meeting;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import lt.gathertime.server.dto.userDTOs.UserFullNameDTO;
+import lt.gathertime.server.dto.user.UserFullNameDTO;
 import lt.gathertime.server.model.enums.MeetingStatus;
 
 @Getter

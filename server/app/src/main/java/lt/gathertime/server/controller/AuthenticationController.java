@@ -1,6 +1,6 @@
 package lt.gathertime.server.controller;
 
-import lt.gathertime.server.dto.userDTOs.*;
+import lt.gathertime.server.dto.user.*;
 import lt.gathertime.server.repository.UserRepository;
 import lt.gathertime.server.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;

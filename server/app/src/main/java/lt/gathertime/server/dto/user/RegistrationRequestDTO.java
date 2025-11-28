@@ -1,6 +1,4 @@
-package lt.gathertime.server.dto.friendshipDTOs;
-
-import java.time.LocalDateTime;
+package lt.gathertime.server.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,15 +9,10 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class FriendshipRequestDTO {
+public class RegistrationRequestDTO {
 
-    private Long friendshipId;
-
-    private Long friendId;
-
+    private String email;
+    private String password;
     private String firstName;
-
     private String lastName;
-
-    private LocalDateTime requestDateTime;
 }

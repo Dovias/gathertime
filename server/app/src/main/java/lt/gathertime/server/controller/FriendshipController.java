@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lt.gathertime.server.dto.friendshipDTOs.CreateFriendshipRequestDTO;
-import lt.gathertime.server.dto.friendshipDTOs.FriendshipRequestDTO;
+import lt.gathertime.server.dto.friendship.CreateFriendshipRequestDTO;
+import lt.gathertime.server.dto.friendship.FriendshipRequestDTO;
 import lt.gathertime.server.service.FriendshipService;
 
 @RestController

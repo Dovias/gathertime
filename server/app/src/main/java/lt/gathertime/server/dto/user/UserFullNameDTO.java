@@ -1,4 +1,4 @@
-package lt.gathertime.server.dto.userDTOs;
+package lt.gathertime.server.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

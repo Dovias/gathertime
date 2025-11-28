@@ -1,4 +1,4 @@
-package lt.gathertime.server.dto.invitationDTOs;
+package lt.gathertime.server.dto.invitation;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
