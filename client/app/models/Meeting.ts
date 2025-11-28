@@ -6,13 +6,8 @@ export type MeetingParticipant = {
   lastName: string;
 };
 
-export type MeetingOwner = MeetingParticipant;
-
 export type Meeting = {
   id: number;
-
-  startDateTime: string;
-  endDateTime: string;
 
   summary: string | null;
   description: string | null;
@@ -21,9 +16,6 @@ export type Meeting = {
   maxParticipants: number | null;
   status: MeetingStatus;
 
-  freeTimeId: number | null;
-  owner: MeetingOwner;
-
   participants: MeetingParticipant[];
-  activityIds: number[] | null;
+  activityIds: number[];
 };

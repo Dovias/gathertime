@@ -4,14 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import lt.gathertime.server.model.enums.MeetingStatus;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class CreateMeetingRequestDTO {
-    
-    private Long userId;
-
+public class MeetingCreationRequest {
+    private String summary;
+    private String description;
+    private String location;
+    private Integer maxParticipants;
+    private MeetingStatus status;
+    private Long ownerId;
     private Long freeTimeId;
 }

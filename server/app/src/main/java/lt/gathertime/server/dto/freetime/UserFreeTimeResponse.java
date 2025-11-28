@@ -11,14 +11,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import lt.gathertime.server.dto.meeting.MeetingResponse;
 import lt.gathertime.server.model.enums.PastimeType;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class FreeTimeDTO {
-    Long id;
+public class UserFreeTimeResponse {
+    private Long id;
+
+    private MeetingResponse meeting;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @NotNull(message = "Start date and time must not be null")

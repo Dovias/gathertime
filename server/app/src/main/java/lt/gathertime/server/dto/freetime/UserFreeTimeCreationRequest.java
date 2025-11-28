@@ -21,9 +21,8 @@ import jakarta.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class CreateFreeTimeRequestDTO {
-
-    private Long userId;
+public class UserFreeTimeCreationRequest {
+    private Long ownerId;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @NotNull(message = "Start date and time must not be null")

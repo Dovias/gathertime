@@ -2,31 +2,32 @@ package lt.gathertime.server.mapper;
 
 import java.util.List;
 
-import lt.gathertime.server.dto.freetime.CreateFreeTimeRequestDTO;
-import lt.gathertime.server.dto.freetime.FreeTimeDTO;
+import lt.gathertime.server.dto.freetime.UserFreeTimeCreationRequest;
+import lt.gathertime.server.dto.freetime.UserFreeTimeResponse;
 import lt.gathertime.server.dto.freetime.FriendFreeTimeDTO;
 import lt.gathertime.server.model.Activity;
 import lt.gathertime.server.model.FreeTime;
+import lt.gathertime.server.model.Meeting;
 import lt.gathertime.server.model.User;
-import lt.gathertime.server.model.enums.FreeTimeStatus;
 
 public class FreeTimeMapper {
 
-    public static FreeTime fromCreateRequestDto(CreateFreeTimeRequestDTO createFreeTimeRequestDto, User user, List<Activity> activities) {
+    public static FreeTime fromCreateRequestDto(UserFreeTimeCreationRequest createFreeTimeRequestDto, User user, List<Activity> activities) {
         return FreeTime.builder()
                 .startDateTime(createFreeTimeRequestDto.getStartDateTime())
                 .endDateTime(createFreeTimeRequestDto.getEndDateTime())
                 .publicForAllFriends(createFreeTimeRequestDto.getPublicForAllFriends())
                 .pastimeType(createFreeTimeRequestDto.getPastimeType())
-                .status(FreeTimeStatus.FREE)
-                .user(user)
+                .owner(user)
                 .momentaryInterests(activities)
                 .build();
     }
 
-    public static FreeTimeDTO toFreeTimeDTO(FreeTime freeTime) {
-        return FreeTimeDTO.builder()
+    public static UserFreeTimeResponse toResponse(FreeTime freeTime) {
+        Meeting meeting = freeTime.getMeeting();
+        return UserFreeTimeResponse.builder()
                 .id(freeTime.getId())
+                .meeting(meeting == null ? null : MeetingMapper.toResponse(meeting))
                 .startDateTime(freeTime.getStartDateTime())
                 .endDateTime(freeTime.getEndDateTime())
                 .pastimeType(freeTime.getPastimeType())
@@ -55,9 +56,9 @@ public class FreeTimeMapper {
                         .map(Activity::getId)
                         .toList()
                 )
-                .friendId(freeTime.getUser().getId())
-                .firstName(freeTime.getUser().getFirstName())
-                .lastName(freeTime.getUser().getLastName())
+                .friendId(freeTime.getOwner().getId())
+                .firstName(freeTime.getOwner().getFirstName())
+                .lastName(freeTime.getOwner().getLastName())
                 .build();
     }
 }

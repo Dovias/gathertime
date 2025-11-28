@@ -1,31 +1,28 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaCircle } from "react-icons/fa";
-import RegisterTimeForm from "../../components/forms/RegisterTimeForm.tsx";
 import type { FreeTime } from "../../models/FreeTime.ts";
-import type { Meeting } from "../../models/Meeting.ts";
-import type { RegisterTimeFormProps } from "../../models/RegisterTimeFormProps.ts";
-import { authStorage } from "../../utilities/Auth.ts";
 import { getFormattedDate } from "../../utilities/date";
+import type { Route } from "./+types/calendar.ts";
+import { userContext } from "../../context.ts";
+import RegisterFreeTimeForm from "../../components/forms/RegisterFreeTimeForm.tsx";
+import RegisterMeetingForm from "../../components/forms/RegisterMeetingForm.tsx";
 
-type CalendarEntry =
-  | (Meeting & { type: "meeting" })
-  | (FreeTime & { type: "freetime" });
+export function clientLoader({ context }: Route.ClientLoaderArgs) {
+  return context.get(userContext);
+}
 
-export default function Calendar() {
+export default function Calendar({ loaderData: user }: Route.ComponentProps) {
   const today = new Date();
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const timeLabelsRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [scrollbarWidth, setScrollbarWidth] = useState(0);
-  const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [freeTimes, setFreeTimes] = useState<FreeTime[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [formType, setFormType] = useState<"meeting" | "free-time">("meeting");
-
-  const user = authStorage.getUser();
-  const userId = user?.id;
+  const [formType, setFormType] = useState<"none" | "meeting" | "free-time">(
+    "none",
+  );
 
   useLayoutEffect(() => {
     const updateScrollbarWidth = () => {
@@ -55,8 +52,6 @@ export default function Calendar() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!userId) return;
-
       try {
         const startDate = weekDays[0];
         const endDate = new Date(weekDays[6]);
@@ -65,26 +60,8 @@ export default function Calendar() {
         const startDateTime = startDate.toISOString().slice(0, 19);
         const endDateTime = endDate.toISOString().slice(0, 19);
 
-        // const token = authStorage.getToken();
-
-        // Fetch meetings
-        const meetingsResponse = await fetch(
-          `http://localhost:8080/meeting/user/${userId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`,
-          {
-            headers: {
-              // 'Authorization': `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
-
-        if (meetingsResponse.ok) {
-          const meetingData: Meeting[] = await meetingsResponse.json();
-          setMeetings(meetingData);
-        }
-
         const freeTimesResponse = await fetch(
-          `http://localhost:8080/freetime/user/${userId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`,
+          `http://localhost:8080/freetime/user/${user.id}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -102,7 +79,7 @@ export default function Calendar() {
     };
 
     fetchData();
-  }, [weekDays, userId]);
+  }, [weekDays, user.id]);
 
   useEffect(() => {
     const handleClickOutSide = (event: MouseEvent) => {
@@ -123,95 +100,6 @@ export default function Calendar() {
     };
   }, [isDropdownOpen]);
 
-  type FormData = Parameters<RegisterTimeFormProps["onSubmit"]>[0];
-
-  const handleFormSubmit = async (data: FormData) => {
-    try {
-      //const token = authStorage.getToken();
-
-      if (formType === "free-time") {
-        const freeTimeData = {
-          userId: user?.id,
-          startDateTime: data.startDateTime,
-          endDateTime: data.endDateTime,
-        };
-
-        await fetch("http://localhost:8080/freetime", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(freeTimeData),
-        });
-      } else {
-        const completeData = {
-          ...data,
-          owner: {
-            id: user?.id,
-            firstName: user?.firstName,
-            lastName: user?.lastName,
-          },
-          participants: [],
-        };
-
-        console.log("Posting free time data:", completeData);
-
-        const response = await fetch("http://localhost:8080/meeting", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            // 'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify(completeData),
-        });
-
-        console.log("Free time response status:", response.status);
-        console.log("Free time response ok:", response.ok);
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Error creating free time:", errorText);
-        } else {
-          console.log("Free time created successfully");
-        }
-      }
-
-      const startDate = weekDays[0];
-      const endDate = new Date(weekDays[6]);
-      endDate.setHours(23, 59, 59, 999);
-
-      const startDateTime = startDate.toISOString().slice(0, 19);
-      const endDateTime = endDate.toISOString().slice(0, 19);
-
-      const [meetingsResponse, freeTimesResponse] = await Promise.all([
-        fetch(
-          `http://localhost:8080/meeting/user/${userId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`,
-          {
-            headers: { "Content-Type": "application/json" },
-          },
-        ),
-        fetch(
-          `http://localhost:8080/freetime/user/${userId}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`,
-          {
-            headers: { "Content-Type": "application/json" },
-          },
-        ),
-      ]);
-
-      if (meetingsResponse.ok) {
-        const meetingsData: Meeting[] = await meetingsResponse.json();
-        setMeetings(meetingsData);
-      }
-
-      if (freeTimesResponse.ok) {
-        const freeTimesData: FreeTime[] = await freeTimesResponse.json();
-        setFreeTimes(freeTimesData);
-      }
-    } catch (error) {
-      console.error("Error at POST:", error);
-    }
-  };
-
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     if (timeLabelsRef.current) {
       timeLabelsRef.current.style.transform = `translateY(-${e.currentTarget.scrollTop}px)`;
@@ -226,7 +114,7 @@ export default function Calendar() {
     return `${start.getDate()}-${end.getDate()} ${start.toLocaleDateString("lt-LT", { month: "long" })} ${start.getFullYear()}`;
   };
 
-  const getEventPosition = (entry: CalendarEntry, day: Date) => {
+  const getEventPosition = (entry: FreeTime, day: Date) => {
     const entryStart = new Date(entry.startDateTime);
     const entryEnd = new Date(entry.endDateTime);
 
@@ -253,12 +141,9 @@ export default function Calendar() {
     return { top: `${top}px`, height: `${height}px` };
   };
 
-  const getColorForEntry = (entry: CalendarEntry): string => {
-    if (entry.type === "freetime") {
-      return "bg-purple-400";
-    }
-
-    switch (entry.status) {
+  const getColorForEntry = ({ meeting }: FreeTime): string => {
+    if (meeting === null) return "bg-purple-600";
+    switch (meeting.status) {
       case "ARRANGED":
         return "bg-yellow-400";
       case "CONFIRMED":
@@ -272,12 +157,9 @@ export default function Calendar() {
     }
   };
 
-  const getTextColorForEntry = (entry: CalendarEntry): string => {
-    if (entry.type === "freetime") {
-      return "text-white";
-    }
-
-    switch (entry.status) {
+  const getTextColorForEntry = ({ meeting }: FreeTime): string => {
+    if (meeting === null) return "text-white";
+    switch (meeting.status) {
       case "ARRANGED":
         return "text-amber-900";
       case "CONFIRMED":
@@ -306,21 +188,8 @@ export default function Calendar() {
     return isSameDay(date, tomorrow);
   };
 
-  const getEntriesForDay = (day: Date): CalendarEntry[] => {
-    const meetingEntries: CalendarEntry[] = meetings
-      .filter((meeting) => {
-        const meetingStart = new Date(meeting.startDateTime);
-        const meetingEnd = new Date(meeting.endDateTime);
-        const dayStart = new Date(day);
-        dayStart.setHours(0, 0, 0, 0);
-        const dayEnd = new Date(day);
-        dayEnd.setHours(23, 59, 59, 999);
-
-        return meetingStart <= dayEnd && meetingEnd >= dayStart;
-      })
-      .map((m) => ({ ...m, type: "meeting" as const }));
-
-    const freeTimeEntries: CalendarEntry[] = freeTimes
+  const getEntriesForDay = (day: Date): FreeTime[] => {
+    const entries: FreeTime[] = freeTimes
       .filter((freeTime) => {
         const freeTimeStart = new Date(freeTime.startDateTime);
         const freeTimeEnd = new Date(freeTime.endDateTime);
@@ -333,18 +202,18 @@ export default function Calendar() {
       })
       .map((ft) => ({ ...ft, type: "freetime" as const }));
 
-    return [...meetingEntries, ...freeTimeEntries];
+    return entries;
   };
 
   const getTodayMeetings = () => {
-    return meetings.filter((meeting) => {
+    return freeTimes.filter((meeting) => {
       const meetingDate = new Date(meeting.startDateTime);
       return isToday(meetingDate);
     });
   };
 
   const getTomorrowMeetings = () => {
-    return meetings.filter((meeting) => {
+    return freeTimes.filter((meeting) => {
       const meetingDate = new Date(meeting.startDateTime);
       return isTomorrow(meetingDate);
     });
@@ -379,16 +248,11 @@ export default function Calendar() {
     return days;
   };
 
+  const getFormattedLabel = ({ meeting }: FreeTime): string => {
+    return meeting == null ? "Laisvas laikas" : (meeting.summary ?? "");
+  };
+
   const monthDays = getCurrentMonthDays();
-
-  if (!userId) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Prašome prisijungti</p>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex bg-gray-50">
       <aside className="w-64 bg-white border-r border-gray-200 p-4 flex flex-col">
@@ -450,30 +314,34 @@ export default function Calendar() {
           </div>
           {getTodayMeetings().length > 0 ? (
             <div className="space-y-2">
-              {getTodayMeetings().map((meeting) => {
-                const entry: CalendarEntry = { ...meeting, type: "meeting" };
-                return (
-                  <div key={meeting.id} className="flex items-center text-xs">
-                    <span
-                      className={`${getColorForEntry(entry).replace("bg-", "text-")} text-xs mr-2`}
+              {getTodayMeetings()
+                .filter((freeTime) => freeTime.meeting !== null)
+                .map((freeTime) => {
+                  return (
+                    <div
+                      key={freeTime.id}
+                      className="flex items-center text-xs"
                     >
-                      <FaCircle />
-                    </span>
-                    <span className="text-gray-700 flex-1 truncate">
-                      {meeting.summary}
-                    </span>
-                    <span className="ml-2 text-gray-500">
-                      {new Date(meeting.startDateTime).toLocaleDateString(
-                        "lt-LT",
-                        {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        },
-                      )}
-                    </span>
-                  </div>
-                );
-              })}
+                      <span
+                        className={`${getColorForEntry(freeTime).replace("bg-", "text-")} text-xs mr-2`}
+                      >
+                        <FaCircle />
+                      </span>
+                      <span className="text-gray-700 flex-1 truncate">
+                        {freeTime.meeting!.summary}
+                      </span>
+                      <span className="ml-2 text-gray-500">
+                        {new Date(freeTime.startDateTime).toLocaleDateString(
+                          "lt-LT",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          },
+                        )}
+                      </span>
+                    </div>
+                  );
+                })}
             </div>
           ) : (
             <p className="text-xs text-gray-500 italic">
@@ -491,30 +359,34 @@ export default function Calendar() {
           </div>
           {getTomorrowMeetings().length > 0 ? (
             <div className="space-y-2">
-              {getTomorrowMeetings().map((meeting) => {
-                const entry: CalendarEntry = { ...meeting, type: "meeting" };
-                return (
-                  <div key={meeting.id} className="flex items-center text-xs">
-                    <span
-                      className={`${getColorForEntry(entry).replace("bg-", "text-")} mr-2`}
+              {getTomorrowMeetings()
+                .filter((freeTime) => freeTime.meeting !== null)
+                .map((freeTime) => {
+                  return (
+                    <div
+                      key={freeTime.id}
+                      className="flex items-center text-xs"
                     >
-                      <FaCircle size={8} />
-                    </span>
-                    <span className="text-gray-700 flex-1 truncate">
-                      {meeting.summary}
-                    </span>
-                    <span className="ml-2 text-gray-500">
-                      {new Date(meeting.startDateTime).toLocaleDateString(
-                        "lt-LT",
-                        {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        },
-                      )}
-                    </span>
-                  </div>
-                );
-              })}
+                      <span
+                        className={`${getColorForEntry(freeTime).replace("bg-", "text-")} text-xs mr-2`}
+                      >
+                        <FaCircle />
+                      </span>
+                      <span className="text-gray-700 flex-1 truncate">
+                        {freeTime.meeting!.summary}
+                      </span>
+                      <span className="ml-2 text-gray-500">
+                        {new Date(freeTime.startDateTime).toLocaleDateString(
+                          "lt-LT",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          },
+                        )}
+                      </span>
+                    </div>
+                  );
+                })}
             </div>
           ) : (
             <p className="text-xs text-gray-500 italic">
@@ -578,7 +450,6 @@ export default function Calendar() {
                     onClick={() => {
                       setIsDropdownOpen(false);
                       setFormType("meeting");
-                      setIsFormOpen(true);
                     }}
                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
@@ -589,7 +460,6 @@ export default function Calendar() {
                     onClick={() => {
                       setIsDropdownOpen(false);
                       setFormType("free-time");
-                      setIsFormOpen(true);
                     }}
                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
@@ -671,13 +541,13 @@ export default function Calendar() {
                           ></div>
                         ))}
 
-                        {getEntriesForDay(day).map((entry) => {
-                          const pos = getEventPosition(entry, day);
-                          const color = getColorForEntry(entry);
-                          const textColor = getTextColorForEntry(entry);
+                        {getEntriesForDay(day).map((freeTime) => {
+                          const pos = getEventPosition(freeTime, day);
+                          const color = getColorForEntry(freeTime);
+                          const textColor = getTextColorForEntry(freeTime);
                           return (
                             <div
-                              key={`${entry.type}-${entry.id}`}
+                              key={freeTime.id}
                               className={`absolute left-1 right-1 ${color} ${textColor} rounded shadow-sm p-2 text-xs overflow-hidden cursor-pointer hover:shadow-md transition-shadow`}
                               style={{ top: pos.top, height: pos.height }}
                             >
@@ -687,17 +557,14 @@ export default function Calendar() {
                                 </span>
                                 <div className="flex-1 min-w-0">
                                   <div className="font-semibold truncate">
-                                    {entry.type === "meeting"
-                                      ? entry.summary
-                                      : "Laisvas laikas"}
+                                    {getFormattedLabel(freeTime)}
                                   </div>
                                 </div>
-                                {entry.type === "meeting" &&
-                                  entry.description && (
-                                    <div className="text-[10px] opacity-80 truncate mt-1">
-                                      {entry.description}
-                                    </div>
-                                  )}
+                                {freeTime.meeting != null && (
+                                  <div className="text-[10px] opacity-80 truncate mt-1">
+                                    {freeTime.meeting.description}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           );
@@ -711,15 +578,96 @@ export default function Calendar() {
           </div>
         </div>
       </main>
-      {isFormOpen && user && (
-        <RegisterTimeForm
-          onClose={() => setIsFormOpen(false)}
-          onSubmit={handleFormSubmit}
-          formType={formType}
-          owner={{
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
+      {formType === "free-time" && (
+        <RegisterFreeTimeForm
+          onClose={() => setFormType("none")}
+          onSubmit={async (data) => {
+            try {
+              const freeTimeData = {
+                ownerId: user.id,
+                startDateTime: data.startDateTime,
+                endDateTime: data.endDateTime,
+              };
+
+              await fetch("http://localhost:8080/freetime", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(freeTimeData),
+              });
+
+              const startDate = weekDays[0];
+              const endDate = new Date(weekDays[6]);
+              endDate.setHours(23, 59, 59, 999);
+
+              const startDateTime = startDate.toISOString().slice(0, 19);
+              const endDateTime = endDate.toISOString().slice(0, 19);
+
+              const freeTimesResponse = await fetch(
+                `http://localhost:8080/freetime/user/${user.id}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`,
+                { headers: { "Content-Type": "application/json" } },
+              );
+
+              if (freeTimesResponse.ok) {
+                const freeTimesData: FreeTime[] =
+                  await freeTimesResponse.json();
+                setFreeTimes(freeTimesData);
+              }
+            } catch (error) {
+              console.error("Error at POST:", error);
+            }
+          }}
+        />
+      )}
+      {formType === "meeting" && (
+        <RegisterMeetingForm
+          freeTimes={freeTimes}
+          onClose={() => setFormType("none")}
+          onSubmit={async (data) => {
+            try {
+              const completeData = {
+                ownerId: user.id,
+                ...data,
+                participants: [],
+              };
+
+              const response = await fetch("http://localhost:8080/meeting", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(completeData),
+              });
+
+              if (!response.ok) {
+                const errorText = await response.text();
+                console.error("Error creating meeting:", errorText);
+                return;
+              }
+
+              console.log("Meeting created successfully");
+
+              const startDate = weekDays[0];
+              const endDate = new Date(weekDays[6]);
+              endDate.setHours(23, 59, 59, 999);
+
+              const startDateTime = startDate.toISOString().slice(0, 19);
+              const endDateTime = endDate.toISOString().slice(0, 19);
+
+              const freeTimesResponse = await fetch(
+                `http://localhost:8080/freetime/user/${user.id}?startDateTime=${startDateTime}&endDateTime=${endDateTime}`,
+                { headers: { "Content-Type": "application/json" } },
+              );
+
+              if (freeTimesResponse.ok) {
+                const freeTimesData: FreeTime[] =
+                  await freeTimesResponse.json();
+                setFreeTimes(freeTimesData);
+              }
+            } catch (error) {
+              console.error("Error at POST:", error);
+            }
           }}
         />
       )}

@@ -1,53 +1,24 @@
 package lt.gathertime.server.mapper;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import lt.gathertime.server.dto.meeting.MeetingResponseDTO;
+import lt.gathertime.server.dto.meeting.MeetingResponse;
 import lt.gathertime.server.dto.meeting.MeetingSummaryDTO;
 import lt.gathertime.server.dto.user.UserFullNameDTO;
 import lt.gathertime.server.model.Activity;
-import lt.gathertime.server.model.FreeTime;
 import lt.gathertime.server.model.Meeting;
 import lt.gathertime.server.model.User;
-import lt.gathertime.server.model.enums.MeetingStatus;
 
 public class MeetingMapper {
-
-    public static Meeting fromCreateRequestDto(
-        LocalDateTime start, 
-        LocalDateTime end, 
-        FreeTime freeTime, 
-        User inviter) {
-        return Meeting.builder()
-                .startDateTime(start)
-                .endDateTime(end)
-                .status(MeetingStatus.ARRANGED)
-                .maxParticipants(2)
-                .freeTime(freeTime)
-                .owner(inviter)
-                .meetingParticipants(List.of(inviter))
-                .build();
-    }
-
-    public static MeetingResponseDTO toResponse(Meeting m) {
-        return MeetingResponseDTO.builder()
+    public static MeetingResponse toResponse(Meeting m) {
+        return MeetingResponse.builder()
                 .id(m.getId())
-                .startDateTime(m.getStartDateTime())
-                .endDateTime(m.getEndDateTime())
                 .summary(m.getSummary())
                 .description(m.getDescription())
                 .location(m.getLocation())
                 .maxParticipants(m.getMaxParticipants())
                 .status(m.getStatus())
-                .freeTimeId(m.getFreeTime() != null ? m.getFreeTime().getId() : null)
-                .owner(UserFullNameDTO.builder()
-                    .id(m.getOwner().getId())
-                    .firstName(m.getOwner().getFirstName())
-                    .lastName(m.getOwner().getLastName())
-                    .build()
-                )
                 .participants(m.getMeetingParticipants().stream().map(participant -> UserFullNameDTO.builder()
                     .id(participant.getId())
                     .firstName(participant.getFirstName())
@@ -66,8 +37,6 @@ public class MeetingMapper {
     public static MeetingSummaryDTO toMeetingSummaryDTO(Meeting meeting, List<User> participants) {
         return MeetingSummaryDTO.builder()
                 .id(meeting.getId())
-                .startDateTime(meeting.getStartDateTime())
-                .endDateTime(meeting.getEndDateTime())
                 .summary(meeting.getSummary())
                 .status(meeting.getStatus())
                 .meetingActivityIds(

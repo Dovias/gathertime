@@ -2,7 +2,6 @@ package lt.gathertime.server.repository;
 
 import lt.gathertime.server.model.Meeting;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,18 +11,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MeetingRepository extends JpaRepository<Meeting, Long> {
-
     @Query("""
-        SELECT m FROM Meeting m
-        LEFT JOIN m.meetingParticipants p
-        WHERE 
-            p.id = :userId
-            AND m.startDateTime >= :startDateTime
-            AND m.endDateTime <= :endDateTime
-        """)
-    public List<Meeting> findUserMeetingsInRange(
-        @Param("userId") Long userId,
-        @Param("startDateTime") LocalDateTime startDateTime,
-        @Param("endDateTime") LocalDateTime endDateTime
-    );
+        SELECT f.meeting FROM FreeTime f
+        WHERE f.owner.id = :ownerId
+    """)
+    public List<Meeting> findAllByOwnerId(@Param("ownerId")Long ownerId);
 }

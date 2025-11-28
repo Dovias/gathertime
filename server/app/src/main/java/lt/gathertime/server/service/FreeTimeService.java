@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lt.gathertime.server.dto.freetime.CreateFreeTimeRequestDTO;
-import lt.gathertime.server.dto.freetime.FreeTimeDTO;
+import lt.gathertime.server.dto.freetime.UserFreeTimeCreationRequest;
+import lt.gathertime.server.dto.freetime.UserFreeTimeResponse;
 import lt.gathertime.server.dto.freetime.FriendFreeTimeDTO;
 import lt.gathertime.server.mapper.FreeTimeMapper;
 import lt.gathertime.server.model.Activity;
@@ -29,9 +29,9 @@ public class FreeTimeService {
     private final ActivityRepository activityRepository;
     private final FriendshipRepository friendshipRepository;
 
-    public void createFreeTime(CreateFreeTimeRequestDTO requestDto) {
-        User user = userRepository.findById(requestDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + requestDto.getUserId()));
+    public void createFreeTime(UserFreeTimeCreationRequest requestDto) {
+        User user = userRepository.findById(requestDto.getOwnerId())
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + requestDto.getOwnerId()));
 
         List<Activity> activities = requestDto.getActivityIds().isEmpty()
                 ? List.of()
@@ -41,7 +41,7 @@ public class FreeTimeService {
         freeTimeRepository.save(newFreeTime);
     }
 
-    public List<FreeTimeDTO> getFreeTimes(Long userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public List<UserFreeTimeResponse> getFreeTimes(Long userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         if (startDateTime.isAfter(endDateTime)) {
             throw new RuntimeException("Start date must be before end date");
         }
@@ -49,7 +49,7 @@ public class FreeTimeService {
         List<FreeTime> freeTimes = freeTimeRepository.getFreeTimesInRange(userId, startDateTime, endDateTime);
 
         return freeTimes.stream()
-                .map(FreeTimeMapper::toFreeTimeDTO)
+                .map(FreeTimeMapper::toResponse)
                 .toList();
     }
 

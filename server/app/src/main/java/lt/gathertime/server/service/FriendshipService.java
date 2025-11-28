@@ -40,9 +40,6 @@ public class FriendshipService {
     }
 
     public List<FriendshipRequestDTO> getFriendshipRequests(Long userId) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
-
         List<Friendship> friendshipRequests = friendshipRepository.getFriendshipRequests(userId);
 
         return friendshipRequests.stream()

@@ -1,24 +1,32 @@
 package lt.gathertime.server.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-import lt.gathertime.server.model.enums.FreeTimeStatus;
 import lt.gathertime.server.model.enums.PastimeType;
 
-@Entity
 @Data
-@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@Builder
+@Entity
 @Table(name = "free_time")
-public class FreeTime extends TimeInterval {
+public class FreeTime {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "start_date_time")
+    private LocalDateTime startDateTime;
+
+    @Column(name = "end_date_time")
+    private LocalDateTime endDateTime;
 
     @Column(name = "public_for_all_friends")
     private Boolean publicForAllFriends;
@@ -27,12 +35,13 @@ public class FreeTime extends TimeInterval {
     @Enumerated(EnumType.STRING)
     private PastimeType pastimeType;
 
-    @Enumerated(EnumType.STRING)
-    private FreeTimeStatus status;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "meeting_id", unique = true)
+    private Meeting meeting;
 
     @ManyToMany
     @JoinTable(

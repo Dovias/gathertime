@@ -1,21 +1,12 @@
 import { X } from "react-feather";
 import { FaUserCircle } from "react-icons/fa";
+import type { Meeting } from "../../api/MeetingApi";
 
 export interface Participant {
   id: string;
   firstName: string;
   lastName: string;
   avatar?: string | null;
-}
-
-export interface Meeting {
-  id: number;
-  summary: string | null;
-  description?: string | null;
-  startDateTime: string;
-  endDateTime: string;
-  location?: string | null;
-  participants?: Participant[];
 }
 
 export default function EventDetails({

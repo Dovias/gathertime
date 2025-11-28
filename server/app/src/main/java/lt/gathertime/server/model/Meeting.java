@@ -1,5 +1,6 @@
 package lt.gathertime.server.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -7,39 +8,43 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import lt.gathertime.server.model.enums.MeetingStatus;
 
-@Entity
 @Data
-@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class Meeting extends Event {
-    
+@Builder
+@Entity
+public class Meeting {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "summary")
+    private String summary;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "location")
+    private String location;
+
     @Column(name = "max_participants")
     private Integer maxParticipants;
 
     @Enumerated(EnumType.STRING)
     private MeetingStatus status;
-
-    @OneToOne
-    @JoinColumn(name = "free_time_id")
-    private FreeTime freeTime;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
-    private User owner;
 
     @ManyToMany
     @JoinTable(

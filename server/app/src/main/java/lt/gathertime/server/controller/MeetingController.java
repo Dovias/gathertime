@@ -1,6 +1,5 @@
 package lt.gathertime.server.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -8,8 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lt.gathertime.server.dto.meeting.CreateMeetingRequestDTO;
-import lt.gathertime.server.dto.meeting.MeetingResponseDTO;
+import lt.gathertime.server.dto.meeting.MeetingCreationRequest;
+import lt.gathertime.server.dto.meeting.MeetingResponse;
 import lt.gathertime.server.dto.meeting.MeetingSummaryDTO;
 import lt.gathertime.server.service.MeetingService;
 
@@ -22,7 +21,7 @@ public class MeetingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createMeeting(@Valid @RequestBody CreateMeetingRequestDTO createMeetingRequestDTO) {
+    public void createMeeting(@Valid @RequestBody MeetingCreationRequest createMeetingRequestDTO) {
         meetingService.createMeeting(createMeetingRequestDTO);
     }
     
@@ -40,17 +39,14 @@ public class MeetingController {
 
     @GetMapping("/{meetingId}")
     @ResponseStatus(HttpStatus.OK)
-    public MeetingResponseDTO getMeeting(@PathVariable Long meetingId) {
+    public MeetingResponse getMeeting(@PathVariable Long meetingId) {
         return meetingService.getMeeting(meetingId);
     }
 
     @GetMapping("user/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<MeetingSummaryDTO> getUserMeetings(
-        @PathVariable Long userId, 
-        @RequestParam LocalDateTime startDateTime,  
-        @RequestParam LocalDateTime endDateTime) {
-            return meetingService.getUserMeetings(userId, startDateTime, endDateTime);
+    public List<MeetingSummaryDTO> getAllUserMeetings(@PathVariable Long userId) {
+            return meetingService.getAllUserMeetings(userId);
     }
 
 }

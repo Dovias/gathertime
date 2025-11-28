@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lt.gathertime.server.dto.freetime.CreateFreeTimeRequestDTO;
-import lt.gathertime.server.dto.freetime.FreeTimeDTO;
+import lt.gathertime.server.dto.freetime.UserFreeTimeCreationRequest;
+import lt.gathertime.server.dto.freetime.UserFreeTimeResponse;
 import lt.gathertime.server.dto.freetime.FriendFreeTimeDTO;
 import lt.gathertime.server.service.FreeTimeService;
 
@@ -30,13 +30,13 @@ public class FreeTimeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createFreeTime(@Valid @RequestBody CreateFreeTimeRequestDTO createFreeTimeRequestDTO) {
+    public void createFreeTime(@Valid @RequestBody UserFreeTimeCreationRequest createFreeTimeRequestDTO) {
         freeTimeService.createFreeTime(createFreeTimeRequestDTO);
     }
 
     @GetMapping("/user/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<FreeTimeDTO> getFreeTimes(
+    public List<UserFreeTimeResponse> getFreeTimes(
         @PathVariable Long userId, 
         @RequestParam LocalDateTime startDateTime,  
         @RequestParam LocalDateTime endDateTime) {

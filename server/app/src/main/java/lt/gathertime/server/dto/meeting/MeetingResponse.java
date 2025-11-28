@@ -1,6 +1,5 @@
 package lt.gathertime.server.dto.meeting;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -14,12 +13,9 @@ import lt.gathertime.server.model.enums.MeetingStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MeetingResponseDTO {
+public class MeetingResponse {
 
     private Long id;
-
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
 
     private String summary;
     private String description;
@@ -27,9 +23,6 @@ public class MeetingResponseDTO {
 
     private Integer maxParticipants;
     private MeetingStatus status;
-
-    private Long freeTimeId;
-    private UserFullNameDTO owner;
 
     private List<UserFullNameDTO> participants;
     private List<Long> activityIds;

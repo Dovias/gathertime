@@ -1,6 +1,9 @@
+import type { Meeting } from "./Meeting";
+
 export type FreeTime = {
   id: number;
-  userId: number;
+  ownerId: number;
+  meeting: Meeting | null;
   startDateTime: string;
   endDateTime: string;
 };
