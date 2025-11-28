@@ -1,4 +1,4 @@
-package lt.gathertime.server.dto.friendshipDTOs;
+package lt.gathertime.server.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class CreateFriendshipRequestDTO {
+public class LoginRequestDTO {
 
-    private Long userId;
-
-    private Long friendId;
+    private String email;
+    private String password;
 }

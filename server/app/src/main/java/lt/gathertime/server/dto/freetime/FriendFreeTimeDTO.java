@@ -1,4 +1,4 @@
-package lt.gathertime.server.dto.freetimeDTOs;
+package lt.gathertime.server.dto.freetime;
 
 import java.time.LocalDateTime;
 import java.util.List;
