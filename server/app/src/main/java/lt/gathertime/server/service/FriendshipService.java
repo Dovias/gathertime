@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import lt.gathertime.server.dto.friendshipDTOs.CreateFriendshipRequestDTO;
-import lt.gathertime.server.dto.friendshipDTOs.FriendshipRequestDTO;
+import lt.gathertime.server.dto.friendship.CreateFriendshipRequestDTO;
+import lt.gathertime.server.dto.friendship.FriendshipRequestDTO;
 import lt.gathertime.server.mapper.FriendshipMapper;
 import lt.gathertime.server.model.Friendship;
 import lt.gathertime.server.model.User;

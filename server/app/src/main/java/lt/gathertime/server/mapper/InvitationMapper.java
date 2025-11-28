@@ -1,8 +1,9 @@
 package lt.gathertime.server.mapper;
 
 import java.time.LocalDateTime;
-import lt.gathertime.server.dto.invitationDTOs.InvitationRequestDTO;
-import lt.gathertime.server.dto.invitationDTOs.InvitationResponseDTO;
+
+import lt.gathertime.server.dto.invitation.InvitationRequestDTO;
+import lt.gathertime.server.dto.invitation.InvitationResponseDTO;
 import lt.gathertime.server.model.Invitation;
 import lt.gathertime.server.model.Meeting;
 import lt.gathertime.server.model.User;

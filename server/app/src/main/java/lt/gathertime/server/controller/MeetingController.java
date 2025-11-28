@@ -1,8 +1,5 @@
 package lt.gathertime.server.controller;
 
-import lt.gathertime.server.dto.meetingDTOs.MeetingResponseDTO;
-import lt.gathertime.server.dto.meetingDTOs.MeetingSummaryDTO;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -11,8 +8,9 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
-import lt.gathertime.server.dto.meetingDTOs.CreateMeetingRequestDTO;
+import lt.gathertime.server.dto.meeting.CreateMeetingRequestDTO;
+import lt.gathertime.server.dto.meeting.MeetingResponseDTO;
+import lt.gathertime.server.dto.meeting.MeetingSummaryDTO;
 import lt.gathertime.server.service.MeetingService;
 
 @RestController

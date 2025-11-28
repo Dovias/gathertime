@@ -1,6 +1,6 @@
 package lt.gathertime.server.service;
 
-import lt.gathertime.server.dto.userDTOs.*;
+import lt.gathertime.server.dto.user.*;
 import lt.gathertime.server.model.EmailVerificationCode;
 import lt.gathertime.server.model.User;
 import lt.gathertime.server.repository.EmailVerificationCodeRepository;

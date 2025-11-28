@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import lt.gathertime.server.dto.meetingDTOs.MeetingResponseDTO;
-import lt.gathertime.server.dto.meetingDTOs.MeetingSummaryDTO;
-import lt.gathertime.server.dto.userDTOs.UserFullNameDTO;
+import lt.gathertime.server.dto.meeting.MeetingResponseDTO;
+import lt.gathertime.server.dto.meeting.MeetingSummaryDTO;
+import lt.gathertime.server.dto.user.UserFullNameDTO;
 import lt.gathertime.server.model.Activity;
 import lt.gathertime.server.model.FreeTime;
 import lt.gathertime.server.model.Meeting;

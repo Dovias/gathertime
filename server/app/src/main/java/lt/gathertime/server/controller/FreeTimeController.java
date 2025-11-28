@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lt.gathertime.server.dto.freetimeDTOs.CreateFreeTimeRequestDTO;
-import lt.gathertime.server.dto.freetimeDTOs.FreeTimeDTO;
-import lt.gathertime.server.dto.freetimeDTOs.FriendFreeTimeDTO;
+import lt.gathertime.server.dto.freetime.CreateFreeTimeRequestDTO;
+import lt.gathertime.server.dto.freetime.FreeTimeDTO;
+import lt.gathertime.server.dto.freetime.FriendFreeTimeDTO;
 import lt.gathertime.server.service.FreeTimeService;
 
 @RestController
