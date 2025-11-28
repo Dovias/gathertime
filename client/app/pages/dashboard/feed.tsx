@@ -7,10 +7,10 @@ import {
 } from "../../api/MeetingApi";
 import EventCard from "../../components/cards/EventCard";
 import EventDetails from "../../components/cards/EventDetails";
+import { userContext } from "../../context";
 import type { Meeting } from "../../models/Meeting";
 import { getFormattedDate } from "../../utilities/date";
 import type { Route } from "./+types/feed";
-import { userContext } from "../../context";
 
 export async function clientLoader({ context }: Route.ClientLoaderArgs) {
   const user = context.get(userContext);
