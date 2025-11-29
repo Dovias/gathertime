@@ -2,7 +2,7 @@ package lt.gathertime.server.mapper;
 
 import lt.gathertime.server.dto.user.RegistrationRequestDTO;
 import lt.gathertime.server.dto.user.UserResponseDTO;
-import lt.gathertime.server.model.User;
+import lt.gathertime.server.entity.User;
 
 public class UserMapper {
 

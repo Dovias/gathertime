@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lt.gathertime.server.model.enums.InvitationStatus;
+import lt.gathertime.server.enums.InvitationStatus;
 
 @Getter
 @NoArgsConstructor

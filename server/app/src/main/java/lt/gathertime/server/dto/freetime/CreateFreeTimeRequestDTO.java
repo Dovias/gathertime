@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import lt.gathertime.server.model.enums.PastimeType;
+import lt.gathertime.server.enums.PastimeType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

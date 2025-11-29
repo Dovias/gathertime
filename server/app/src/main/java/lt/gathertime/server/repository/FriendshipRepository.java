@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import lt.gathertime.server.model.Friendship;
+import lt.gathertime.server.entity.Friendship;
 
 @Repository
 public interface FriendshipRepository extends JpaRepository<Friendship, Long> {

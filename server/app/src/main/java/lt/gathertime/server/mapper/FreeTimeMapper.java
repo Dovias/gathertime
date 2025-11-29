@@ -5,10 +5,10 @@ import java.util.List;
 import lt.gathertime.server.dto.freetime.CreateFreeTimeRequestDTO;
 import lt.gathertime.server.dto.freetime.FreeTimeDTO;
 import lt.gathertime.server.dto.freetime.FriendFreeTimeDTO;
-import lt.gathertime.server.model.Activity;
-import lt.gathertime.server.model.FreeTime;
-import lt.gathertime.server.model.User;
-import lt.gathertime.server.model.enums.FreeTimeStatus;
+import lt.gathertime.server.entity.Activity;
+import lt.gathertime.server.entity.FreeTime;
+import lt.gathertime.server.entity.User;
+import lt.gathertime.server.enums.FreeTimeStatus;
 
 public class FreeTimeMapper {
 

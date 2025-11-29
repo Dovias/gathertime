@@ -1,8 +1,8 @@
 package lt.gathertime.server.mapper;
 
 import lt.gathertime.server.dto.friendship.FriendshipRequestDTO;
-import lt.gathertime.server.model.Friendship;
-import lt.gathertime.server.model.User;
+import lt.gathertime.server.entity.Friendship;
+import lt.gathertime.server.entity.User;
 
 public class FriendshipMapper {
 

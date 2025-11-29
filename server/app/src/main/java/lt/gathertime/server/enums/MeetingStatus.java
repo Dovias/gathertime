@@ -1,4 +1,4 @@
-package lt.gathertime.server.model.enums;
+package lt.gathertime.server.enums;
 
 public enum MeetingStatus {
     ARRANGED,

@@ -1,7 +1,5 @@
 package lt.gathertime.server.repository;
 
-import lt.gathertime.server.model.FreeTime;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -9,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import lt.gathertime.server.entity.FreeTime;
 
 @Repository
 public interface FreeTimeRepository extends JpaRepository<FreeTime, Long> {

@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import lt.gathertime.server.dto.user.UserFullNameDTO;
-import lt.gathertime.server.model.enums.MeetingStatus;
+import lt.gathertime.server.enums.MeetingStatus;
 
 @Getter
 @NoArgsConstructor

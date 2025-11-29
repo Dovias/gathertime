@@ -1,4 +1,4 @@
-package lt.gathertime.server.model;
+package lt.gathertime.server.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

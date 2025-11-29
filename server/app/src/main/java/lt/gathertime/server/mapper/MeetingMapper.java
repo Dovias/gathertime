@@ -7,11 +7,11 @@ import java.util.stream.Collectors;
 import lt.gathertime.server.dto.meeting.MeetingResponseDTO;
 import lt.gathertime.server.dto.meeting.MeetingSummaryDTO;
 import lt.gathertime.server.dto.user.UserFullNameDTO;
-import lt.gathertime.server.model.Activity;
-import lt.gathertime.server.model.FreeTime;
-import lt.gathertime.server.model.Meeting;
-import lt.gathertime.server.model.User;
-import lt.gathertime.server.model.enums.MeetingStatus;
+import lt.gathertime.server.entity.Activity;
+import lt.gathertime.server.entity.FreeTime;
+import lt.gathertime.server.entity.Meeting;
+import lt.gathertime.server.entity.User;
+import lt.gathertime.server.enums.MeetingStatus;
 
 public class MeetingMapper {
 

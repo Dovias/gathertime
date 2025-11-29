@@ -1,4 +1,4 @@
-package lt.gathertime.server.model;
+package lt.gathertime.server.entity;
 
 import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;

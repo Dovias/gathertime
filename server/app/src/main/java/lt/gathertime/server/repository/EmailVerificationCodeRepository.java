@@ -1,7 +1,8 @@
 package lt.gathertime.server.repository;
 
-import lt.gathertime.server.model.EmailVerificationCode;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import lt.gathertime.server.entity.EmailVerificationCode;
 
 import java.util.Optional;
 

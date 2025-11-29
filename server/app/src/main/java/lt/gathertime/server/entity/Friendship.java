@@ -1,11 +1,8 @@
-package lt.gathertime.server.model;
+package lt.gathertime.server.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,7 +14,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lt.gathertime.server.model.enums.InvitationStatus;
 
 @Entity
 @Data
@@ -25,30 +21,27 @@ import lt.gathertime.server.model.enums.InvitationStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class Invitation {
+public class Friendship {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    private Long id;
 
-    @Column(name = "created_date_time")
-    protected LocalDateTime createdDateTime;
+    private LocalDateTime starDateTime;
 
-    @Column(name = "modified_date_time")
-    protected LocalDateTime modifiedDateTime;
+    private Boolean isBestFriends;
 
-    @Enumerated(EnumType.STRING)
-    private InvitationStatus status;
+    private Boolean isConfirmed;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "meeting_id")
-    private Meeting meeting;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "inviter_id")
-    private User inviter;
+    @JoinColumn(name = "friend_id")
+    private User friend;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "invitee_id")
-    private User invitee;
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
 }

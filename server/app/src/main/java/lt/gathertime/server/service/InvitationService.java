@@ -2,17 +2,17 @@ package lt.gathertime.server.service;
 
 import java.util.List;
 
-import lt.gathertime.server.model.enums.InvitationStatus;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.invitation.InvitationRequestDTO;
 import lt.gathertime.server.dto.invitation.InvitationResponseDTO;
+import lt.gathertime.server.entity.Invitation;
+import lt.gathertime.server.entity.Meeting;
+import lt.gathertime.server.entity.User;
+import lt.gathertime.server.enums.InvitationStatus;
 import lt.gathertime.server.mapper.InvitationMapper;
-import lt.gathertime.server.model.Invitation;
-import lt.gathertime.server.model.Meeting;
-import lt.gathertime.server.model.User;
 import lt.gathertime.server.repository.InvitationRepository;
 import lt.gathertime.server.repository.MeetingRepository;
 import lt.gathertime.server.repository.UserRepository;

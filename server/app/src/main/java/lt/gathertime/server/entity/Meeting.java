@@ -1,4 +1,4 @@
-package lt.gathertime.server.model;
+package lt.gathertime.server.entity;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import lt.gathertime.server.model.enums.MeetingStatus;
+import lt.gathertime.server.enums.MeetingStatus;
 
 @Entity
 @Data

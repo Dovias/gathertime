@@ -1,8 +1,9 @@
 package lt.gathertime.server.repository;
 
-import lt.gathertime.server.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import lt.gathertime.server.entity.User;
 
 import java.util.Optional;
 

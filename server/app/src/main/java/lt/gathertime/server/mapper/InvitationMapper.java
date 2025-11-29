@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 
 import lt.gathertime.server.dto.invitation.InvitationRequestDTO;
 import lt.gathertime.server.dto.invitation.InvitationResponseDTO;
-import lt.gathertime.server.model.Invitation;
-import lt.gathertime.server.model.Meeting;
-import lt.gathertime.server.model.User;
-import lt.gathertime.server.model.enums.InvitationStatus;
+import lt.gathertime.server.entity.Invitation;
+import lt.gathertime.server.entity.Meeting;
+import lt.gathertime.server.entity.User;
+import lt.gathertime.server.enums.InvitationStatus;
 
 public class InvitationMapper {
 

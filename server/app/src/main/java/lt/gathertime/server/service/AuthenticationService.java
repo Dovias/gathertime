@@ -2,8 +2,8 @@ package lt.gathertime.server.service;
 
 import lt.gathertime.server.data.Password;
 import lt.gathertime.server.dto.user.*;
-import lt.gathertime.server.model.EmailVerificationCode;
-import lt.gathertime.server.model.User;
+import lt.gathertime.server.entity.EmailVerificationCode;
+import lt.gathertime.server.entity.User;
 import lt.gathertime.server.repository.EmailVerificationCodeRepository;
 import lt.gathertime.server.repository.UserRepository;
 import jakarta.transaction.Transactional;

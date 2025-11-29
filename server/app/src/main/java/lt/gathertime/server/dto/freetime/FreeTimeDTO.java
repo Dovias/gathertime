@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import lt.gathertime.server.model.enums.PastimeType;
+import lt.gathertime.server.enums.PastimeType;
 
 @Getter
 @NoArgsConstructor
