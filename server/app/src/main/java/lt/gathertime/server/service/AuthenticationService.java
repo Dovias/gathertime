@@ -1,11 +1,11 @@
 package lt.gathertime.server.service;
 
+import lt.gathertime.server.data.Password;
 import lt.gathertime.server.dto.user.*;
 import lt.gathertime.server.model.EmailVerificationCode;
 import lt.gathertime.server.model.User;
 import lt.gathertime.server.repository.EmailVerificationCodeRepository;
 import lt.gathertime.server.repository.UserRepository;
-import lt.gathertime.server.value.Password;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;

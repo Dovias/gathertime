@@ -1,7 +1,8 @@
 package lt.gathertime.server.configuration;
 
+import lt.gathertime.server.data.Password;
 import lt.gathertime.server.repository.UserRepository;
-import lt.gathertime.server.value.Password;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

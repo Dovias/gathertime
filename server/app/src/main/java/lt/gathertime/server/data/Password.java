@@ -1,4 +1,4 @@
-package lt.gathertime.server.value;
+package lt.gathertime.server.data;
 
 import java.util.Objects;
 import java.util.regex.Matcher;
