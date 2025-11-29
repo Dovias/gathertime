@@ -5,13 +5,13 @@ import lt.gathertime.server.model.EmailVerificationCode;
 import lt.gathertime.server.model.User;
 import lt.gathertime.server.repository.EmailVerificationCodeRepository;
 import lt.gathertime.server.repository.UserRepository;
+import lt.gathertime.server.value.Password;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,7 +23,6 @@ public class AuthenticationService {
 
     private final UserRepository userRepository;
     private final EmailVerificationCodeRepository codeRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final JavaMailSender mailSender;
@@ -66,7 +65,7 @@ public class AuthenticationService {
 
         User user = User.builder()
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .password(Password.encode(request.getPassword()).toString())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .build();
