@@ -49,7 +49,7 @@ public class ApplicationConfiguration {
 
             @Override
             public boolean matches(CharSequence rawPassword, String encodedPassword) {
-                return Password.encoded(rawPassword.toString()).validate(encodedPassword);
+                return Password.encoded(rawPassword.toString()).matches(encodedPassword);
             }
             
         };

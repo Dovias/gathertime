@@ -1,6 +1,8 @@
 package lt.gathertime.server.value;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -12,6 +14,7 @@ import com.google.common.base.Preconditions;
 
 @NullMarked
 public final class Password {
+    private final static Pattern PATTERN = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$");
     private final static PasswordEncoder ENCODER = new BCryptPasswordEncoder(BCryptVersion.$2A, 10);
 
     private final PasswordEncoder encoder;
@@ -22,7 +25,7 @@ public final class Password {
         this.value = value;
     }
 
-    public boolean validate(final String value) {
+    public boolean matches(final String value) {
         return this.encoder.matches(this.value, value);
     }
 
@@ -43,9 +46,16 @@ public final class Password {
         return Objects.hash(this.value);
     }
 
+    private static Password validated(final String password) {
+        Matcher matcher = Password.PATTERN.matcher(password);
+        Preconditions.checkArgument(matcher.matches(), "password does not comply with requirements");
+
+        return new Password(Password.ENCODER, Password.ENCODER.encode(password));
+    }
+
     public static Password encode(final String password) {
         Preconditions.checkNotNull(password, "password cannot be null");
-        return new Password(Password.ENCODER, Password.ENCODER.encode(password));
+        return Password.validated(password);
     }
     
 
