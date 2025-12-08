@@ -2,6 +2,7 @@ package lt.gathertime.server.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -77,7 +78,14 @@ public class MeetingService {
                         meeting.setStatus(MeetingStatus.CONFIRMED);
                 }
 
-                meeting.getFreeTime().setStatus(FreeTimeStatus.PLANNED);
+                FreeTime freeTime = Optional.ofNullable(meeting.getFreeTime().getId())
+                        .map(id -> freeTimeRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Free time not found with ID: " + id)))
+                        .orElse(null);
+
+                if (freeTime != null) {
+                        freeTime.setStatus(FreeTimeStatus.PLANNED);
+                }
 
                 invitation.setStatus(InvitationStatus.CONFIRMED);
                 invitation.setModifiedDateTime(LocalDateTime.now());
