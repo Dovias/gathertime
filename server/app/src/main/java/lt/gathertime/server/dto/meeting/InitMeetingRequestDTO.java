@@ -9,8 +9,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class CreateMeetingRequestDTO {
-    
+public class InitMeetingRequestDTO {
+
     private Long userId;
 
     private Long freeTimeId;

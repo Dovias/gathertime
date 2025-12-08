@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lt.gathertime.server.dto.meeting.CreateMeetingRequestDTO;
+import lt.gathertime.server.dto.meeting.InitMeetingRequestDTO;
 import lt.gathertime.server.dto.meeting.MeetingResponseDTO;
 import lt.gathertime.server.dto.meeting.MeetingSummaryDTO;
 import lt.gathertime.server.entity.FreeTime;
@@ -27,79 +27,86 @@ import lt.gathertime.server.repository.UserRepository;
 @RequiredArgsConstructor
 public class MeetingService {
 
-    private final FreeTimeRepository freeTimeRepository;
-    private final UserRepository userRepository;
-    private final MeetingRepository meetingRepository;
-    private final InvitationRepository invitationRepository;
+        private final FreeTimeRepository freeTimeRepository;
+        private final UserRepository userRepository;
+        private final MeetingRepository meetingRepository;
+        private final InvitationRepository invitationRepository;
 
-    @Transactional
-    public void createMeeting(CreateMeetingRequestDTO requestDto) {
-        LocalDateTime createdDateTime = LocalDateTime.now();
+        @Transactional
+        public void initMeeting(InitMeetingRequestDTO requestDto) {
+                LocalDateTime createdDateTime = LocalDateTime.now();
 
-        User inviter = userRepository.findById(requestDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + requestDto.getUserId()));
+                User inviter = userRepository.findById(requestDto.getUserId())
+                                .orElseThrow(() -> new RuntimeException(
+                                                "User not found with ID: " + requestDto.getUserId()));
 
-        FreeTime freeTime = freeTimeRepository.findById(requestDto.getFreeTimeId())
-                .orElseThrow(() -> new RuntimeException("Free time not found with ID: " + requestDto.getFreeTimeId()));
+                FreeTime freeTime = freeTimeRepository.findById(requestDto.getFreeTimeId())
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Free time not found with ID: " + requestDto.getFreeTimeId()));
 
-        Meeting meeting = MeetingMapper.fromCreateRequestDto(freeTime.getStartDateTime(), freeTime.getEndDateTime(),
-                freeTime, inviter);
-        meetingRepository.save(meeting);
+                Meeting meeting = MeetingMapper.fromCreateRequestDto(freeTime.getStartDateTime(),
+                                freeTime.getEndDateTime(),
+                                freeTime, inviter);
+                meetingRepository.save(meeting);
 
-        User invitee = freeTime.getUser();
+                User invitee = freeTime.getUser();
 
-        Invitation invitation = Invitation.builder()
-                .meeting(meeting)
-                .inviter(inviter)
-                .invitee(invitee)
-                .createdDateTime(createdDateTime)
-                .modifiedDateTime(createdDateTime)
-                .status(InvitationStatus.SENT)
-                .build();
+                Invitation invitation = Invitation.builder()
+                                .meeting(meeting)
+                                .inviter(inviter)
+                                .invitee(invitee)
+                                .createdDateTime(createdDateTime)
+                                .modifiedDateTime(createdDateTime)
+                                .status(InvitationStatus.SENT)
+                                .build();
 
-        invitationRepository.save(invitation);
-    }
-
-    @Transactional
-    public void confirmMeeting(Long invitationId) {
-        Invitation invitation = invitationRepository.findById(invitationId)
-                .orElseThrow(() -> new RuntimeException("Invitation not found with ID: " + invitationId));
-
-        Meeting meeting = invitation.getMeeting();
-
-        List<User> participants = meeting.getMeetingParticipants();
-        participants.add(invitation.getInvitee());
-        if (participants.size() > 1) {
-            meeting.setStatus(MeetingStatus.CONFIRMED);
+                invitationRepository.save(invitation);
         }
 
-        meeting.getFreeTime().setStatus(FreeTimeStatus.PLANNED);
+        @Transactional
+        public void confirmMeeting(Long invitationId) {
+                Invitation invitation = invitationRepository.findById(invitationId)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Invitation not found with ID: " + invitationId));
 
-        invitation.setStatus(InvitationStatus.CONFIRMED);
-        invitation.setModifiedDateTime(LocalDateTime.now());
-    }
+                Meeting meeting = invitation.getMeeting();
 
-    @Transactional
-    public void declineMeeting(Long invitationId) {
-        Invitation invitation = invitationRepository.findById(invitationId)
-                .orElseThrow(() -> new RuntimeException("Invitation not found with ID: " + invitationId));
+                List<User> participants = meeting.getMeetingParticipants();
+                participants.add(invitation.getInvitee());
+                if (participants.size() > 1) {
+                        meeting.setStatus(MeetingStatus.CONFIRMED);
+                }
 
-        invitation.setStatus(InvitationStatus.DECLINED);
-        invitation.setModifiedDateTime(LocalDateTime.now());
-    }
+                meeting.getFreeTime().setStatus(FreeTimeStatus.PLANNED);
 
-    public MeetingResponseDTO getMeeting(Long meetingId) {
-        Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(() -> new RuntimeException("Meeting not found with ID: " + meetingId));
+                invitation.setStatus(InvitationStatus.CONFIRMED);
+                invitation.setModifiedDateTime(LocalDateTime.now());
+        }
 
-        return MeetingMapper.toResponse(meeting);
-    }
-    
-    public List<MeetingSummaryDTO> getUserMeetings(Long userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        List<Meeting> meetings = meetingRepository.findUserMeetingsInRange(userId, startDateTime, endDateTime);
-        return meetings.stream()
-                .map(meeting -> MeetingMapper.toMeetingSummaryDTO(meeting, meeting.getMeetingParticipants()))
-                .toList();
-    }
+        @Transactional
+        public void declineMeeting(Long invitationId) {
+                Invitation invitation = invitationRepository.findById(invitationId)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Invitation not found with ID: " + invitationId));
+
+                invitation.setStatus(InvitationStatus.DECLINED);
+                invitation.setModifiedDateTime(LocalDateTime.now());
+        }
+
+        public MeetingResponseDTO getMeeting(Long meetingId) {
+                Meeting meeting = meetingRepository.findById(meetingId)
+                                .orElseThrow(() -> new RuntimeException("Meeting not found with ID: " + meetingId));
+
+                return MeetingMapper.toResponse(meeting);
+        }
+
+        public List<MeetingSummaryDTO> getUserMeetings(Long userId, LocalDateTime startDateTime,
+                        LocalDateTime endDateTime) {
+                List<Meeting> meetings = meetingRepository.findUserMeetingsInRange(userId, startDateTime, endDateTime);
+                return meetings.stream()
+                                .map(meeting -> MeetingMapper.toMeetingSummaryDTO(meeting,
+                                                meeting.getMeetingParticipants()))
+                                .toList();
+        }
 
 }
