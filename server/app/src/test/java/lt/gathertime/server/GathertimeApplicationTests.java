@@ -1,4 +1,4 @@
-package lt.gathertime.server.entity;
+package lt.gathertime.server;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
