@@ -38,27 +38,27 @@ export default function Login() {
         localStorage.setItem("user", JSON.stringify(data));
         navigate(appRoutes.dashboard.index);
       } else {
-        setError("Wrong email or password. Please try again.");
+        setError("Blogas e. paštas arba slaptažodis. Bandykite dar kartą.");
       }
     } catch (_error) {
-      setError("Wrong email or password. Please try again.");
+      setError("Blogas e. paštas arba slaptažodis. Bandykite dar kartą.");
     }
   };
 
   return (
     <div className="bg-white shadow-lg rounded-2xl px-10 py-10 w-[400px] text-center">
       <h1 className="text-3xl font-semibold mb-6 text-gray-800">
-        Welcome Back 👋
+        Sveiki sugrįžę 👋
       </h1>
       <p className="text-gray-500 mb-6">
-        Log in to continue to{" "}
+        Prisijunkite, kad pateiktumėte į{" "}
         <span className="text-blue-600 font-semibold">GatherTime</span>
       </p>
 
       <Form onSubmit={handleSubmit} className="space-y-5">
         <div className="text-left">
           <label htmlFor="email" className="text-gray-700 text-sm font-medium">
-            Email
+            Elektroninis paštas
           </label>
           <input
             type="email"
@@ -75,7 +75,7 @@ export default function Login() {
             htmlFor="password"
             className="text-gray-700 text-sm font-medium"
           >
-            Password
+            Slaptažodis
           </label>
           <input
             type="password"
@@ -95,17 +95,17 @@ export default function Login() {
           type="submit"
           className="w-full py-2 mt-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-60"
         >
-          Log In
+          Prisijungti
         </button>
       </Form>
 
       <div className="mt-6 text-sm text-gray-600">
-        Don’t have an account?{" "}
+        Neturite paskyros?{" "}
         <Link
           to={appRoutes.auth.register}
           className="text-purple-600 font-semibold hover:underline"
         >
-          Sign up
+          Prisiregistruoti
         </Link>
       </div>
     </div>

@@ -77,7 +77,7 @@ export default function Register() {
 
       if (user !== null) {
         setEmailError({
-          message: "Email is already registered",
+          message: "E. paštas jau naudojamas",
           errorType: ErrorType.EmailRegistered,
         });
       } else {
@@ -113,7 +113,7 @@ export default function Register() {
     } catch (error) {
       console.error(error);
       setError({
-        message: "Could not send verification code",
+        message: "Patvirtinimo kodas nebuvo išsiųstas",
         errorType: ErrorType.Other,
       });
     } finally {
@@ -126,11 +126,9 @@ export default function Register() {
       {/* Header */}
       <div className="text-center mb-6">
         <h1 className="text-4xl font-semibold text-gray-800 mb-2">
-          Welcome to <span className="text-indigo-600">GatherTime?</span>
+          Sveiki atvykę į <span className="text-indigo-600">GatherTime?</span>
         </h1>
-        <p className="text-gray-500 text-sm">
-          Create your account to get started
-        </p>
+        <p className="text-gray-500 text-sm">Susikurkite paskyrą</p>
       </div>
 
       {/* Form */}
@@ -141,7 +139,7 @@ export default function Register() {
             htmlFor="email"
             className="block text-sm font-medium text-gray-700 text-left"
           >
-            Email
+            Elektroninis paštas
           </label>
           <input
             type="email"
@@ -163,7 +161,7 @@ export default function Register() {
             htmlFor="firstName"
             className="block text-sm font-medium text-gray-700 text-left"
           >
-            First Name
+            Vardas
           </label>
           <input
             type="text"
@@ -181,7 +179,7 @@ export default function Register() {
             htmlFor="lastName"
             className="block text-sm font-medium text-gray-700 text-left"
           >
-            Last Name
+            Pavardė
           </label>
           <input
             type="text"
@@ -199,7 +197,7 @@ export default function Register() {
             htmlFor="password"
             className="block text-sm font-medium text-gray-700 text-left"
           >
-            Password
+            Slaptažodis
           </label>
           <input
             type="password"
@@ -210,7 +208,7 @@ export default function Register() {
             className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           />
           {error.errorType === ErrorType.TooWeakPassword && (
-            <p className="text-sm text-red-500 mt-1">Password is too weak</p>
+            <p className="text-sm text-red-500 mt-1">Slaptažodis per silpnas</p>
           )}
         </div>
 
@@ -220,7 +218,7 @@ export default function Register() {
             htmlFor="confirmPassword"
             className="block text-sm font-medium text-gray-700 text-left"
           >
-            Confirm Password
+            Patvirtinkite slaptažodį
           </label>
           <input
             type="password"
@@ -231,7 +229,7 @@ export default function Register() {
             className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           />
           {error.errorType === ErrorType.PasswordNotMatch && (
-            <p className="text-sm text-red-500 mt-1">Passwords do not match</p>
+            <p className="text-sm text-red-500 mt-1">Slaptažodžiai nesutampa</p>
           )}
         </div>
 
@@ -241,19 +239,19 @@ export default function Register() {
           disabled={isSubmitting}
           className="w-full py-2 mt-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-60"
         >
-          {isSubmitting ? "Signing up..." : "Sign Up"}
+          {isSubmitting ? "Registruojama..." : "Prisiregistruoti"}
         </button>
       </form>
 
       {/* Footer */}
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600">
-          Already have an account?{" "}
+          Jau turite paskyrą?{" "}
           <Link
             to={appRoutes.auth.login}
             className="text-indigo-600 hover:text-indigo-800 font-medium"
           >
-            Log in
+            Prisijungti
           </Link>
         </p>
       </div>

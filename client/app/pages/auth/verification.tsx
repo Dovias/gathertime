@@ -34,7 +34,7 @@ export default function Verify() {
 
       navigate(appRoutes.auth.login);
     } catch (_err) {
-      setError("Invalid or expired code");
+      setError("Neteisingas arba pasibaigęs kodas");
     } finally {
       setIsSubmitting(false);
     }
@@ -43,11 +43,11 @@ export default function Verify() {
   return (
     <div className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md">
       <h2 className="text-2xl font-semibold text-center mb-4">
-        Verify your email
+        Patvirtinkite savo e. paštą
       </h2>
 
       <p className="text-center text-gray-600 mb-4">
-        A verification code has been sent to:
+        Patvirtinimo kodas buvo nusiųstas į
         <br />
         <span className="font-medium">{email}</span>
       </p>
@@ -55,7 +55,7 @@ export default function Verify() {
       <form onSubmit={handleVerify} className="space-y-4">
         <input
           type="text"
-          placeholder="Enter verification code"
+          placeholder="Įveskite patvirtinimo kodą"
           className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           value={code}
           onChange={(e) => setCode(e.target.value)}
@@ -69,7 +69,7 @@ export default function Verify() {
           disabled={isSubmitting}
           className="w-full py-2 bg-indigo-600 text-white rounded-lg"
         >
-          {isSubmitting ? "Verifying..." : "Verify Email"}
+          {isSubmitting ? "Tvirtinama..." : "Patvirtinti"}
         </button>
       </form>
     </div>
