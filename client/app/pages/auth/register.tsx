@@ -109,7 +109,7 @@ export default function Register() {
         password: credentials.password,
       });
 
-      navigate(`/verify-email?${params.toString()}`);
+      navigate(`${appRoutes.auth.verify}?${params.toString()}`);
     } catch (error) {
       console.error(error);
       setError({
