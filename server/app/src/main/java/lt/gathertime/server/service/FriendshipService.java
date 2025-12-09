@@ -52,6 +52,17 @@ public class FriendshipService {
                 .toList();
     }
 
+    public List<FriendshipRequestDTO> getFriendships(Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+
+        List<Friendship> friendships = friendshipRepository.getFriendships(userId);
+
+        return friendships.stream()
+                .map(FriendshipMapper::toFriendshipRequestDTO)
+                .toList();
+    }
+
     public void confirmFriendship(Long friendshipId) {
         Friendship friendshipRequest = friendshipRepository.findById(friendshipId)
             .orElseThrow(() -> new RuntimeException("Friendship not found with ID: " + friendshipId));
