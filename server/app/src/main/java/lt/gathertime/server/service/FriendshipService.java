@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.friendship.CreateFriendshipRequestDTO;
+import lt.gathertime.server.dto.friendship.FriendshipDTO;
 import lt.gathertime.server.dto.friendship.FriendshipRequestDTO;
 import lt.gathertime.server.entity.Chat;
 import lt.gathertime.server.entity.Friendship;
@@ -52,14 +53,14 @@ public class FriendshipService {
                 .toList();
     }
 
-    public List<FriendshipRequestDTO> getFriendships(Long userId) {
+    public List<FriendshipDTO> getFriendships(Long userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
         List<Friendship> friendships = friendshipRepository.getFriendships(userId);
 
         return friendships.stream()
-                .map(FriendshipMapper::toFriendshipRequestDTO)
+                .map(FriendshipMapper::toFriendshipDTO)
                 .toList();
     }
 
