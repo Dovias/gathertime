@@ -1,7 +1,9 @@
 package lt.gathertime.server.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -11,6 +13,7 @@ import lt.gathertime.server.entity.Chat;
 import lt.gathertime.server.entity.Comment;
 import lt.gathertime.server.entity.User;
 import lt.gathertime.server.mapper.CommentMapper;
+import lt.gathertime.server.mapper.FreeTimeMapper;
 import lt.gathertime.server.repository.ChatRepository;
 import lt.gathertime.server.repository.CommentRepository;
 import lt.gathertime.server.repository.UserRepository;
@@ -42,5 +45,18 @@ public class ChatService {
                 commentRepository.save(comment);
 
                 return CommentMapper.toCommentDTO(comment);
+        }
+
+        public List<CommentDTO> getChatComments(Long chatId) {
+
+                Chat chat = chatRepository.findById(chatId)
+                                .orElseThrow(() -> new RuntimeException("Chat not found with id " + chatId));
+
+
+                List<Comment> comments = commentRepository.findChatComments(chat.getId(), PageRequest.of(0, 20));
+                
+                return comments.stream()
+                        .map(CommentMapper::toCommentDTO)
+                        .toList();
         }
 }
