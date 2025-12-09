@@ -77,4 +77,22 @@ public class ChatService {
 
                 comment.setContent(content);
         }
+
+        @Transactional
+        public void deleteComment(Long chatId, Long userId, Long commentId) {
+                Chat chat = chatRepository.findById(chatId)
+                                .orElseThrow(() -> new RuntimeException("Chat not found with id " + chatId));
+
+                User user = userRepository.findById(userId)
+                                .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+
+                Comment comment = commentRepository.findById(commentId)
+                                .orElseThrow(() -> new RuntimeException("Comment not found with id " + commentId));
+
+                if(user.getId() != comment.getUser().getId()) {
+                        throw new AccessDeniedException("You cannot delete someone else's comment");
+                }
+
+                commentRepository.delete(comment);
+        }
 }
