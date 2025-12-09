@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class CreateCommentRequestDTO {
+public class UpsertCommentRequestDTO {
 
     @NotBlank
     private String content;
