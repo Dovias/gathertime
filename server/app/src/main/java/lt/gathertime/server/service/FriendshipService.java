@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.friendship.CreateFriendshipRequestDTO;
 import lt.gathertime.server.dto.friendship.FriendshipRequestDTO;
+import lt.gathertime.server.entity.Chat;
 import lt.gathertime.server.entity.Friendship;
 import lt.gathertime.server.entity.User;
 import lt.gathertime.server.mapper.FriendshipMapper;
+import lt.gathertime.server.repository.ChatRepository;
 import lt.gathertime.server.repository.FriendshipRepository;
 import lt.gathertime.server.repository.UserRepository;
 
@@ -19,8 +21,8 @@ import lt.gathertime.server.repository.UserRepository;
 public class FriendshipService {
     
     private final FriendshipRepository friendshipRepository;
-
     private final UserRepository userRepository;
+    private final ChatRepository chatRepository;
 
     public void createFriendship(CreateFriendshipRequestDTO payload) {
         User user = userRepository.findById(payload.getUserId())
@@ -59,12 +61,19 @@ public class FriendshipService {
         friendshipRequest.setIsConfirmed(true);
         friendshipRequest.setStarDateTime(startDateTime);
 
+        Chat chat = new Chat();
+
+        chatRepository.save(chat);
+
+        friendshipRequest.setChat(chat);
+
         Friendship friendship = Friendship.builder()
                 .user(friendshipRequest.getFriend())
                 .friend(friendshipRequest.getUser())
                 .starDateTime(startDateTime)
                 .isBestFriends(false)
                 .isConfirmed(true)
+                .chat(chat)
                 .build();
 
         friendshipRepository.save(friendship);
