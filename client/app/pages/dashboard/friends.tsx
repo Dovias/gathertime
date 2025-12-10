@@ -1,39 +1,34 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getFriendships, getFriendshipRequests } from "../../api/FriendshipApi";
 import type { Friendship, FriendshipRequest } from "../../models/Friendship";
 import FriendsSection from "../../components/cards/FriendsSection";
 import FriendshipRequestsSection from "../../components/cards/FriendRequestsSection";
+import { userContext } from "../../context";
+import type { Route } from "./+types/friends";
 
-export default function Friends() {
-  const userId = 2; // replace with auth user
-  const [friends, setFriends] = useState<Friendship[]>([]);
-  const [requests, setRequests] = useState<FriendshipRequest[]>([]);
-  const [loading, setLoading] = useState(true);
+export async function clientLoader({ context }: Route.ClientLoaderArgs) {
+  const user = context.get(userContext);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [friendsData, requestsData] = await Promise.all([
-          getFriendships(userId),
-          getFriendshipRequests(userId)
-        ]);
-        setFriends(friendsData);
-        setRequests(requestsData);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
+  const [friends, requests] = await Promise.all([
+    getFriendships(user.id),
+    getFriendshipRequests(user.id),
+  ]);
 
-    fetchData();
-  }, [userId]);
+  return { friends, requests };
+}
+
+export default function Friends({ loaderData }: Route.ComponentProps) {
+  const safeData = loaderData || { friends: [], requests: [] };
+
+  const [friends, setFriends] = useState<Friendship[]>(safeData.friends);
+  const [requests, setRequests] = useState<FriendshipRequest[]>(safeData.requests);
+  const [loading, setLoading] = useState(false);
 
   if (loading) return <div>Loading...</div>;
 
   return (
     <main className="m-6 flex flex-col gap-8">
-      {requests.length > 0 && (<FriendshipRequestsSection requests={requests} />)}
+      {requests.length > 0 && <FriendshipRequestsSection requests={requests} />}
       <FriendsSection friends={friends} />
     </main>
   );
