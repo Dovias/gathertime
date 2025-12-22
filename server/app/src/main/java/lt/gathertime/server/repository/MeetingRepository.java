@@ -21,9 +21,9 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
             AND m.startDateTime >= :startDateTime
             AND m.endDateTime <= :endDateTime
         """)
-    public List<Meeting> findUserMeetingsInRange(
-        @Param("userId") Long userId,
-        @Param("startDateTime") LocalDateTime startDateTime,
-        @Param("endDateTime") LocalDateTime endDateTime
+    List<Meeting> findUserMeetingsInRange(
+            @Param("userId") Long userId,
+            @Param("startDateTime") LocalDateTime startDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime
     );
 }

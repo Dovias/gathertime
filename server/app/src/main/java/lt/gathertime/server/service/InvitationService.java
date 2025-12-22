@@ -26,22 +26,22 @@ public class InvitationService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void createInvitation(InvitationRequestDTO dto) {
-        Meeting meeting = meetingRepository.findById(dto.getMeetingId())
+    public void createInvitation(final InvitationRequestDTO dto) {
+        final Meeting meeting = this.meetingRepository.findById(dto.getMeetingId())
                 .orElseThrow(() -> new EntityNotFoundException("Meeting not found"));
 
-        User inviter = userRepository.findById(dto.getInviterId())
+        final User inviter = this.userRepository.findById(dto.getInviterId())
                 .orElseThrow(() -> new EntityNotFoundException("Inviter not found"));
 
-        User invitee = userRepository.findById(dto.getInviteeId())
+        final User invitee = this.userRepository.findById(dto.getInviteeId())
                 .orElseThrow(() -> new EntityNotFoundException("Invitee not found"));
 
-        Invitation invitation = InvitationMapper.fromRequest(dto, meeting, inviter, invitee);
-        invitationRepository.save(invitation);
+        final Invitation invitation = InvitationMapper.fromRequest(dto, meeting, inviter, invitee);
+        this.invitationRepository.save(invitation);
     }
 
-    public List<InvitationResponseDTO> getInvitationsForUser(Long userId) {
-        return invitationRepository.findAll()
+    public List<InvitationResponseDTO> getInvitationsForUser(final Long userId) {
+        return this.invitationRepository.findAll()
                 .stream()
                 .filter(i -> i.getInvitee().getId().equals(userId))
                 .filter(i -> i.getStatus() == InvitationStatus.SENT)

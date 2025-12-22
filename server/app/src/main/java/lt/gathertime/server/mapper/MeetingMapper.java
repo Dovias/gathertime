@@ -16,10 +16,10 @@ import lt.gathertime.server.enums.MeetingStatus;
 public class MeetingMapper {
 
     public static Meeting fromCreateRequestDto(
-        LocalDateTime start, 
-        LocalDateTime end, 
-        FreeTime freeTime, 
-        User inviter) {
+            final LocalDateTime start,
+            final LocalDateTime end,
+            final FreeTime freeTime,
+            final User inviter) {
         return Meeting.builder()
                 .startDateTime(start)
                 .endDateTime(end)
@@ -31,7 +31,7 @@ public class MeetingMapper {
                 .build();
     }
 
-    public static MeetingResponseDTO toResponse(Meeting m) {
+    public static MeetingResponseDTO toResponse(final Meeting m) {
         return MeetingResponseDTO.builder()
                 .id(m.getId())
                 .startDateTime(m.getStartDateTime())
@@ -63,7 +63,7 @@ public class MeetingMapper {
                 .build();
     }
     
-    public static MeetingSummaryDTO toMeetingSummaryDTO(Meeting meeting, List<User> participants) {
+    public static MeetingSummaryDTO toMeetingSummaryDTO(final Meeting meeting, final List<User> participants) {
         return MeetingSummaryDTO.builder()
                 .id(meeting.getId())
                 .startDateTime(meeting.getStartDateTime())

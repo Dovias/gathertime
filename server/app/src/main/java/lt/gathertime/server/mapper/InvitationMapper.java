@@ -11,7 +11,7 @@ import lt.gathertime.server.enums.InvitationStatus;
 
 public class InvitationMapper {
 
-    public static Invitation fromRequest(InvitationRequestDTO dto, Meeting meeting, User inviter, User invitee) {
+    public static Invitation fromRequest(final InvitationRequestDTO dto, final Meeting meeting, final User inviter, final User invitee) {
         return Invitation.builder()
                 .createdDateTime(LocalDateTime.now())
                 .modifiedDateTime(LocalDateTime.now())
@@ -22,7 +22,7 @@ public class InvitationMapper {
                 .build();
     }
 
-    public static InvitationResponseDTO toResponse(Invitation inv) {
+    public static InvitationResponseDTO toResponse(final Invitation inv) {
         return InvitationResponseDTO.builder()
                 .id(inv.getId())
                 .createdDateTime(inv.getCreatedDateTime())

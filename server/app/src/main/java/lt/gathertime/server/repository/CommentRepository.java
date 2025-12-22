@@ -17,6 +17,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             WHERE c.chat.id = :chatId
             ORDER BY c.sentDateTime DESC
             """)
-    public List<Comment> findChatComments(@Param("chatId") Long chatId, Pageable pageable);
+    List<Comment> findChatComments(@Param("chatId") Long chatId, Pageable pageable);
 }
 

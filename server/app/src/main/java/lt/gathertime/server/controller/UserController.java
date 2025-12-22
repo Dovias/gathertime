@@ -15,17 +15,17 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public UserResponseDTO getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    public UserResponseDTO getUserById(@PathVariable final Long id) {
+        return this.userService.getUserById(id);
     }
 
     @PutMapping("/update-profile")
-    public UserResponseDTO updateProfile(@RequestBody UpdateInfoDTO request) {
-        return userService.updateUserProfile(request);
+    public UserResponseDTO updateProfile(@RequestBody final UpdateInfoDTO request) {
+        return this.userService.updateUserProfile(request);
     }
 
     @PutMapping("/change-password")
-    public void changePassword(@RequestBody PasswordChangeDTO request) {
-        userService.changePassword(request.getId(), request.getPassword());
+    public void changePassword(@RequestBody final PasswordChangeDTO request) {
+        this.userService.changePassword(request.getId(), request.getPassword());
     }
 }

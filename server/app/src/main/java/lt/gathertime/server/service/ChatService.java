@@ -3,6 +3,7 @@ package lt.gathertime.server.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import lt.gathertime.server.data.Password;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -21,39 +22,37 @@ import lt.gathertime.server.repository.UserRepository;
 @Service
 @RequiredArgsConstructor
 public class ChatService {
-
         private final CommentRepository commentRepository;
         private final ChatRepository chatRepository;
         private final UserRepository userRepository;
 
         @Transactional
-        public CommentDTO createComment(Long chatId, Long userId, String content) {
-
-                Chat chat = chatRepository.findById(chatId)
+        public CommentDTO createComment(final Long chatId, final Long userId, final String content) {
+                final Chat chat = this.chatRepository.findById(chatId)
                                 .orElseThrow(() -> new RuntimeException("Chat not found with id " + chatId));
 
-                User user = userRepository.findById(userId)
+                final User user = this.userRepository.findById(userId)
                                 .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
 
-                Comment comment = Comment.builder()
+                final Comment comment = Comment.builder()
                                 .content(content)
                                 .sentDateTime(LocalDateTime.now())
                                 .chat(chat)
                                 .user(user)
                                 .build();
 
-                commentRepository.save(comment);
+            this.commentRepository.save(comment);
 
                 return CommentMapper.toCommentDTO(comment);
         }
 
-        public List<CommentDTO> getChatComments(Long chatId) {
+        public List<CommentDTO> getChatComments(final Long chatId) {
 
-                Chat chat = chatRepository.findById(chatId)
+                final Chat chat = this.chatRepository.findById(chatId)
                                 .orElseThrow(() -> new RuntimeException("Chat not found with id " + chatId));
 
 
-                List<Comment> comments = commentRepository.findChatComments(chat.getId(), PageRequest.of(0, 20));
+                final List<Comment> comments = this.commentRepository.findChatComments(chat.getId(), PageRequest.of(0, 20));
                 
                 return comments.stream()
                         .map(CommentMapper::toCommentDTO)
@@ -61,14 +60,14 @@ public class ChatService {
         }
 
         @Transactional
-        public void updateComment(Long chatId, Long userId, Long commentId, String content) {
-                Chat chat = chatRepository.findById(chatId)
+        public void updateComment(final Long chatId, final Long userId, final Long commentId, final String content) {
+                final Chat chat = this.chatRepository.findById(chatId)
                                 .orElseThrow(() -> new RuntimeException("Chat not found with id " + chatId));
 
-                User user = userRepository.findById(userId)
+                final User user = this.userRepository.findById(userId)
                                 .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
 
-                Comment comment = commentRepository.findById(commentId)
+                final Comment comment = this.commentRepository.findById(commentId)
                                 .orElseThrow(() -> new RuntimeException("Comment not found with id " + commentId));
 
                 if(user.getId() != comment.getUser().getId()) {
@@ -79,20 +78,20 @@ public class ChatService {
         }
 
         @Transactional
-        public void deleteComment(Long chatId, Long userId, Long commentId) {
-                Chat chat = chatRepository.findById(chatId)
+        public void deleteComment(final Long chatId, final Long userId, final Long commentId) {
+                final Chat chat = this.chatRepository.findById(chatId)
                                 .orElseThrow(() -> new RuntimeException("Chat not found with id " + chatId));
 
-                User user = userRepository.findById(userId)
+                final User user = this.userRepository.findById(userId)
                                 .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
 
-                Comment comment = commentRepository.findById(commentId)
+                final Comment comment = this.commentRepository.findById(commentId)
                                 .orElseThrow(() -> new RuntimeException("Comment not found with id " + commentId));
 
                 if(user.getId() != comment.getUser().getId()) {
                         throw new AccessDeniedException("You cannot delete someone else's comment");
                 }
 
-                commentRepository.delete(comment);
+            this.commentRepository.delete(comment);
         }
 }

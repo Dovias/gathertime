@@ -20,13 +20,13 @@ public class InvitationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createInvitation(@Valid @RequestBody InvitationRequestDTO dto) {
-        invitationService.createInvitation(dto);
+    public void createInvitation(@Valid @RequestBody final InvitationRequestDTO dto) {
+        this.invitationService.createInvitation(dto);
     }
 
     @GetMapping("/user/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<InvitationResponseDTO> getInvitations(@PathVariable Long userId) {
-        return invitationService.getInvitationsForUser(userId);
+    public List<InvitationResponseDTO> getInvitations(@PathVariable final Long userId) {
+        return this.invitationService.getInvitationsForUser(userId);
     }
 }

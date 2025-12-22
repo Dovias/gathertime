@@ -7,8 +7,8 @@ import lt.gathertime.server.entity.User;
 
 public class FriendshipMapper {
 
-    public static FriendshipDTO toFriendshipDTO(Friendship friendship) {
-        User friend = friendship.getUser();
+    public static FriendshipDTO toFriendshipDTO(final Friendship friendship) {
+        final User friend = friendship.getUser();
 
         return FriendshipDTO.builder()
                 .friendshipId(friendship.getId())
@@ -18,8 +18,8 @@ public class FriendshipMapper {
                 .build();
     }
 
-    public static FriendshipRequestDTO toFriendshipRequestDTO(Friendship friendship) {
-        User friend = friendship.getUser();
+    public static FriendshipRequestDTO toFriendshipRequestDTO(final Friendship friendship) {
+        final User friend = friendship.getUser();
 
         return FriendshipRequestDTO.builder()
                 .friendshipId(friendship.getId())

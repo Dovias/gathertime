@@ -17,34 +17,34 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserResponseDTO getUserById(Long id) {
-        User user = userRepository.findById(id)
+    public UserResponseDTO getUserById(final Long id) {
+        final User user = this.userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
         return UserMapper.toDto(user);
     }
 
-    public UserResponseDTO updateUserProfile(UpdateInfoDTO request) {
+    public UserResponseDTO updateUserProfile(final UpdateInfoDTO request) {
 
-        User user = userRepository.findById(request.getId())
+        final User user = this.userRepository.findById(request.getId())
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + request.getId()));
 
         user.setEmail(request.getEmail());
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
 
-        User saved = userRepository.save(user);
+        final User saved = this.userRepository.save(user);
 
         return UserMapper.toDto(saved);
     }
 
     @Transactional
-    public void changePassword(Long id, String newPassword) {
-        User user = userRepository.findById(id)
+    public void changePassword(final Long id, final String newPassword) {
+        final User user = this.userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
 
-        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPassword(this.passwordEncoder.encode(newPassword));
 
-        userRepository.save(user);
+        this.userRepository.save(user);
     }
 
 }

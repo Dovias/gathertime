@@ -1,5 +1,7 @@
 package lt.gathertime.server.service;
 
+import lt.gathertime.server.data.Digestible;
+import lt.gathertime.server.data.Hash;
 import lt.gathertime.server.data.Password;
 import lt.gathertime.server.dto.user.*;
 import lt.gathertime.server.entity.EmailVerificationCode;
@@ -27,28 +29,28 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JavaMailSender mailSender;
 
-    public void sendVerificationCode(String email) {
-        String code = String.format("%06d", new Random().nextInt(1_000_000));
+    public void sendVerificationCode(final String email) {
+        final String code = String.format("%06d", new Random().nextInt(1_000_000));
 
-        EmailVerificationCode entity = EmailVerificationCode.builder()
+        final EmailVerificationCode entity = EmailVerificationCode.builder()
                 .email(email)
                 .code(code)
                 .expiresAt(LocalDateTime.now().plusMinutes(10))
                 .used(false)
                 .build();
-        codeRepository.save(entity);
+        this.codeRepository.save(entity);
 
-        SimpleMailMessage message = new SimpleMailMessage();
+        final SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("GatherTime – Registration Code");
         message.setText("Your verification code is: " + code);
 
-        mailSender.send(message);
+        this.mailSender.send(message);
     }
 
     @Transactional
-    public AuthenticationResponseDTO verifyCodeAndRegister(VerifyCodeAndRegisterDTO request) {
-        EmailVerificationCode verification = codeRepository
+    public AuthenticationResponseDTO verifyCodeAndRegister(final VerifyCodeAndRegisterDTO request) {
+        final EmailVerificationCode verification = this.codeRepository
                 .findTopByEmailAndUsedIsFalseOrderByExpiresAtDesc(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Code not found"));
 
@@ -61,17 +63,17 @@ public class AuthenticationService {
         }
 
         verification.setUsed(true);
-        codeRepository.save(verification);
+        this.codeRepository.save(verification);
 
-        User user = User.builder()
+        final User user = User.builder()
                 .email(request.getEmail())
-                .password(Password.encode(request.getPassword()).toString())
+                .password(Hash.from(Digestible.of(Password.of(request.getPassword()).value())).value())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .build();
-        userRepository.save(user);
+        this.userRepository.save(user);
 
-        var jwtToken = jwtService.generateToken(user);
+        final var jwtToken = this.jwtService.generateToken(user);
 
         return AuthenticationResponseDTO.builder()
                 .id(user.getId())
@@ -82,18 +84,18 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponseDTO login(LoginRequestDTO request) {
-        authenticationManager.authenticate(
+    public AuthenticationResponseDTO login(final LoginRequestDTO request) {
+        this.authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
 
-        var user = userRepository.findByEmail(request.getEmail())
+        final var user = this.userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
 
-        var jwtToken = jwtService.generateToken(user);
+        final var jwtToken = this.jwtService.generateToken(user);
 
         return AuthenticationResponseDTO.builder()
                 .id(user.getId())

@@ -6,7 +6,7 @@ import lt.gathertime.server.entity.User;
 
 public class UserMapper {
 
-    public static UserResponseDTO toDto(User user){
+    public static UserResponseDTO toDto(final User user){
 
         return UserResponseDTO.builder()
                 .id(user.getId())
@@ -16,7 +16,7 @@ public class UserMapper {
                 .build();
     }
 
-    public static User fromDto(RegistrationRequestDTO registrationRequestDTO){
+    public static User fromDto(final RegistrationRequestDTO registrationRequestDTO){
 
         return User.builder()
                 .email(registrationRequestDTO.getEmail())

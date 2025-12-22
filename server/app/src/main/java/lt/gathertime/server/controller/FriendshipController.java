@@ -27,25 +27,25 @@ public class FriendshipController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createFriendship(@Valid @RequestBody CreateFriendshipRequestDTO payload) {
-        friendshipService.createFriendship(payload);
+    public void createFriendship(@Valid @RequestBody final CreateFriendshipRequestDTO payload) {
+        this.friendshipService.createFriendship(payload);
     }
 
     @PostMapping("/{friendshipId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void confirmFriendship(@PathVariable Long friendshipId) {
-        friendshipService.confirmFriendship(friendshipId);
+    public void confirmFriendship(@PathVariable final Long friendshipId) {
+        this.friendshipService.confirmFriendship(friendshipId);
     }
 
     @GetMapping("/user/{userId}") 
     @ResponseStatus(HttpStatus.OK)
-    public List<FriendshipDTO> getFriendships(@PathVariable Long userId) {
-        return friendshipService.getFriendships(userId);
+    public List<FriendshipDTO> getFriendships(@PathVariable final Long userId) {
+        return this.friendshipService.getFriendships(userId);
     }
 
     @GetMapping("/user/{userId}/requests") 
     @ResponseStatus(HttpStatus.OK)
-    public List<FriendshipRequestDTO> getFriendshipRequests(@PathVariable Long userId) {
-        return friendshipService.getFriendshipRequests(userId);
+    public List<FriendshipRequestDTO> getFriendshipRequests(@PathVariable final Long userId) {
+        return this.friendshipService.getFriendshipRequests(userId);
     }
 }

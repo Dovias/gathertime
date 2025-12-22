@@ -25,13 +25,13 @@ public class FriendshipService {
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
 
-    public void createFriendship(CreateFriendshipRequestDTO payload) {
-        User user = userRepository.findById(payload.getUserId())
+    public void createFriendship(final CreateFriendshipRequestDTO payload) {
+        final User user = this.userRepository.findById(payload.getUserId())
             .orElseThrow(() -> new RuntimeException("User not found with ID: " + payload.getUserId()));
-        User friend = userRepository.findById(payload.getFriendId())
+        final User friend = this.userRepository.findById(payload.getFriendId())
             .orElseThrow(() -> new RuntimeException("User not found with ID: " + payload.getFriendId()));
 
-        Friendship friendship = Friendship.builder()
+        final Friendship friendship = Friendship.builder()
             .user(user)
             .friend(friend)
             .starDateTime(LocalDateTime.now())
@@ -39,47 +39,47 @@ public class FriendshipService {
             .isConfirmed(false)
             .build();
 
-        friendshipRepository.save(friendship);
+        this.friendshipRepository.save(friendship);
     }
 
-    public List<FriendshipRequestDTO> getFriendshipRequests(Long userId) {
-        User user = userRepository.findById(userId)
+    public List<FriendshipRequestDTO> getFriendshipRequests(final Long userId) {
+        final User user = this.userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
-        List<Friendship> friendshipRequests = friendshipRepository.getFriendshipRequests(userId);
+        final List<Friendship> friendshipRequests = this.friendshipRepository.getFriendshipRequests(userId);
 
         return friendshipRequests.stream()
                 .map(FriendshipMapper::toFriendshipRequestDTO)
                 .toList();
     }
 
-    public List<FriendshipDTO> getFriendships(Long userId) {
-        User user = userRepository.findById(userId)
+    public List<FriendshipDTO> getFriendships(final Long userId) {
+        final User user = this.userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
-        List<Friendship> friendships = friendshipRepository.getFriendships(userId);
+        final List<Friendship> friendships = this.friendshipRepository.getFriendships(userId);
 
         return friendships.stream()
                 .map(FriendshipMapper::toFriendshipDTO)
                 .toList();
     }
 
-    public void confirmFriendship(Long friendshipId) {
-        Friendship friendshipRequest = friendshipRepository.findById(friendshipId)
+    public void confirmFriendship(final Long friendshipId) {
+        final Friendship friendshipRequest = this.friendshipRepository.findById(friendshipId)
             .orElseThrow(() -> new RuntimeException("Friendship not found with ID: " + friendshipId));
 
-        LocalDateTime startDateTime = LocalDateTime.now();
+        final LocalDateTime startDateTime = LocalDateTime.now();
 
         friendshipRequest.setIsConfirmed(true);
         friendshipRequest.setStarDateTime(startDateTime);
 
-        Chat chat = new Chat();
+        final Chat chat = new Chat();
 
-        chatRepository.save(chat);
+        this.chatRepository.save(chat);
 
         friendshipRequest.setChat(chat);
 
-        Friendship friendship = Friendship.builder()
+        final Friendship friendship = Friendship.builder()
                 .user(friendshipRequest.getFriend())
                 .friend(friendshipRequest.getUser())
                 .starDateTime(startDateTime)
@@ -88,6 +88,6 @@ public class FriendshipService {
                 .chat(chat)
                 .build();
 
-        friendshipRepository.save(friendship);
+        this.friendshipRepository.save(friendship);
     }
 }
