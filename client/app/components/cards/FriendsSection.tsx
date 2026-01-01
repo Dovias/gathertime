@@ -6,9 +6,7 @@ interface FriendsSectionProps {
   friends: Friendship[];
 }
 
-const FriendsSection: React.FC<FriendsSectionProps> = ({ 
-  friends,
-}) => {
+const FriendsSection: React.FC<FriendsSectionProps> = ({ friends }) => {
   return (
     <section className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
       <h2 className="text-2xl font-semibold pb-4 mb-6 text-gray-700 border-b border-gray-300">
@@ -18,7 +16,7 @@ const FriendsSection: React.FC<FriendsSectionProps> = ({
         <p className="text-gray-500">Dar neturi draugų.</p>
       ) : (
         <ul>
-          {friends.map(friend => (
+          {friends.map((friend) => (
             <FriendCard key={friend.friendshipId} friend={friend} />
           ))}
         </ul>

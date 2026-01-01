@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { getFriendships, getFriendshipRequests } from "../../api/FriendshipApi";
-import type { Friendship, FriendshipRequest } from "../../models/Friendship";
 import FriendshipRequestsSection from "../../components/cards/FriendRequestsSection";
-import { userContext } from "../../context";
 import FriendsSection from "../../components/cards/FriendsSection";
+import { userContext } from "../../context";
+import type { Friendship, FriendshipRequest } from "../../models/Friendship";
 import type { Route } from "./+types/friends";
 
 export async function clientLoader({ context }: Route.ClientLoaderArgs) {
@@ -21,9 +21,7 @@ export default function Friends({ loaderData }: Route.ComponentProps) {
   const safeData = loaderData || { friends: [], requests: [] };
 
   const [friends] = useState<Friendship[]>(safeData.friends);
-  const [requests] = useState<FriendshipRequest[]>(
-    safeData.requests,
-  );
+  const [requests] = useState<FriendshipRequest[]>(safeData.requests);
   const [loading] = useState(false);
 
   if (loading) return <div>Loading...</div>;
