@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getFriendships, getFriendshipRequests } from "../../api/FriendshipApi";
+import { getFriendshipRequests, getFriendships } from "../../api/FriendshipApi";
 import FriendshipRequestsSection from "../../components/cards/FriendRequestsSection";
 import FriendsSection from "../../components/cards/FriendsSection";
 import { userContext } from "../../context";
