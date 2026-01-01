@@ -22,7 +22,7 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
 
     @Query("""
     SELECT f FROM Friendship f
-    WHERE f.user.id = :userId
+    WHERE f.friend.id = :userId
         AND f.isConfirmed = true
     """)
     List<Friendship> getFriendships(
