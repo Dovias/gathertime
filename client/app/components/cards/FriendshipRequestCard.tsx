@@ -1,6 +1,9 @@
 import type React from "react";
 import type { FriendshipRequest } from "../../models/Friendship";
+import clsx from "clsx";
 import { TimeAgo } from "../ui/TimeAgo";
+import { confirmFriendship } from "../../api/FriendshipApi";
+import { useState } from "react";
 
 interface FriendshipRequestCardProps {
   request: FriendshipRequest;
@@ -9,6 +12,19 @@ interface FriendshipRequestCardProps {
 const FriendshipRequestCard: React.FC<FriendshipRequestCardProps> = ({
   request,
 }) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleAccept = async () => {
+    try {
+      setLoading(true);
+      await confirmFriendship(request.friendshipId);
+    } catch (error) {
+      console.error("Failed to confirm friendship", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="bg-white rounded-2xl p-6 flex items-center space-x-4 hover:bg-gray-100 transition-shadow">
       <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-2xl text-gray-600">
@@ -24,7 +40,14 @@ const FriendshipRequestCard: React.FC<FriendshipRequestCardProps> = ({
       <div className="flex space-x-2">
         <button
           type="button"
-          className="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition"
+          onClick={handleAccept}
+          disabled={loading}
+          className={clsx(
+            "px-4 py-2 rounded-xl transition-colors",
+            loading
+            ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+            : "bg-blue-500 text-white hover:bg-blue-600"
+          )}
         >
           Accept
         </button>
