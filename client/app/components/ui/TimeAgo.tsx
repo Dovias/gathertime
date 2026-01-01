@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 
 interface TimeAgoProps {
   date: string | Date;
@@ -48,9 +48,5 @@ export const TimeAgo: React.FC<TimeAgoProps> = ({ date }) => {
     return <span>{WEEK_DAYS_LT[target.getDay()]}</span>;
   }
 
-  return (
-    <span>
-      {target.toLocaleDateString("lt-LT")}
-    </span>
-  );
+  return <span>{target.toLocaleDateString("lt-LT")}</span>;
 };

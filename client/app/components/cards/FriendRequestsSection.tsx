@@ -15,8 +15,8 @@ const FriendshipRequestsSection: React.FC<FriendshipRequestsSectionProps> = ({
         Žmonės, norintys tapti jūsų draugais
       </h2>
       <ul className="divide-y divide-gray-200">
-        {requests.map((r) => (
-          <FriendshipRequestCard key={r.friendshipId} request={r}/>
+        {requests.map((request) => (
+          <FriendshipRequestCard key={request.friendshipId} request={request} />
         ))}
       </ul>
     </section>
