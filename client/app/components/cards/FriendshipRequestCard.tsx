@@ -43,8 +43,8 @@ const FriendshipRequestCard: React.FC<FriendshipRequestCardProps> = ({
           disabled={loading}
           className={`px-4 py-2 rounded-xl transition 
             ${
-              loading 
-                ? "bg-gray-400 text-gray-200 cursor-not-allowed" 
+              loading
+                ? "bg-gray-400 text-gray-200 cursor-not-allowed"
                 : "bg-blue-500 text-white hover:bg-blue-600"
             }`}
         >
