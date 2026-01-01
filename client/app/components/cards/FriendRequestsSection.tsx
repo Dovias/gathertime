@@ -1,5 +1,6 @@
 import type React from "react";
 import type { FriendshipRequest } from "../../models/Friendship";
+import FriendshipRequestCard from "./FriendshipRequestCard";
 
 interface FriendshipRequestsSectionProps {
   requests: FriendshipRequest[];
@@ -15,10 +16,7 @@ const FriendshipRequestsSection: React.FC<FriendshipRequestsSectionProps> = ({
       </h2>
       <ul className="divide-y divide-gray-200">
         {requests.map((r) => (
-          <li key={r.friendshipId} className="py-1">
-            {r.firstName} {r.lastName} — requested at{" "}
-            {new Date(r.requestDateTime).toLocaleString()}
-          </li>
+          <FriendshipRequestCard key={r.friendshipId} request={r}/>
         ))}
       </ul>
     </section>
