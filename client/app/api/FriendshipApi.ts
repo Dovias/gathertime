@@ -15,6 +15,8 @@ export const getFriendshipRequests = async (
   return res.data;
 };
 
-export const confirmFriendship = async (friendshipId: number): Promise<void> => {
+export const confirmFriendship = async (
+  friendshipId: number,
+): Promise<void> => {
   await axios.post(`/friendship/${friendshipId}`);
 };
