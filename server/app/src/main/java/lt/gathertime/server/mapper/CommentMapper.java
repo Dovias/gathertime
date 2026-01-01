@@ -5,7 +5,7 @@ import lt.gathertime.server.entity.Comment;
 
 public class CommentMapper {
 
-    public static CommentDTO toCommentDTO(Comment comment) {
+    public static CommentDTO toCommentDTO(final Comment comment) {
         return CommentDTO.builder()
                 .id(comment.getId())
                 .content(comment.getContent())

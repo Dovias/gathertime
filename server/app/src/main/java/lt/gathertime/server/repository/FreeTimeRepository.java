@@ -58,7 +58,7 @@ public interface FreeTimeRepository extends JpaRepository<FreeTime, Long> {
                 AND f.endDateTime >= :startDateTime
                 AND f.status = 'FREE'
             """)
-    public List<FreeTime> getFreeTimesInRange(
+    List<FreeTime> getFreeTimesInRange(
             @Param("userId") Long userId,
             @Param("startDateTime") LocalDateTime startDateTime,
             @Param("endDateTime") LocalDateTime endDateTime);

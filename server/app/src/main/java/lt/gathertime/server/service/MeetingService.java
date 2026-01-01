@@ -34,25 +34,25 @@ public class MeetingService {
         private final InvitationRepository invitationRepository;
 
         @Transactional
-        public void initMeeting(InitMeetingRequestDTO requestDto) {
-                LocalDateTime createdDateTime = LocalDateTime.now();
+        public void initMeeting(final InitMeetingRequestDTO requestDto) {
+                final LocalDateTime createdDateTime = LocalDateTime.now();
 
-                User inviter = userRepository.findById(requestDto.getUserId())
+                final User inviter = this.userRepository.findById(requestDto.getUserId())
                                 .orElseThrow(() -> new RuntimeException(
                                                 "User not found with ID: " + requestDto.getUserId()));
 
-                FreeTime freeTime = freeTimeRepository.findById(requestDto.getFreeTimeId())
+                final FreeTime freeTime = this.freeTimeRepository.findById(requestDto.getFreeTimeId())
                                 .orElseThrow(() -> new RuntimeException(
                                                 "Free time not found with ID: " + requestDto.getFreeTimeId()));
 
-                Meeting meeting = MeetingMapper.fromCreateRequestDto(freeTime.getStartDateTime(),
+                final Meeting meeting = MeetingMapper.fromCreateRequestDto(freeTime.getStartDateTime(),
                                 freeTime.getEndDateTime(),
                                 freeTime, inviter);
-                meetingRepository.save(meeting);
+            this.meetingRepository.save(meeting);
 
-                User invitee = freeTime.getUser();
+                final User invitee = freeTime.getUser();
 
-                Invitation invitation = Invitation.builder()
+                final Invitation invitation = Invitation.builder()
                                 .meeting(meeting)
                                 .inviter(inviter)
                                 .invitee(invitee)
@@ -61,25 +61,25 @@ public class MeetingService {
                                 .status(InvitationStatus.SENT)
                                 .build();
 
-                invitationRepository.save(invitation);
+            this.invitationRepository.save(invitation);
         }
 
         @Transactional
-        public void confirmMeeting(Long invitationId) {
-                Invitation invitation = invitationRepository.findById(invitationId)
+        public void confirmMeeting(final Long invitationId) {
+                final Invitation invitation = this.invitationRepository.findById(invitationId)
                                 .orElseThrow(() -> new RuntimeException(
                                                 "Invitation not found with ID: " + invitationId));
 
-                Meeting meeting = invitation.getMeeting();
+                final Meeting meeting = invitation.getMeeting();
 
-                List<User> participants = meeting.getMeetingParticipants();
+                final List<User> participants = meeting.getMeetingParticipants();
                 participants.add(invitation.getInvitee());
                 if (participants.size() > 1) {
                         meeting.setStatus(MeetingStatus.CONFIRMED);
                 }
 
-                FreeTime freeTime = Optional.ofNullable(meeting.getFreeTime().getId())
-                        .map(id -> freeTimeRepository.findById(id)
+                final FreeTime freeTime = Optional.ofNullable(meeting.getFreeTime().getId())
+                        .map(id -> this.freeTimeRepository.findById(id)
                                 .orElseThrow(() -> new RuntimeException("Free time not found with ID: " + id)))
                         .orElse(null);
 
@@ -92,8 +92,8 @@ public class MeetingService {
         }
 
         @Transactional
-        public void declineMeeting(Long invitationId) {
-                Invitation invitation = invitationRepository.findById(invitationId)
+        public void declineMeeting(final Long invitationId) {
+                final Invitation invitation = this.invitationRepository.findById(invitationId)
                                 .orElseThrow(() -> new RuntimeException(
                                                 "Invitation not found with ID: " + invitationId));
 
@@ -101,16 +101,16 @@ public class MeetingService {
                 invitation.setModifiedDateTime(LocalDateTime.now());
         }
 
-        public MeetingResponseDTO getMeeting(Long meetingId) {
-                Meeting meeting = meetingRepository.findById(meetingId)
+        public MeetingResponseDTO getMeeting(final Long meetingId) {
+                final Meeting meeting = this.meetingRepository.findById(meetingId)
                                 .orElseThrow(() -> new RuntimeException("Meeting not found with ID: " + meetingId));
 
                 return MeetingMapper.toResponse(meeting);
         }
 
-        public List<MeetingSummaryDTO> getUserMeetings(Long userId, LocalDateTime startDateTime,
-                        LocalDateTime endDateTime) {
-                List<Meeting> meetings = meetingRepository.findUserMeetingsInRange(userId, startDateTime, endDateTime);
+        public List<MeetingSummaryDTO> getUserMeetings(final Long userId, final LocalDateTime startDateTime,
+                                                       final LocalDateTime endDateTime) {
+                final List<Meeting> meetings = this.meetingRepository.findUserMeetingsInRange(userId, startDateTime, endDateTime);
                 return meetings.stream()
                                 .map(meeting -> MeetingMapper.toMeetingSummaryDTO(meeting,
                                                 meeting.getMeetingParticipants()))

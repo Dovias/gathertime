@@ -16,29 +16,29 @@ public class AuthenticationController {
     private final UserRepository userRepository;
 
     @PostMapping("/send-code")
-    public ResponseEntity<Void> sendCode(@RequestBody SendCodeRequestDTO request) {
-        authenticationService.sendVerificationCode(request.getEmail());
+    public ResponseEntity<Void> sendCode(@RequestBody final SendCodeRequestDTO request) {
+        this.authenticationService.sendVerificationCode(request.getEmail());
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/verify-code-and-register")
     public ResponseEntity<AuthenticationResponseDTO> verifyAndRegister(
-            @RequestBody VerifyCodeAndRegisterDTO request
+            @RequestBody final VerifyCodeAndRegisterDTO request
     ) {
-        return ResponseEntity.ok(authenticationService.verifyCodeAndRegister(request));
+        return ResponseEntity.ok(this.authenticationService.verifyCodeAndRegister(request));
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponseDTO> login(
-            @RequestBody LoginRequestDTO request
+            @RequestBody final LoginRequestDTO request
     ) {
-        return ResponseEntity.ok(authenticationService.login(request));
+        return ResponseEntity.ok(this.authenticationService.login(request));
     }
 
     @GetMapping("/check-email/{email}")
-    public ResponseEntity<?> checkEmail(@PathVariable("email") String email) {
+    public ResponseEntity<?> checkEmail(@PathVariable("email") final String email) {
         return ResponseEntity.ofNullable(
-                userRepository.findByEmail(email).orElse(null)
+                this.userRepository.findByEmail(email).orElse(null)
         );
     }
 }

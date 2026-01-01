@@ -12,7 +12,7 @@ import lt.gathertime.server.enums.FreeTimeStatus;
 
 public class FreeTimeMapper {
 
-    public static FreeTime fromCreateRequestDto(CreateFreeTimeRequestDTO createFreeTimeRequestDto, User user, List<Activity> activities) {
+    public static FreeTime fromCreateRequestDto(final CreateFreeTimeRequestDTO createFreeTimeRequestDto, final User user, final List<Activity> activities) {
         return FreeTime.builder()
                 .startDateTime(createFreeTimeRequestDto.getStartDateTime())
                 .endDateTime(createFreeTimeRequestDto.getEndDateTime())
@@ -24,7 +24,7 @@ public class FreeTimeMapper {
                 .build();
     }
 
-    public static FreeTimeDTO toFreeTimeDTO(FreeTime freeTime) {
+    public static FreeTimeDTO toFreeTimeDTO(final FreeTime freeTime) {
         return FreeTimeDTO.builder()
                 .id(freeTime.getId())
                 .startDateTime(freeTime.getStartDateTime())
@@ -41,7 +41,7 @@ public class FreeTimeMapper {
                 .build();
     }
 
-    public static FriendFreeTimeDTO toFriendFreeTimeDTO(FreeTime freeTime) {
+    public static FriendFreeTimeDTO toFriendFreeTimeDTO(final FreeTime freeTime) {
         return FriendFreeTimeDTO.builder()
                 .id(freeTime.getId())
                 .startDateTime(freeTime.getStartDateTime())

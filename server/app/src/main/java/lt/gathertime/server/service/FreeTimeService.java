@@ -29,52 +29,52 @@ public class FreeTimeService {
     private final ActivityRepository activityRepository;
     private final FriendshipRepository friendshipRepository;
 
-    public void createFreeTime(CreateFreeTimeRequestDTO requestDto) {
-        User user = userRepository.findById(requestDto.getUserId())
+    public void createFreeTime(final CreateFreeTimeRequestDTO requestDto) {
+        final User user = this.userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + requestDto.getUserId()));
 
-        List<Activity> activities = requestDto.getActivityIds().isEmpty()
+        final List<Activity> activities = requestDto.getActivityIds().isEmpty()
                 ? List.of()
-                : activityRepository.findAllById(requestDto.getActivityIds());
+                : this.activityRepository.findAllById(requestDto.getActivityIds());
 
-        FreeTime newFreeTime = FreeTimeMapper.fromCreateRequestDto(requestDto, user, activities);
-        freeTimeRepository.save(newFreeTime);
+        final FreeTime newFreeTime = FreeTimeMapper.fromCreateRequestDto(requestDto, user, activities);
+        this.freeTimeRepository.save(newFreeTime);
     }
 
-    public List<FreeTimeDTO> getFreeTimes(Long userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public List<FreeTimeDTO> getFreeTimes(final Long userId, final LocalDateTime startDateTime, final LocalDateTime endDateTime) {
         if (startDateTime.isAfter(endDateTime)) {
             throw new RuntimeException("Start date must be before end date");
         }
 
-        List<FreeTime> freeTimes = freeTimeRepository.getFreeTimesInRange(userId, startDateTime, endDateTime);
+        final List<FreeTime> freeTimes = this.freeTimeRepository.getFreeTimesInRange(userId, startDateTime, endDateTime);
 
         return freeTimes.stream()
                 .map(FreeTimeMapper::toFreeTimeDTO)
                 .toList();
     }
 
-    public List<FriendFreeTimeDTO> getFreeTimesOfFriends(Long userId) {
-        List<Long> friendIds = friendshipRepository.getFriendships(userId).stream()
+    public List<FriendFreeTimeDTO> getFreeTimesOfFriends(final Long userId) {
+        final List<Long> friendIds = this.friendshipRepository.getFriendships(userId).stream()
             .map(friendship -> friendship.getFriend().getId())
             .toList();
 
         if(friendIds.isEmpty()) return List.of();
 
-        List<FreeTime> freeTimes = freeTimeRepository.getFutureFreeTimesOfFriends(userId, friendIds);
+        final List<FreeTime> freeTimes = this.freeTimeRepository.getFutureFreeTimesOfFriends(userId, friendIds);
 
         return freeTimes.stream()
             .map(FreeTimeMapper::toFriendFreeTimeDTO)
             .toList();
     }
 
-    public List<FriendFreeTimeDTO> getOverlappingFreeTimesOfFriends(Long userId) {
-        List<Long> friendIds = friendshipRepository.getFriendships(userId).stream()
+    public List<FriendFreeTimeDTO> getOverlappingFreeTimesOfFriends(final Long userId) {
+        final List<Long> friendIds = this.friendshipRepository.getFriendships(userId).stream()
             .map(friendship -> friendship.getFriend().getId())
             .toList();
 
         if(friendIds.isEmpty()) return List.of();
 
-        List<FreeTime> freeTimes = freeTimeRepository.getOverlappingFutureFreeTimesOfFriends(userId, friendIds);
+        final List<FreeTime> freeTimes = this.freeTimeRepository.getOverlappingFutureFreeTimesOfFriends(userId, friendIds);
 
         return freeTimes.stream()
             .map(FreeTimeMapper::toFriendFreeTimeDTO)
@@ -82,12 +82,12 @@ public class FreeTimeService {
     }
 
     @Transactional
-    public void deleteFreeTime(Long id) {
-        FreeTime freeTime = freeTimeRepository.findById(id)
+    public void deleteFreeTime(final Long id) {
+        final FreeTime freeTime = this.freeTimeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Not found"));
 
         freeTime.getMomentaryInterests().clear();
 
-        freeTimeRepository.delete(freeTime);
+        this.freeTimeRepository.delete(freeTime);
     }
 }

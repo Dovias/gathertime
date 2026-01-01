@@ -45,9 +45,9 @@ public class CreateFreeTimeRequestDTO {
 
     @AssertTrue(message = "End date and time must be after start date and time")
     public boolean isEndAfterStart() {
-        if (startDateTime == null || endDateTime == null) {
+        if (this.startDateTime == null || this.endDateTime == null) {
             return true;
         }
-        return endDateTime.isAfter(startDateTime);
+        return this.endDateTime.isAfter(this.startDateTime);
     }
 }

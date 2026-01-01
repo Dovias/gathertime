@@ -30,34 +30,34 @@ public class FreeTimeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createFreeTime(@Valid @RequestBody CreateFreeTimeRequestDTO createFreeTimeRequestDTO) {
-        freeTimeService.createFreeTime(createFreeTimeRequestDTO);
+    public void createFreeTime(@Valid @RequestBody final CreateFreeTimeRequestDTO createFreeTimeRequestDTO) {
+        this.freeTimeService.createFreeTime(createFreeTimeRequestDTO);
     }
 
     @GetMapping("/user/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public List<FreeTimeDTO> getFreeTimes(
-        @PathVariable Long userId, 
-        @RequestParam LocalDateTime startDateTime,  
-        @RequestParam LocalDateTime endDateTime) {
-        return freeTimeService.getFreeTimes(userId, startDateTime, endDateTime);
+        @PathVariable final Long userId,
+        @RequestParam final LocalDateTime startDateTime,
+        @RequestParam final LocalDateTime endDateTime) {
+        return this.freeTimeService.getFreeTimes(userId, startDateTime, endDateTime);
     }
 
     @GetMapping("/user/{userId}/friends")
     @ResponseStatus(HttpStatus.OK)
-    public List<FriendFreeTimeDTO> getFreeTimesOfFriends(@PathVariable Long userId) {
-        return freeTimeService.getFreeTimesOfFriends(userId);
+    public List<FriendFreeTimeDTO> getFreeTimesOfFriends(@PathVariable final Long userId) {
+        return this.freeTimeService.getFreeTimesOfFriends(userId);
     }
 
     @GetMapping("/user/{userId}/friends/overlapping")
     @ResponseStatus(HttpStatus.OK)
-    public List<FriendFreeTimeDTO> getOverlappingFreeTimesOfFriends(@PathVariable Long userId) {
-        return freeTimeService.getOverlappingFreeTimesOfFriends(userId);
+    public List<FriendFreeTimeDTO> getOverlappingFreeTimesOfFriends(@PathVariable final Long userId) {
+        return this.freeTimeService.getOverlappingFreeTimesOfFriends(userId);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteFreeTime(@PathVariable Long id) {
-        freeTimeService.deleteFreeTime(id);
+    public void deleteFreeTime(@PathVariable final Long id) {
+        this.freeTimeService.deleteFreeTime(id);
     }
 }

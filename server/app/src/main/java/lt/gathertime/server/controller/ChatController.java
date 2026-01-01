@@ -29,36 +29,36 @@ public class ChatController {
     @PostMapping("/user/{userId}/comment")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDTO createComment(
-        @PathVariable Long chatId,
-        @PathVariable Long userId,
-        @Valid @RequestBody UpsertCommentRequestDTO payload) {
-            return chatService.createComment(chatId, userId, payload.getContent());
+        @PathVariable final Long chatId,
+        @PathVariable final Long userId,
+        @Valid @RequestBody final UpsertCommentRequestDTO payload) {
+            return this.chatService.createComment(chatId, userId, payload.getContent());
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<CommentDTO> getChatComments(@PathVariable Long chatId) {
-        return chatService.getChatComments(chatId);
+    public List<CommentDTO> getChatComments(@PathVariable final Long chatId) {
+        return this.chatService.getChatComments(chatId);
     }
 
     @PutMapping("/user/{userId}/comment/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void editComment(
-        @PathVariable Long chatId,
-        @PathVariable Long userId,
-        @PathVariable Long commentId,
-        @Valid @RequestBody UpsertCommentRequestDTO payload
+        @PathVariable final Long chatId,
+        @PathVariable final Long userId,
+        @PathVariable final Long commentId,
+        @Valid @RequestBody final UpsertCommentRequestDTO payload
     ) {
-        chatService.updateComment(chatId, userId, commentId, payload.getContent());
+        this.chatService.updateComment(chatId, userId, commentId, payload.getContent());
     }
 
     @DeleteMapping("/user/{userId}/comment/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteComment(
-        @PathVariable Long chatId,
-        @PathVariable Long userId,
-        @PathVariable Long commentId
+        @PathVariable final Long chatId,
+        @PathVariable final Long userId,
+        @PathVariable final Long commentId
     ) {
-        chatService.deleteComment(chatId, userId, commentId);
+        this.chatService.deleteComment(chatId, userId, commentId);
     }
 }

@@ -22,35 +22,35 @@ public class MeetingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void initMeeting(@Valid @RequestBody InitMeetingRequestDTO initMeetingRequestDTO) {
-        meetingService.initMeeting(initMeetingRequestDTO);
+    public void initMeeting(@Valid @RequestBody final InitMeetingRequestDTO initMeetingRequestDTO) {
+        this.meetingService.initMeeting(initMeetingRequestDTO);
     }
 
     @PutMapping("/invitation/{invitationId}/confirm")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void confirmMeeting(@PathVariable Long invitationId) {
-        meetingService.confirmMeeting(invitationId);
+    public void confirmMeeting(@PathVariable final Long invitationId) {
+        this.meetingService.confirmMeeting(invitationId);
     }
 
     @PutMapping("/invitation/{invitationId}/decline")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void declineMeeting(@PathVariable Long invitationId) {
-        meetingService.declineMeeting(invitationId);
+    public void declineMeeting(@PathVariable final Long invitationId) {
+        this.meetingService.declineMeeting(invitationId);
     }
 
     @GetMapping("/{meetingId}")
     @ResponseStatus(HttpStatus.OK)
-    public MeetingResponseDTO getMeeting(@PathVariable Long meetingId) {
-        return meetingService.getMeeting(meetingId);
+    public MeetingResponseDTO getMeeting(@PathVariable final Long meetingId) {
+        return this.meetingService.getMeeting(meetingId);
     }
 
     @GetMapping("user/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public List<MeetingSummaryDTO> getUserMeetings(
-            @PathVariable Long userId,
-            @RequestParam LocalDateTime startDateTime,
-            @RequestParam LocalDateTime endDateTime) {
-        return meetingService.getUserMeetings(userId, startDateTime, endDateTime);
+            @PathVariable final Long userId,
+            @RequestParam final LocalDateTime startDateTime,
+            @RequestParam final LocalDateTime endDateTime) {
+        return this.meetingService.getUserMeetings(userId, startDateTime, endDateTime);
     }
 
 }
