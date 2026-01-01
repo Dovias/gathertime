@@ -1,4 +1,3 @@
-import { clsx } from "clsx";
 import type React from "react";
 import { useState } from "react";
 import { confirmFriendship } from "../../api/FriendshipApi";
@@ -42,12 +41,10 @@ const FriendshipRequestCard: React.FC<FriendshipRequestCardProps> = ({
           type="button"
           onClick={handleAccept}
           disabled={loading}
-          className={clsx(
-            "px-4 py-2 rounded-xl transition-colors",
-            loading
-              ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-              : "bg-blue-500 text-white hover:bg-blue-600",
-          )}
+          className={`px-4 py-2 rounded-xl transition 
+            ${loading 
+              ? "bg-gray-400 text-gray-200 cursor-not-allowed" 
+              : "bg-blue-500 text-white hover:bg-blue-600"}`}
         >
           Patvirtinti
         </button>
