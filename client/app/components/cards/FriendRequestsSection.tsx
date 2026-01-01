@@ -5,7 +5,7 @@ interface FriendshipRequestsSectionProps {
   requests: FriendshipRequest[];
 }
 
-const FriendshipRequestsSection: React.FC<FriendshipRequestsSectionProps> = ({ 
+const FriendshipRequestsSection: React.FC<FriendshipRequestsSectionProps> = ({
   requests,
 }) => {
   return (
@@ -14,7 +14,7 @@ const FriendshipRequestsSection: React.FC<FriendshipRequestsSectionProps> = ({
         Žmonės, norintys tapti jūsų draugais
       </h2>
       <ul className="divide-y divide-gray-200">
-        {requests.map(r => (
+        {requests.map((r) => (
           <li key={r.friendshipId} className="py-1">
             {r.firstName} {r.lastName} — requested at{" "}
             {new Date(r.requestDateTime).toLocaleString()}
