@@ -6,9 +6,9 @@ interface FriendshipRequestCardProps {
   request: FriendshipRequest;
 }
 
-const FriendshipRequestCard: React.FC<FriendshipRequestCardProps> = ({ 
-    request,
- }) => {
+const FriendshipRequestCard: React.FC<FriendshipRequestCardProps> = ({
+  request,
+}) => {
   return (
     <div className="bg-white rounded-2xl p-6 flex items-center space-x-4 hover:bg-gray-100 transition-shadow">
       <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-2xl text-gray-600">
