@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-router/node": "^7.9.6",
     "axios": "^1.13.1",
+    "clsx": "^1.2.1",
     "date-fns": "^4.1.0",
     "isbot": "^5",
     "react": "^19.1.1",
