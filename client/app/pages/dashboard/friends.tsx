@@ -5,6 +5,7 @@ import FriendsSection from "../../components/cards/FriendsSection";
 import { userContext } from "../../context";
 import type { Friendship, FriendshipRequest } from "../../models/Friendship";
 import type { Route } from "./+types/friends";
+import { UserSearch } from "../../components/ui/UserSearch";
 
 export async function clientLoader({ context }: Route.ClientLoaderArgs) {
   const user = context.get(userContext);
@@ -28,6 +29,7 @@ export default function Friends({ loaderData }: Route.ComponentProps) {
 
   return (
     <main className="m-6 flex flex-col gap-8">
+      <UserSearch/>
       {requests.length > 0 && <FriendshipRequestsSection requests={requests} />}
       <FriendsSection friends={friends} />
     </main>

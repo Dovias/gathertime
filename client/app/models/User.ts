@@ -5,3 +5,9 @@ export type User = {
   firstName: string;
   lastName: string;
 };
+
+export type UserFullName = {
+  id: number;
+  firstName: string;
+  lastName: string;
+}
