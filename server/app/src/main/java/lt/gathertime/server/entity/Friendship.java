@@ -3,6 +3,8 @@ package lt.gathertime.server.entity;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,6 +16,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lt.gathertime.server.enums.FriendshipStatus;
 
 @Entity
 @Data
@@ -31,7 +34,8 @@ public class Friendship {
 
     private Boolean isBestFriends;
 
-    private Boolean isConfirmed;
+    @Enumerated(EnumType.STRING)
+    private FriendshipStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
