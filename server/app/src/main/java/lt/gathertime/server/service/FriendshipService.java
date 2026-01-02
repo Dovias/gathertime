@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.friendship.CreateFriendshipRequestDTO;
 import lt.gathertime.server.dto.friendship.FriendshipDTO;
@@ -92,6 +93,7 @@ public class FriendshipService {
         this.friendshipRepository.save(friendship);
     }
 
+    @Transactional
     public void declineFriendship(final Long friendshipId) {
         final Friendship friendshipRequest = this.friendshipRepository.findById(friendshipId)
             .orElseThrow(() -> new RuntimeException("Friendship not found with ID: " + friendshipId));

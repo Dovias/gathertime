@@ -20,3 +20,7 @@ export const confirmFriendship = async (
 ): Promise<void> => {
   await axios.post(`/friendship/${friendshipId}`);
 };
+
+export const declineFriendship = async (friendshipId: number): Promise<void> => {
+  await axios.put(`/friendship/${friendshipId}/decline`);
+};
