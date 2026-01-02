@@ -3,10 +3,14 @@ package lt.gathertime.server.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.user.UpdateInfoDTO;
+import lt.gathertime.server.dto.user.UserFullNameDTO;
 import lt.gathertime.server.dto.user.UserResponseDTO;
 import lt.gathertime.server.entity.User;
 import lt.gathertime.server.mapper.UserMapper;
 import lt.gathertime.server.repository.UserRepository;
+
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +25,18 @@ public class UserService {
         final User user = this.userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
         return UserMapper.toDto(user);
+    }
+
+    public List<UserFullNameDTO> searchUsers(String query) {
+        if (query == null || query.isBlank()) {
+            return List.of();
+        }
+
+        List<User> users = userRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(query, query);
+
+        return users.stream()
+                .map(user -> new UserFullNameDTO(user.getId(), user.getFirstName(), user.getLastName()))
+                .toList();
     }
 
     public UserResponseDTO updateUserProfile(final UpdateInfoDTO request) {

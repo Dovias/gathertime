@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { User } from "../models/User";
+import type { User, UserFullName } from "../models/User";
 
 export const fetchUserByEmail = async (email: string): Promise<User | null> => {
   const response = await axios.get<User | null>(`/auth/check-email/${email}`);
@@ -8,5 +8,13 @@ export const fetchUserByEmail = async (email: string): Promise<User | null> => {
 
 export const fetchUserById = async (id: number): Promise<User | null> => {
   const response = await axios.get<User | null>(`/user/${id}`);
+  return response.data;
+};
+
+export const searchUsers = async (query: string): Promise<UserFullName[]> => {
+  if (!query) return [];
+  const response = await axios.get<UserFullName[]>(`/user/search`, {
+    params: { query },
+  });
   return response.data;
 };

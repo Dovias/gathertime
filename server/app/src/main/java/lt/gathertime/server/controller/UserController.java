@@ -3,8 +3,12 @@ package lt.gathertime.server.controller;
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.user.PasswordChangeDTO;
 import lt.gathertime.server.dto.user.UpdateInfoDTO;
+import lt.gathertime.server.dto.user.UserFullNameDTO;
 import lt.gathertime.server.dto.user.UserResponseDTO;
 import lt.gathertime.server.service.UserService;
+
+import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +21,11 @@ public class UserController {
     @GetMapping("/{id}")
     public UserResponseDTO getUserById(@PathVariable final Long id) {
         return this.userService.getUserById(id);
+    }
+
+    @GetMapping("/search")
+    public List<UserFullNameDTO> searchUsers(@RequestParam String query) {
+        return userService.searchUsers(query);
     }
 
     @PutMapping("/update-profile")
