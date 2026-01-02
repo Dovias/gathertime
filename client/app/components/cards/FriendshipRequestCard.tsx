@@ -50,11 +50,11 @@ const FriendshipRequestCard: React.FC<FriendshipRequestCardProps> = ({
         </h3>
         <TimeAgo date={request.requestDateTime} />
       </div>
-      <div className="flex space-x-2">
+      <div className="flex space-x-2 justify-center items-center">
         {status === 'CONFIRMED' ? (
-          <span className="font-bold text-green-700">Draugystė užmegzta</span>
+          <span className="font-bold text-green-700 min-w-40 text-center">Draugystė užmegzta</span>
         ) : status === 'DECLINED' ? (
-          <span className="font-bold text-red-600">Atmesta</span>
+          <div className="font-bold text-red-600 min-w-40 text-center">Atmesta</div>
         ) : (
           <>
             <button
@@ -70,16 +70,16 @@ const FriendshipRequestCard: React.FC<FriendshipRequestCardProps> = ({
             >
               Sutikti
             </button>
-          <button
-            type="button"
-            onClick={handleDecline}
-            disabled={loading}
-            className={`px-4 py-2 rounded-xl transition
-              ${
-                loading
-                  ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                  : "bg-gray-200 text-red-700 hover:bg-gray-300"
-              }`}
+            <button
+              type="button"
+              onClick={handleDecline}
+              disabled={loading}
+              className={`px-4 py-2 rounded-xl transition
+                ${
+                  loading
+                    ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                    : "bg-gray-200 hover:bg-gray-300"
+                }`}
             >
               Atmesti
             </button>
