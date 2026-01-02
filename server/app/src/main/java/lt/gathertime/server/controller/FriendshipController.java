@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -35,6 +36,12 @@ public class FriendshipController {
     @ResponseStatus(HttpStatus.CREATED)
     public void confirmFriendship(@PathVariable final Long friendshipId) {
         this.friendshipService.confirmFriendship(friendshipId);
+    }
+
+    @PutMapping("/{friendshipId}/decline")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void declineFriendship(@PathVariable final Long friendshipId) {
+        this.friendshipService.declineFriendship(friendshipId);
     }
 
     @GetMapping("/user/{userId}") 

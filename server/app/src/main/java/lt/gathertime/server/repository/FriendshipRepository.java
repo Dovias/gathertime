@@ -15,7 +15,7 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     @Query("""
     SELECT f FROM Friendship f
     WHERE f.friend.id = :userId
-        AND f.isConfirmed = false
+        AND f.status = 'NOT_CONFIRMED'
     """)
     List<Friendship> getFriendshipRequests(
             @Param("userId") Long userId);
@@ -23,7 +23,7 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     @Query("""
     SELECT f FROM Friendship f
     WHERE f.friend.id = :userId
-        AND f.isConfirmed = true
+        AND f.status = 'CONFIRMED'
     """)
     List<Friendship> getFriendships(
             @Param("userId") Long userId);

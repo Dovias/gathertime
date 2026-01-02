@@ -12,6 +12,7 @@ import lt.gathertime.server.dto.friendship.FriendshipRequestDTO;
 import lt.gathertime.server.entity.Chat;
 import lt.gathertime.server.entity.Friendship;
 import lt.gathertime.server.entity.User;
+import lt.gathertime.server.enums.FriendshipStatus;
 import lt.gathertime.server.mapper.FriendshipMapper;
 import lt.gathertime.server.repository.ChatRepository;
 import lt.gathertime.server.repository.FriendshipRepository;
@@ -36,7 +37,7 @@ public class FriendshipService {
             .friend(friend)
             .starDateTime(LocalDateTime.now())
             .isBestFriends(false)
-            .isConfirmed(false)
+            .status(FriendshipStatus.NOT_CONFIRMED)
             .build();
 
         this.friendshipRepository.save(friendship);
@@ -70,7 +71,7 @@ public class FriendshipService {
 
         final LocalDateTime startDateTime = LocalDateTime.now();
 
-        friendshipRequest.setIsConfirmed(true);
+        friendshipRequest.setStatus(FriendshipStatus.CONFIRMED);
         friendshipRequest.setStarDateTime(startDateTime);
 
         final Chat chat = new Chat();
@@ -84,10 +85,17 @@ public class FriendshipService {
                 .friend(friendshipRequest.getUser())
                 .starDateTime(startDateTime)
                 .isBestFriends(false)
-                .isConfirmed(true)
+                .status(FriendshipStatus.CONFIRMED)
                 .chat(chat)
                 .build();
 
         this.friendshipRepository.save(friendship);
+    }
+
+    public void declineFriendship(final Long friendshipId) {
+        final Friendship friendshipRequest = this.friendshipRepository.findById(friendshipId)
+            .orElseThrow(() -> new RuntimeException("Friendship not found with ID: " + friendshipId));
+
+        friendshipRequest.setStatus(FriendshipStatus.DECLINED);
     }
 }
