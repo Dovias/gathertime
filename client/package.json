@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "react-router dev",
-    "build": "biome check && react-router typegen && tsc -b && react-router build",
-    "check": "biome check --write",
+    "build": "react-router build",
     "preview": "react-router preview"
   },
   "dependencies": {

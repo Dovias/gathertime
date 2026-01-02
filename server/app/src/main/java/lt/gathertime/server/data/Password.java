@@ -43,19 +43,19 @@ public final class Password {
     }
 
     /**
-     * Creates new {@link Password} from the provided acceptable representative value.
-     * <p>Acceptable representative values consists of:</p>
+     * Creates new {@link Password} from the representative value.
+     * <p>Acceptable representative values consist of at least:</p>
      * <ul>
-     *     <li>At least <b>6</b> characters</li>
-     *     <li>At least <b>one</b> uppercase letter</li>
-     *     <li>At least <b>one</b> lowercase letter</li>
-     *     <li>At least <b>one</b> digit</li>
+     *     <li><b>6</b> characters</li>
+     *     <li><b>one</b> uppercase letter</li>
+     *     <li><b>one</b> lowercase letter</li>
+     *     <li><b>one</b> digit</li>
      * </ul>
      *
      * @param value representative value
      * @return newly created {@link Password}
-     * @throws NullPointerException if the provided value is null
-     * @throws IllegalArgumentException if the provided value is not acceptable
+     * @throws NullPointerException representative value is null
+     * @throws IllegalArgumentException representative value is not acceptable
      */
     public static Password of(final String value) {
         if (value == null) {

@@ -4,3 +4,6 @@
 # Ignore artifact-specific directories
 build/
 dist/
+
+# Ignore package manager directories
+node_modules/

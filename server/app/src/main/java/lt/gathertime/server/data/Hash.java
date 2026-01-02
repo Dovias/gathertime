@@ -32,11 +32,11 @@ public final class Hash {
     }
 
     /**
-     * Checks whether provided value matches the value being used to compute this hash.
+     * Checks whether comparison value matches the value being used to compute this hash.
      *
      * @param value comparison value
-     * @throws NullPointerException if the comparison value is null
-     * @return {@code true} if compared value is the same as the hash computation value
+     * @throws NullPointerException comparison value is null
+     * @return whether comparison value is equivalent to the computation value of this hash
      */
     public boolean matches(final Digestible value) {
         if (value == null) {
@@ -63,13 +63,13 @@ public final class Hash {
     }
 
     /**
-     * Creates new {@link Hash} from the previously computed representative hash {@link #value()}.
+     * Creates new {@link Hash} from the representative value.
      *
-     * <p>Proper behaviour of this method with explicit inputs is not guaranteed.</p>
+     * <p>Valid representative value is equivalent to the result of {@link #value()} method.</p>
      * @param value representative value
      * @return newly created {@link Hash}
-     * @throws NullPointerException if the representative value is null
-     * @throws IllegalArgumentException if the representative value is invalid
+     * @throws NullPointerException representative value is null
+     * @throws IllegalArgumentException representative value is not valid
      */
     public static Hash of(final String value) {
         if (value == null) {
@@ -85,11 +85,11 @@ public final class Hash {
     }
 
     /**
-     * Computes new {@link Hash} from the provided value.
+     * Computes new {@link Hash} from the representative value.
      *
-     * @param value computation value
+     * @param value representative value
      * @return newly computed {@link Hash}
-     * @throws NullPointerException if the provided value is null
+     * @throws NullPointerException representative value is null
      */
     public static Hash from(final Digestible value) {
         if (value == null) {

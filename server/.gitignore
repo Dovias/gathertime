@@ -4,3 +4,8 @@
 # Ignore artifact-specific directories
 build/
 bin/
+
+# Ignore IDE specific files and directories
+.idea
+.project
+.factorypath
