@@ -1,4 +1,4 @@
-import { FaUserCircle } from "react-icons/fa";
+import {UiAvatar} from "../ui/UiAvatar.tsx";
 
 export default function EventCard({
   title,
@@ -12,7 +12,7 @@ export default function EventCard({
   subtitle?: string;
   startDateTime: string;
   endDateTime: string;
-  users: { name: string; avatar?: string | null }[];
+  users: { firstName: string; lastName:string; avatar?: string | null }[];
   onClick?: () => void;
 }) {
   const inviter = users[0];
@@ -25,20 +25,14 @@ export default function EventCard({
       className="px-4 py-3 w-64 rounded-xl shadow flex gap-4 border bg-white border-gray-200 cursor-pointer hover:shadow-lg transition text-left"
     >
       <div className="flex flex-col items-center w-16">
-        {inviter?.avatar ? (
-          <img
-            src={inviter.avatar}
-            alt={`${inviter.name} avatar`}
-            className="w-8 h-8 rounded-full mb-1"
-          />
-        ) : (
-          <FaUserCircle
-            className="w-8 h-8 text-gray-400 mb-1"
-            aria-hidden="true"
-          />
-        )}
+        <UiAvatar
+            firstName={inviter.firstName}
+            lastName={inviter.lastName}
+            size="sm"
+            className="mb-1"
+        />
         <span className="text-xs text-gray-600 text-center">
-          {inviter.name}
+          {inviter.firstName} {inviter.lastName}
         </span>
       </div>
 

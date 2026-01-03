@@ -25,7 +25,7 @@ type FriendFreeTimeCard = {
   subtitle: string;
   startDateTime: string;
   endDateTime: string;
-  users: { name: string }[];
+  users: { firstName: string; lastName: string }[];
 };
 
 type LoaderData = {
@@ -124,7 +124,7 @@ export async function clientLoader({ context }: Route.ClientLoaderArgs) {
         subtitle: ft.pastimeType ?? "",
         startDateTime: ft.startDateTime,
         endDateTime: ft.endDateTime,
-        users: [{ name: `${friend.firstName} ${friend.lastName}`.trim() }],
+        users: [{ firstName: friend.firstName, lastName: friend.lastName }],
       })),
   );
 
@@ -161,7 +161,7 @@ export async function clientLoader({ context }: Route.ClientLoaderArgs) {
             subtitle: f.pastimeType ?? "",
             startDateTime: f.startDateTime,
             endDateTime: f.endDateTime,
-            users: [{ name: `${friend.firstName} ${friend.lastName}`.trim() }],
+            users: [{ firstName: friend.firstName, lastName: friend.lastName }],
           });
         }
       }
@@ -276,7 +276,6 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
         {() =>
           invitations.map((item) => {
             const friend = getFriendForMeeting(item.meeting);
-            const friendFullName = friend ? `${friend.firstName} ${friend.lastName}` : "Draugas";
 
             return (
               <EventCard
@@ -285,7 +284,7 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
                 subtitle=""
                 startDateTime={item.meeting.startDateTime}
                 endDateTime={item.meeting.endDateTime}
-                users={[{ name: friendFullName }]}
+                users={[{ firstName: friend.firstName, lastName: friend.lastName }]}
                 onClick={() => {
                   setSelectedMeeting(item.meeting);
                   setSelectedInvitationId(item.invitationId);
@@ -308,7 +307,6 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
         {() =>
           joinableMeetings.map((m) => {
             const friend = getFriendForMeeting(m);
-            const friendFullName = friend ? `${friend.firstName} ${friend.lastName}` : "Draugas";
 
             return (
               <EventCard
@@ -317,7 +315,7 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
                 subtitle=""
                 startDateTime={m.startDateTime}
                 endDateTime={m.endDateTime}
-                users={[{ name: friendFullName }]}
+                users={[{ firstName: friend.firstName, lastName: friend.lastName }]}
                 onClick={() => {}}
               />
             );

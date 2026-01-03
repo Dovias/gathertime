@@ -10,3 +10,7 @@ settings/
 # Ignore IDE-specific files
 *.code-workspace
 .project
+
+# Ignore node-modules directories
+client/node_modules
+node_modules
