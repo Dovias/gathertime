@@ -53,6 +53,7 @@ export default [
       route("friends", "./pages/dashboard/friends.tsx"),
       route("profile", "./pages/dashboard/profile.tsx"),
       route("settings", "./pages/dashboard/settings.tsx"),
+      route("user-profile/:id", "./pages/dashboard/user-profile.tsx"),
       route("*", "./pages/dashboard/error/notFound.tsx"),
     ]),
   ]),

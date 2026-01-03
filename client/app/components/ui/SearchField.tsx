@@ -10,7 +10,7 @@ interface SearchFieldProps {
 export const SearchField: React.FC<SearchFieldProps> = ({
   value,
   onChange,
-  placeholder = "Search...",
+  placeholder = "Paieška...",
   className = "",
   ...rest
 }) => {
