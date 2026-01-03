@@ -212,7 +212,7 @@ function Section({
               style={{ transform: `translateX(-${clampedPage * 100}%)` }}
             >
               {Array.from({ length: totalPages }).map((_, pageIndex) => (
-                <div key={pageIndex} className="grid grid-cols-3 gap-2 min-w-0">
+                <div key={pageIndex} className="grid grid-cols-4 min-w-0">
                   {nodes
                     .slice(pageIndex * VISIBLE, pageIndex * VISIBLE + VISIBLE)
                     .map((node, i) => (

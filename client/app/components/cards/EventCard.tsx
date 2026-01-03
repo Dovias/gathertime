@@ -1,4 +1,5 @@
 import {UiAvatar} from "../ui/UiAvatar.tsx";
+import {UiButton} from "../ui/UiButton.tsx";
 
 export default function EventCard({
   title,
@@ -7,6 +8,7 @@ export default function EventCard({
   endDateTime,
   users,
   onClick,
+  onButtonClick,
 }: {
   title: string;
   subtitle?: string;
@@ -14,15 +16,17 @@ export default function EventCard({
   endDateTime: string;
   users: { firstName: string; lastName:string; avatar?: string | null }[];
   onClick?: () => void;
+  onButtonClick? : () => void;
 }) {
   const inviter = users[0];
 
   return (
+      <div className="px-4 py-3 w-64 rounded-xl shadow flex flex-col gap-3 border bg-white border-gray-200 hover:shadow-lg transition">
     <button
       type="button"
       onClick={onClick}
       onKeyDown={(e) => e.key === "Enter" && onClick?.()}
-      className="px-4 py-3 w-64 rounded-xl shadow flex gap-4 border bg-white border-gray-200 cursor-pointer hover:shadow-lg transition text-left"
+      className="flex gap-4 text-left cursor-pointer"
     >
       <div className="flex flex-col items-center w-16">
         <UiAvatar
@@ -44,5 +48,11 @@ export default function EventCard({
         </span>
       </div>
     </button>
+        <UiButton
+            onClick={onButtonClick}
+        >
+          Susitikti
+        </UiButton>
+      </div>
   );
 }
