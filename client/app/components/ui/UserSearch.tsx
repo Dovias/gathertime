@@ -43,7 +43,7 @@ export const UserSearch: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-4 relative">
+    <div className="w-full max-w-8xl mx-auto relative">
       <SearchField
         value={query}
         onChange={(e) => setQuery(e.target.value)}
