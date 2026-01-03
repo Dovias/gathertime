@@ -11,3 +11,9 @@ export type UserFullName = {
   firstName: string;
   lastName: string;
 }
+
+export type UserProfileInfo = {
+  id: number;
+  firstName: string;
+  lastName: string;
+}

@@ -1,5 +1,6 @@
 import type React from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { confirmFriendship, declineFriendship } from "../../api/FriendshipApi";
 import type { FriendshipRequest } from "../../models/Friendship";
 import { TimeAgo } from "../ui/TimeAgo";
@@ -13,6 +14,11 @@ const FriendshipRequestCard: React.FC<FriendshipRequestCardProps> = ({
 }) => {
   const [status, setStatus] = useState<'PENDING' | 'CONFIRMED' | 'DECLINED'>('PENDING');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleGoToProfile = () => {
+    navigate(`/dashboard/user-profile/${request.friendId}`);
+  };
 
   const handleAccept = async () => {
     try {
@@ -27,25 +33,31 @@ const FriendshipRequestCard: React.FC<FriendshipRequestCardProps> = ({
   };
 
   const handleDecline = async () => {
-  try {
-    setLoading(true);
-    await declineFriendship(request.friendshipId);
-    setStatus('DECLINED');
-  } catch (error) {
-    console.error("Failed to decline friendship", error);
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      setLoading(true);
+      await declineFriendship(request.friendshipId);
+      setStatus('DECLINED');
+    } catch (error) {
+      console.error("Failed to decline friendship", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-white rounded-2xl p-6 flex items-center space-x-4 hover:bg-gray-100 transition-shadow">
-      <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-2xl text-gray-600">
+      <div
+        onClick={handleGoToProfile}
+        className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-2xl text-gray-600 cursor-pointer"
+      >
         {request.firstName[0]}
         {request.lastName[0]}
       </div>
       <div className="flex-1">
-        <h3 className="text-lg font-semibold text-gray-800">
+        <h3
+          onClick={handleGoToProfile}
+          className="inline-block text-lg font-semibold text-gray-800 cursor-pointer hover:underline"
+        >
           {request.firstName} {request.lastName}
         </h3>
         <TimeAgo date={request.requestDateTime} />
@@ -62,11 +74,10 @@ const FriendshipRequestCard: React.FC<FriendshipRequestCardProps> = ({
               onClick={handleAccept}
               disabled={loading}
               className={`px-4 py-2 rounded-xl transition 
-              ${
-                loading
+              ${loading
                   ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                  : "bg-blue-500 text-white hover:bg-blue-600"
-              }`}
+                  : "bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"
+                }`}
             >
               Sutikti
             </button>
@@ -75,10 +86,9 @@ const FriendshipRequestCard: React.FC<FriendshipRequestCardProps> = ({
               onClick={handleDecline}
               disabled={loading}
               className={`px-4 py-2 rounded-xl transition
-                ${
-                  loading
-                    ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                    : "bg-gray-200 hover:bg-gray-300"
+                ${loading
+                  ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                  : "bg-gray-200 hover:bg-gray-300 cursor-pointer"
                 }`}
             >
               Atmesti

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import type { UserFullName } from "../../models/User";
 import { searchUsers } from "../../api/UserApi";
 import { SearchField } from "../ui/SearchField";
@@ -7,6 +8,8 @@ export const UserSearch: React.FC = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<UserFullName[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!query) {
@@ -33,6 +36,12 @@ export const UserSearch: React.FC = () => {
     return () => clearTimeout(handler);
   }, [query]);
 
+  const handleSelectUser = (userId: number) => {
+    setQuery("");
+    setResults([]);
+    navigate(`/dashboard/user-profile/${userId}`);
+  };
+
   return (
     <div className="w-full max-w-md mx-auto p-4 relative">
       <SearchField
@@ -56,9 +65,17 @@ export const UserSearch: React.FC = () => {
             results.map((user) => (
               <li
                 key={user.id}
+                onClick={() => handleSelectUser(user.id)}
                 className="p-3 hover:bg-gray-100 cursor-pointer transition rounded-md"
               >
-                {user.firstName} {user.lastName}
+                <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-medium text-sm">
+                  {user.firstName[0]}
+                  {user.lastName[0]}
+                </div>
+
+                <span className="text-gray-800 font-medium">
+                  {user.firstName} {user.lastName}
+                </span>
               </li>
             ))}
         </ul>

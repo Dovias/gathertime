@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.user.UpdateInfoDTO;
 import lt.gathertime.server.dto.user.UserFullNameDTO;
+import lt.gathertime.server.dto.user.UserProfileInfoDTO;
 import lt.gathertime.server.dto.user.UserResponseDTO;
 import lt.gathertime.server.entity.User;
 import lt.gathertime.server.mapper.UserMapper;
@@ -25,6 +26,12 @@ public class UserService {
         final User user = this.userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
         return UserMapper.toDto(user);
+    }
+
+    public UserProfileInfoDTO getUserProfileInfo(final Long id) {
+        final User user = this.userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+        return UserMapper.tProfileInfoDto(user);
     }
 
     public List<UserFullNameDTO> searchUsers(String query) {
