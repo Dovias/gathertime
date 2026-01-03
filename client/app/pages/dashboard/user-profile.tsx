@@ -2,6 +2,7 @@ import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import type { UserProfileInfo } from "../../models/User";
 import { getUserProfileInfo } from "../../api/UserApi";
+import { UiAvatar } from "../../components/ui/UiAvatar";
 
 const UserProfilePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -35,10 +36,11 @@ const UserProfilePage: React.FC = () => {
   return (
     <main className="w-full max-w-8xl mx-auto py-10 px-8">
       <section className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 flex flex-row items-center gap-6">
-        <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-3xl font-semibold text-gray-600 flex-shrink-0">
-          {profile.firstName[0]}
-          {profile.lastName[0]}
-        </div>
+        <UiAvatar
+          firstName={profile.firstName}
+          lastName={profile.lastName}
+          size="lg"
+        />
         <h1 className="text-2xl font-semibold text-gray-800 inline-block">
           {profile.firstName} {profile.lastName}
         </h1>

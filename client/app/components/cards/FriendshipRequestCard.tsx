@@ -5,6 +5,7 @@ import { confirmFriendship, declineFriendship } from "../../api/FriendshipApi";
 import type { FriendshipRequest } from "../../models/Friendship";
 import { TimeAgo } from "../ui/TimeAgo";
 import { UiButton } from "../ui/UiButton";
+import { UiAvatar } from "../ui/UiAvatar";
 
 interface FriendshipRequestCardProps {
   request: FriendshipRequest;
@@ -47,13 +48,12 @@ const FriendshipRequestCard: React.FC<FriendshipRequestCardProps> = ({
 
   return (
     <div className="bg-white rounded-2xl p-6 flex items-center space-x-4 hover:bg-gray-100 transition-shadow">
-      <div
+      <UiAvatar
         onClick={handleGoToProfile}
-        className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-2xl text-gray-600 cursor-pointer"
-      >
-        {request.firstName[0]}
-        {request.lastName[0]}
-      </div>
+        firstName={request.firstName}
+        lastName={request.lastName}
+        className="cursor-pointer"
+      />
       <div className="flex-1">
         <h3
           onClick={handleGoToProfile}
