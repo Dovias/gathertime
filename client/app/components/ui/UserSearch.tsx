@@ -66,14 +66,13 @@ export const UserSearch: React.FC = () => {
               <li
                 key={user.id}
                 onClick={() => handleSelectUser(user.id)}
-                className="p-3 hover:bg-gray-100 cursor-pointer transition rounded-md"
+                className="p-3 hover:bg-gray-100 rounded-md flex items-center gap-3 transition cursor-pointer"
               >
-                <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-medium text-sm">
+                <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-medium text-sm shrink-0">
                   {user.firstName[0]}
                   {user.lastName[0]}
                 </div>
-
-                <span className="text-gray-800 font-medium">
+                <span className="text-gray-800 font-medium inline-block">
                   {user.firstName} {user.lastName}
                 </span>
               </li>
