@@ -1,0 +1,7 @@
+export enum PastimeType {
+  ENERGETIC = "ENERGETIC",
+  NEUTRAL = "NEUTRAL",
+  RELAX = "RELAX",
+  SHOPPING = "SHOPPING",
+  TRAVEL = "TRAVEL",
+}

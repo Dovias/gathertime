@@ -1,6 +1,10 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaCircle } from "react-icons/fa";
 import { getFormattedDate } from "../../utilities/date";
+import { getFreeTimes } from "../../api/FreeTimeApi";
+import { userContext } from "../../context";
+import type { FreeTimeDTO } from "../../models/FreeTimeDTO";
+import type { Route } from "./+types/calendar";
 
 interface CalendarEvent {
   id: string;
@@ -13,12 +17,162 @@ interface CalendarEvent {
   textColor?: string;
 }
 
-export default function Calendar() {
+const pad = (n: number) => String(n).padStart(2, "0");
+
+const toBackendLocalDateTime = (date: Date): string => {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
+    date.getHours(),
+  )}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+};
+
+
+const fromBackendLocalDateTime = (value: string): Date => {
+  const normalized = value.trim().replace(" ", "T");
+  const [datePart, timeRaw = "00:00:00"] = normalized.split("T");
+  const [y, m, d] = datePart.split("-").map(Number);
+
+  const [hh = "0", mm = "0", ssMs = "0"] = timeRaw.split(":");
+  const [ss = "0", ms = "0"] = ssMs.split(".");
+
+  return new Date(y, m - 1, d, Number(hh), Number(mm), Number(ss), Number(ms));
+};
+
+const toHHmm = (d: Date) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+const styleByPastimeType = (type?: string | null) => {
+  switch (type) {
+    case "ENERGETIC":
+      return { color: "bg-green-300", textColor: "text-green-900", title: "ENERGETIC" };
+    case "NEUTRAL":
+      return { color: "bg-blue-600", textColor: "text-white", title: "NEUTRAL" };
+    case "RELAX":
+      return { color: "bg-purple-500", textColor: "text-white", title: "RELAX" };
+    case "SHOPPING":
+      return { color: "bg-red-400", textColor: "text-white", title: "SHOPPING" };
+    case "TRAVEL":
+      return { color: "bg-amber-400", textColor: "text-gray-900", title: "TRAVEL" };
+    default:
+      return { color: "bg-purple-500", textColor: "text-white", title: "FREE" };
+  }
+};
+
+const startOfWeek = (base: Date) => {
+  const start = new Date(base);
+  start.setDate(start.getDate() - start.getDay() + 1);
+  start.setHours(0, 0, 0, 0);
+  return start;
+};
+
+const endOfWeek = (base: Date) => {
+  const start = startOfWeek(base);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  end.setHours(23, 59, 59, 0);
+  return end;
+};
+
+export async function clientLoader({ context }: Route.ClientLoaderArgs) {
+  const user = context.get(userContext);
+
+  const now = new Date();
+  const start = startOfWeek(now);
+  const end = endOfWeek(now);
+
+  const data = await getFreeTimes(
+    user.id,
+    toBackendLocalDateTime(start),
+    toBackendLocalDateTime(end),
+  );
+
+  return { userId: user.id, freeTimes: Array.isArray(data) ? data : [] };
+}
+
+export default function Calendar({ loaderData }: Route.ComponentProps) {
   const today = new Date();
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const timeLabelsRef = useRef<HTMLDivElement>(null);
   const [scrollbarWidth, setScrollbarWidth] = useState(0);
+
+  const initialFreeTimes = (loaderData?.freeTimes ?? []) as FreeTimeDTO[];
+  const userId = loaderData?.userId as number;
+
+  const [events, setEvents] = useState<CalendarEvent[]>(() => {
+    return initialFreeTimes.map((ft: any) => {
+      const startStr = ft.startDateTime ?? ft.start_date_time;
+      const endStr = ft.endDateTime ?? ft.end_date_time;
+
+      const startDt = fromBackendLocalDateTime(startStr);
+      const endDt = fromBackendLocalDateTime(endStr);
+
+      const style = styleByPastimeType(ft.pastimeType);
+
+      return {
+        id: String(ft.id),
+        title: style.title,
+        subtitle:
+          ft.momentaryInterestIds?.length
+            ? `Interests: ${ft.momentaryInterestIds.join(", ")}`
+            : undefined,
+        startTime: toHHmm(startDt),
+        endTime: toHHmm(endDt),
+        date: startDt,
+        color: style.color,
+        textColor: style.textColor,
+      };
+    });
+  });
+
+  useEffect(() => {
+    const fetchWeek = async () => {
+      if (!userId) return;
+
+      const start = startOfWeek(currentWeek);
+      const end = endOfWeek(currentWeek);
+
+      try {
+        const data = await getFreeTimes(
+          userId,
+          toBackendLocalDateTime(start),
+          toBackendLocalDateTime(end),
+        );
+
+        const safe = Array.isArray(data) ? data : [];
+
+        const mapped: CalendarEvent[] = (safe as any[]).map((ft) => {
+          const startStr = ft.startDateTime ?? ft.start_date_time;
+          const endStr = ft.endDateTime ?? ft.end_date_time;
+
+          const startDt = fromBackendLocalDateTime(startStr);
+          const endDt = fromBackendLocalDateTime(endStr);
+
+          const style = styleByPastimeType(ft.pastimeType);
+
+          return {
+            id: String(ft.id),
+            title: style.title,
+            subtitle:
+              ft.momentaryInterestIds?.length
+                ? `Interests: ${ft.momentaryInterestIds.join(", ")}`
+                : undefined,
+            startTime: toHHmm(startDt),
+            endTime: toHHmm(endDt),
+            date: startDt,
+            color: style.color,
+            textColor: style.textColor,
+          };
+        });
+
+        setEvents(mapped);
+      } catch (e) {
+        console.error("Failed to fetch freetimes:", e);
+        setEvents([]);
+      }
+    };
+
+    fetchWeek();
+  }, [currentWeek, userId]);
 
   useLayoutEffect(() => {
     const updateScrollbarWidth = () => {
@@ -31,58 +185,6 @@ export default function Calendar() {
     window.addEventListener("resize", updateScrollbarWidth);
     return () => window.removeEventListener("resize", updateScrollbarWidth);
   }, []);
-
-  const [events] = useState<CalendarEvent[]>([
-    {
-      id: "1",
-      title: "Susitikimas su Povilu",
-      subtitle: "Susitikimas",
-      startTime: "13:00",
-      endTime: "15:00",
-      date: new Date(2025, 10, 25),
-      color: "bg-green-300",
-      textColor: "text-green-900",
-    },
-    {
-      id: "2",
-      title: "Talk Lunch",
-      subtitle: "Pietų pokalbis su Arūnu",
-      startTime: "13:00",
-      endTime: "14:00",
-      date: new Date(2025, 10, 26),
-      color: "bg-purple-500",
-      textColor: "text-white",
-    },
-    {
-      id: "3",
-      title: "1 on 1",
-      subtitle: "Skombutis su Coach",
-      startTime: "15:00",
-      endTime: "16:00",
-      date: new Date(2025, 10, 25),
-      color: "bg-blue-600",
-      textColor: "text-white",
-    },
-    {
-      id: "4",
-      title: "Mokymai",
-      startTime: "16:00",
-      endTime: "17:00",
-      date: new Date(2025, 10, 25),
-      color: "bg-red-400",
-      textColor: "text-white",
-    },
-    {
-      id: "5",
-      title: "Susitikimas su Povilu",
-      subtitle: "Susitikimas",
-      startTime: "18:00",
-      endTime: "19:00",
-      date: new Date(2025, 10, 4),
-      color: "bg-green-300",
-      textColor: "text-green-900",
-    },
-  ]);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     if (timeLabelsRef.current) {
@@ -430,6 +532,9 @@ export default function Calendar() {
                                   </div>
                                   <div className="text-[10px] opacity-90">
                                     {event.startTime}
+                                  </div>
+                                  <div className="text-[10px] opacity-90">
+                                    {event.endTime}
                                   </div>
                                   {event.subtitle && (
                                     <div className="text-[10px] opacity-80 truncate mt-1">
