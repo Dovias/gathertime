@@ -5,6 +5,8 @@ import { getFreeTimes } from "../../api/FreeTimeApi";
 import { userContext } from "../../context";
 import type { FreeTimeDTO } from "../../models/FreeTimeDTO";
 import type { Route } from "./+types/calendar";
+import CreateFreeTimeModal from "../../components/ui/CreateFreeTimeModal";
+import { createFreeTime } from "../../api/FreeTimeApi";
 
 interface CalendarEvent {
   id: string;
@@ -97,6 +99,7 @@ export default function Calendar({ loaderData }: Route.ComponentProps) {
 
   const initialFreeTimes = (loaderData?.freeTimes ?? []) as FreeTimeDTO[];
   const userId = loaderData?.userId as number;
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const [events, setEvents] = useState<CalendarEvent[]>(() => {
     return initialFreeTimes.map((ft: any) => {
@@ -435,6 +438,7 @@ export default function Calendar({ loaderData }: Route.ComponentProps) {
               </button>
               <button
                 type="button"
+                onClick={() => setIsCreateOpen(true)}
                 className="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 flex items-center gap-2"
               >
                 Registruoti laiką
@@ -555,6 +559,16 @@ export default function Calendar({ loaderData }: Route.ComponentProps) {
           </div>
         </div>
       </main>
+      <CreateFreeTimeModal
+        isOpen={isCreateOpen}
+        userId={userId}
+        onClose={() => setIsCreateOpen(false)}
+        onSubmit={async (payload) => {
+          await createFreeTime(payload);
+          window.location.reload();
+        }}
+      />
+
     </div>
   );
 }

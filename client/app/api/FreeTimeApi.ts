@@ -11,3 +11,9 @@ export const getFreeTimes = async (
   });
   return response.data;
 };
+
+export const createFreeTime = async (
+  payload: CreateFreeTimeRequestDTO,
+): Promise<void> => {
+  await axios.post("/freetime", payload);
+};
