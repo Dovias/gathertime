@@ -1,6 +1,7 @@
 import type React from "react";
 import type { Friendship } from "../../models/Friendship";
 import { useNavigate } from "react-router";
+import { UiButton } from "../ui/UiButton";
 
 interface FriendCardProps {
   friend: Friendship;
@@ -31,12 +32,9 @@ const FriendCard: React.FC<FriendCardProps> = ({ friend }) => {
         </h3>
       </div>
       <div className="flex space-x-2">
-        <button
-          type="button"
-          className="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition cursor-pointer"
-        >
+        <UiButton>
           Message
-        </button>
+        </UiButton>
       </div>
     </div>
   );

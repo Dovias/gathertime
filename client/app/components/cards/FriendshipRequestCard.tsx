@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { confirmFriendship, declineFriendship } from "../../api/FriendshipApi";
 import type { FriendshipRequest } from "../../models/Friendship";
 import { TimeAgo } from "../ui/TimeAgo";
+import { UiButton } from "../ui/UiButton";
 
 interface FriendshipRequestCardProps {
   request: FriendshipRequest;
@@ -56,7 +57,7 @@ const FriendshipRequestCard: React.FC<FriendshipRequestCardProps> = ({
       <div className="flex-1">
         <h3
           onClick={handleGoToProfile}
-          className="inline-block text-lg font-semibold text-gray-800 cursor-pointer hover:underline"
+          className="text-lg font-semibold text-gray-800 cursor-pointer hover:underline"
         >
           {request.firstName} {request.lastName}
         </h3>
@@ -69,30 +70,21 @@ const FriendshipRequestCard: React.FC<FriendshipRequestCardProps> = ({
           <div className="font-bold text-red-600 min-w-40 text-center">Atmesta</div>
         ) : (
           <>
-            <button
-              type="button"
+            <UiButton
               onClick={handleAccept}
               disabled={loading}
-              className={`px-4 py-2 rounded-xl transition 
-              ${loading
-                  ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                  : "bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"
-                }`}
+              className={loading ? "bg-gray-400 text-gray-200 cursor-not-allowed" : ""}
             >
               Sutikti
-            </button>
-            <button
-              type="button"
+            </UiButton>
+            <UiButton
               onClick={handleDecline}
               disabled={loading}
-              className={`px-4 py-2 rounded-xl transition
-                ${loading
-                  ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                  : "bg-gray-200 hover:bg-gray-300 cursor-pointer"
-                }`}
+              className={loading ? "bg-gray-400 text-gray-200 cursor-not-allowed" : ""}
+              variant="outline"
             >
               Atmesti
-            </button>
+            </UiButton>
           </>
         )}
       </div>
