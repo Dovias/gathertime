@@ -2,6 +2,7 @@ import type React from "react";
 import type { Friendship } from "../../models/Friendship";
 import { useNavigate } from "react-router";
 import { UiButton } from "../ui/UiButton";
+import { UiAvatar } from "../ui/UiAvatar";
 
 interface FriendCardProps {
   friend: Friendship;
@@ -16,13 +17,12 @@ const FriendCard: React.FC<FriendCardProps> = ({ friend }) => {
 
   return (
     <div className="bg-white rounded-2xl p-6 flex items-center space-x-4 hover:bg-gray-100 transition-shadow">
-      <div
+      <UiAvatar
         onClick={handleGoToProfile}
-        className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-2xl text-gray-600 cursor-pointer"
-      >
-        {friend.firstName[0]}
-        {friend.lastName[0]}
-      </div>
+        firstName={friend.firstName}
+        lastName={friend.lastName}
+        className="cursor-pointer"
+      />
       <div className="flex-1">
         <h3
           onClick={handleGoToProfile}
