@@ -9,6 +9,7 @@ export default function EventCard({
   users,
   onClick,
   onButtonClick,
+  inviteSent = false,
 }: {
   title: string;
   subtitle?: string;
@@ -17,6 +18,7 @@ export default function EventCard({
   users: { firstName: string; lastName:string; avatar?: string | null }[];
   onClick?: () => void;
   onButtonClick? : () => void;
+  inviteSent?: boolean;
 }) {
   const inviter = users[0];
 
@@ -48,11 +50,17 @@ export default function EventCard({
         </span>
       </div>
     </button>
-        <UiButton
-            onClick={onButtonClick}
-        >
-          Susitikti
-        </UiButton>
+        {onButtonClick && (
+          inviteSent ? (
+            <div className="text-center text-sm text-green-600 font-medium py-2">
+              Kvietimas išsiųstas
+            </div>
+        ) : (
+          <UiButton onClick={onButtonClick} >
+            Susitikti
+          </UiButton>
+          )
+        )}
       </div>
   );
 }

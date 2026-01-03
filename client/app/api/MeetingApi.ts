@@ -13,3 +13,10 @@ export const confirmInvitation = async (invitationId: number) => {
 export const declineInvitation = async (invitationId: number) => {
   await axios.put(`/meeting/invitation/${invitationId}/decline`);
 };
+
+export const initMeeting = async (meetingData: {
+  userId: number;
+  freeTimeId: number;
+}) => {
+  await axios.post('/meeting', meetingData);
+};

@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState } from "react";
 import { getInvitationsForUser } from "../../api/InvitationApi";
-import { confirmInvitation, declineInvitation, getMeeting } from "../../api/MeetingApi";
+import {confirmInvitation, declineInvitation, getMeeting, initMeeting} from "../../api/MeetingApi";
 import { getFriendships } from "../../api/FriendshipApi";
 import { getFreeTimes } from "../../api/FreeTimeApi";
 import EventCard from "../../components/cards/EventCard";
@@ -10,8 +10,12 @@ import type { Meeting } from "../../models/Meeting";
 import type { FreeTimeDTO } from "../../models/FreeTimeDTO";
 import { getFormattedDate } from "../../utilities/date";
 import type { Route } from "./+types/feed";
+import { Invitation } from "../../models/Invitation.ts";
 
-type InvitationItem = { invitationId: number; meeting: Meeting };
+type InvitationItem = {
+  invitation: Invitation;
+  meeting: Meeting
+};
 
 type FriendLite = {
   friendId: number;
@@ -25,7 +29,8 @@ type FriendFreeTimeCard = {
   subtitle: string;
   startDateTime: string;
   endDateTime: string;
-  users: { firstName: string; lastName: string }[];
+  freeTimeId: number;
+  users: { firstName: string; lastName: string, friendId: number }[];
 };
 
 type LoaderData = {
@@ -89,7 +94,7 @@ export async function clientLoader({ context }: Route.ClientLoaderArgs) {
 
   const invitations: InvitationItem[] = await Promise.all(
     validInvites.map(async (inv) => ({
-      invitationId: inv.id,
+      invitation: inv,
       meeting: await getMeeting(inv.meetingId),
     })),
   );
@@ -124,7 +129,8 @@ export async function clientLoader({ context }: Route.ClientLoaderArgs) {
         subtitle: ft.pastimeType ?? "",
         startDateTime: ft.startDateTime,
         endDateTime: ft.endDateTime,
-        users: [{ firstName: friend.firstName, lastName: friend.lastName }],
+        freeTimeId: ft.id,
+        users: [{ firstName: friend.firstName, lastName: friend.lastName, friendId: friend.friendId }],
       })),
   );
 
@@ -161,7 +167,8 @@ export async function clientLoader({ context }: Route.ClientLoaderArgs) {
             subtitle: f.pastimeType ?? "",
             startDateTime: f.startDateTime,
             endDateTime: f.endDateTime,
-            users: [{ firstName: friend.firstName, lastName: friend.lastName }],
+            freeTimeId: f.id,
+            users: [{ firstName: friend.firstName, lastName: friend.lastName, friendId: friend.friendId }],
           });
         }
       }
@@ -255,6 +262,7 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
   const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
   const [selectedInvitationId, setSelectedInvitationId] = useState<number | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [sentInvites, setSentInvites] = useState<Set<string>>(new Set());
 
   const data = (loaderData ?? {}) as LoaderData;
 
@@ -263,10 +271,35 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
   const friendFreeTimes = Array.isArray(data.friendFreeTimes) ? data.friendFreeTimes : [];
   const joinableMeetings = Array.isArray(data.joinableMeetings) ? data.joinableMeetings : [];
 
+  const getFriendForInvitation = (item: InvitationItem) => {
+    const inviterId = item.invitation.inviterId;
+    const meeting = item.meeting;
+
+    // Find the inviter in either owner or participants
+    if (meeting.owner.id === inviterId) {
+      return meeting.owner;
+    }
+
+    return meeting.participants.find((p) => Number(p.id) === inviterId) || null;
+  }
+
   const getFriendForMeeting = (meeting: Meeting) =>
     (meeting as any)?.owner?.id === data.userId
-      ? (meeting as any)?.users?.find((u: any) => u.id !== data.userId)
-      : (meeting as any)?.owner;
+        ? (meeting as any)?.participants?.find((u: any) => Number(u.id) !== data.userId)
+        : (meeting as any)?.owner;
+
+  const handleSendInvite = async (cardKey: string, friendId: number, freeTimeId: number) => {
+    try {
+      await initMeeting({
+        userId: friendId,
+        freeTimeId: freeTimeId,
+      });
+
+      setSentInvites(prev => new Set(prev).add(cardKey));
+    } catch (error) {
+        console.error("Failed to send invite:", error);
+    }
+  }
 
   return (
     <main className="p-10 min-w-0 max-w-full overflow-x-hidden">
@@ -275,7 +308,9 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
       <Section title="Kvietimai į susitikimus" itemsCount={invitations.length}>
         {() =>
           invitations.map((item) => {
-            const friend = getFriendForMeeting(item.meeting);
+            const friend = getFriendForInvitation(item);
+
+            if (!friend) return null;
 
             return (
               <EventCard
@@ -287,7 +322,7 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
                 users={[{ firstName: friend.firstName, lastName: friend.lastName }]}
                 onClick={() => {
                   setSelectedMeeting(item.meeting);
-                  setSelectedInvitationId(item.invitationId);
+                  setSelectedInvitationId(item.invitation.id);
                   setIsOpen(true);
                 }}
               />
@@ -297,7 +332,15 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
       </Section>
 
       <Section title="Laisvų laikų sutapimai" itemsCount={overlappingFreeTimes.length}>
-        {() => overlappingFreeTimes.map((c) => <EventCard key={c.key} {...c} onClick={() => {}} />)}
+        {() => overlappingFreeTimes.map((c) => (
+            <EventCard
+                key={c.key}
+                {...c}
+                onClick={() => {}}
+                onButtonClick={() => handleSendInvite(c.key, c.users[0].friendId, c.freeTimeId)}
+                inviteSent={sentInvites.has(c.key)}
+            />
+        ))}
       </Section>
 
       <Section
@@ -324,7 +367,15 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
       </Section>
 
       <Section title="Draugų laisvi laikai" itemsCount={friendFreeTimes.length}>
-        {() => friendFreeTimes.map((c) => <EventCard key={c.key} {...c} onClick={() => {}} />)}
+        {() => friendFreeTimes.map((c) => (
+            <EventCard
+                key={c.key}
+                {...c}
+                onClick={() => {}}
+                onButtonClick={() => handleSendInvite(c.key, c.users[0].friendId, c.freeTimeId)}
+                inviteSent={sentInvites.has(c.key)}
+            />
+        ))}
       </Section>
 
       {isOpen && selectedMeeting && (
