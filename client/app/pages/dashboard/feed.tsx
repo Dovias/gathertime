@@ -11,6 +11,7 @@ import type { FreeTimeDTO } from "../../models/FreeTimeDTO";
 import { getFormattedDate } from "../../utilities/date";
 import type { Route } from "./+types/feed";
 import { Invitation } from "../../models/Invitation.ts";
+import {FiCalendar} from "react-icons/fi";
 
 type InvitationItem = {
   invitation: Invitation;
@@ -72,8 +73,18 @@ const parseLocalDateTime = (value: string): Date => {
   return new Date(y, m - 1, d, Number(hh), Number(mm), Number(ss), Number(ms));
 };
 
+const isSameDay = (date1: Date, date2: Date) => {
+  return date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate();
+};
+
 const overlaps = (aStart: Date, aEnd: Date, bStart: Date, bEnd: Date) =>
   aStart <= bEnd && aEnd >= bStart;
+
+const formatDateForInput = (date: Date) => {
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+};
 
 export async function clientLoader({ context }: Route.ClientLoaderArgs) {
   const user = context.get(userContext);
@@ -259,6 +270,11 @@ function Section({
 }
 
 export default function Feed({ loaderData }: Route.ComponentProps) {
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  });
   const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
   const [selectedInvitationId, setSelectedInvitationId] = useState<number | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -266,10 +282,29 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
 
   const data = (loaderData ?? {}) as LoaderData;
 
-  const invitations = Array.isArray(data.invitations) ? data.invitations : [];
-  const overlappingFreeTimes = Array.isArray(data.overlappingFreeTimes) ? data.overlappingFreeTimes : [];
-  const friendFreeTimes = Array.isArray(data.friendFreeTimes) ? data.friendFreeTimes : [];
-  const joinableMeetings = Array.isArray(data.joinableMeetings) ? data.joinableMeetings : [];
+  const allInvitations = Array.isArray(data.invitations) ? data.invitations : [];
+  const allOverlappingFreeTimes = Array.isArray(data.overlappingFreeTimes) ? data.overlappingFreeTimes : [];
+  const allFriendFreeTimes = Array.isArray(data.friendFreeTimes) ? data.friendFreeTimes : [];
+  const allJoinableMeetings = Array.isArray(data.joinableMeetings) ? data.joinableMeetings : [];
+
+  const filterByDate = <T extends { startDateTime: string }>(items: T[]): T[] => {
+    return items.filter(item => {
+      const itemDate = parseLocalDateTime(item.startDateTime);
+      return isSameDay(itemDate, selectedDate);
+    })
+  }
+
+  const invitations = filterByDate(allInvitations.map(item => ({
+    ...item,
+    startDateTime: item.meeting.startDateTime
+  }))).map(item => {
+    const { startDateTime, ...rest } = item;
+    return rest;
+  })
+
+  const overlappingFreeTimes = filterByDate(allOverlappingFreeTimes);
+  const friendFreeTimes = filterByDate(allFriendFreeTimes);
+  const joinableMeetings = filterByDate(allJoinableMeetings);
 
   const getFriendForInvitation = (item: InvitationItem) => {
     const inviterId = item.invitation.inviterId;
@@ -301,9 +336,37 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
     }
   }
 
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value) {
+      const [year, month, day] = value.split('-').map(Number);
+      const newDate = new Date(year, month - 1, day);
+      newDate.setHours(0, 0, 0, 0);
+      setSelectedDate(newDate);
+    }
+  };
+
+  const formattedDate = selectedDate.toLocaleDateString("lt-LT", {
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  });
+  const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+
   return (
     <main className="p-10 min-w-0 max-w-full overflow-x-hidden">
-      <h1 className="text-2xl font-semibold mb-4">{getFormattedDate()}</h1>
+      <div className="flex items-center gap-3 mb-4">
+        <h1 className="text-2xl font-semibold">{capitalizedDate}</h1>
+        <label className="relative cursor-pointer inline-block group">
+          <FiCalendar className="text-gray-600 group-hover:text-blue-500 transition" size={24}/>
+          <input
+            type="date"
+            value={formatDateForInput(selectedDate)}
+            onChange={handleDateChange}
+            className="absolute inset-0 opacity-0 cursor-pointer"
+          />
+        </label>
+      </div>
 
       <Section title="Kvietimai į susitikimus" itemsCount={invitations.length}>
         {() =>
