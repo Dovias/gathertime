@@ -1,6 +1,6 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { getInvitationsForUser } from "../../api/InvitationApi";
-import {confirmInvitation, declineInvitation, getMeeting, initMeeting} from "../../api/MeetingApi";
+import { confirmInvitation, declineInvitation, getMeeting, initMeeting } from "../../api/MeetingApi";
 import { getFriendships } from "../../api/FriendshipApi";
 import { getFreeTimes } from "../../api/FreeTimeApi";
 import EventCard from "../../components/cards/EventCard";
@@ -8,15 +8,17 @@ import EventDetails from "../../components/cards/EventDetails";
 import { userContext } from "../../context";
 import type { Meeting } from "../../models/Meeting";
 import type { FreeTimeDTO } from "../../models/FreeTimeDTO";
-import { getFormattedDate } from "../../utilities/date";
 import type { Route } from "./+types/feed";
-import { Invitation } from "../../models/Invitation.ts";
-import {FiCalendar} from "react-icons/fi";
-
-type InvitationItem = {
-  invitation: Invitation;
-  meeting: Meeting
-};
+import { FiCalendar } from "react-icons/fi";
+import { useNavigate, useSearchParams, useRevalidator } from "react-router";
+import {
+  endOfWeek,
+  formatDateForInput, isSameDay, overlaps,
+  parseLocalDateTime,
+  startOfWeek,
+  toBackendLocalDateTime
+} from "../../utilities/date.ts";
+import { getFriendForInvitation, getFriendForMeeting, InvitationItem } from "../../utilities/feedHelpers.ts";
 
 type FriendLite = {
   friendId: number;
@@ -32,6 +34,7 @@ type FriendFreeTimeCard = {
   endDateTime: string;
   freeTimeId: number;
   users: { firstName: string; lastName: string, friendId: number }[];
+  invitationSent?: boolean;
 };
 
 type LoaderData = {
@@ -40,53 +43,10 @@ type LoaderData = {
   friendFreeTimes: FriendFreeTimeCard[];
   overlappingFreeTimes: FriendFreeTimeCard[];
   joinableMeetings: Meeting[];
+  selectedDateStr: string;
 };
 
-const pad = (n: number) => String(n).padStart(2, "0");
-
-const toBackendLocalDateTime = (d: Date) =>
-  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
-    d.getHours(),
-  )}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-
-const startOfWeek = (base: Date) => {
-  const start = new Date(base);
-  start.setDate(start.getDate() - start.getDay() + 1);
-  start.setHours(0, 0, 0, 0);
-  return start;
-};
-
-const endOfWeek = (base: Date) => {
-  const start = startOfWeek(base);
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6);
-  end.setHours(23, 59, 59, 0);
-  return end;
-};
-
-const parseLocalDateTime = (value: string): Date => {
-  const normalized = value.trim().replace(" ", "T");
-  const [datePart, timePart = "00:00:00"] = normalized.split("T");
-  const [y, m, d] = datePart.split("-").map(Number);
-  const [hh = "0", mm = "0", ssRaw = "0"] = timePart.split(":");
-  const [ss = "0", ms = "0"] = ssRaw.split(".");
-  return new Date(y, m - 1, d, Number(hh), Number(mm), Number(ss), Number(ms));
-};
-
-const isSameDay = (date1: Date, date2: Date) => {
-  return date1.getFullYear() === date2.getFullYear() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getDate() === date2.getDate();
-};
-
-const overlaps = (aStart: Date, aEnd: Date, bStart: Date, bEnd: Date) =>
-  aStart <= bEnd && aEnd >= bStart;
-
-const formatDateForInput = (date: Date) => {
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-};
-
-export async function clientLoader({ context }: Route.ClientLoaderArgs) {
+export async function clientLoader({ context, request }: Route.ClientLoaderArgs) {
   const user = context.get(userContext);
   if (!user?.id) {
     return {
@@ -95,10 +55,16 @@ export async function clientLoader({ context }: Route.ClientLoaderArgs) {
       friendFreeTimes: [],
       overlappingFreeTimes: [],
       joinableMeetings: [],
+      selectedDateStr: formatDateForInput(new Date()),
     } satisfies LoaderData;
   }
 
   const userId = user.id;
+
+  const url = new URL(request.url);
+  const dateParam = url.searchParams.get('date');
+  const selectedDate = dateParam ? new Date(dateParam) : new Date();
+  selectedDate.setHours(0, 0, 0, 0);
 
   const invites = await getInvitationsForUser(userId);
   const validInvites = Array.isArray(invites) ? invites : [];
@@ -110,6 +76,15 @@ export async function clientLoader({ context }: Route.ClientLoaderArgs) {
     })),
   );
 
+  const sentFreeTimeIds = new Set<number>();
+  invitations.forEach(({ invitation, meeting }) => {
+    if (invitation.inviterId === userId &&
+        invitation.status === "SENT" &&
+        meeting.freeTimeId) {
+      sentFreeTimeIds.add(meeting.freeTimeId);
+    }
+  });
+
   const friendships = await getFriendships(userId);
   const friends: FriendLite[] = (Array.isArray(friendships) ? friendships : []).map((f: any) => ({
     friendId: f.friendId,
@@ -117,9 +92,8 @@ export async function clientLoader({ context }: Route.ClientLoaderArgs) {
     lastName: f.lastName ?? "",
   }));
 
-  const now = new Date();
-  const weekStart = startOfWeek(now);
-  const weekEnd = endOfWeek(now);
+  const weekStart = startOfWeek(selectedDate);
+  const weekEnd = endOfWeek(selectedDate);
 
   const friendFreeTimesRaw = await Promise.all(
     friends.map(async (fr) => ({
@@ -142,6 +116,7 @@ export async function clientLoader({ context }: Route.ClientLoaderArgs) {
         endDateTime: ft.endDateTime,
         freeTimeId: ft.id,
         users: [{ firstName: friend.firstName, lastName: friend.lastName, friendId: friend.friendId }],
+        invitationSent: sentFreeTimeIds.has(ft.id),
       })),
   );
 
@@ -180,6 +155,7 @@ export async function clientLoader({ context }: Route.ClientLoaderArgs) {
             endDateTime: f.endDateTime,
             freeTimeId: f.id,
             users: [{ firstName: friend.firstName, lastName: friend.lastName, friendId: friend.friendId }],
+            invitationSent: sentFreeTimeIds.has(f.id),
           });
         }
       }
@@ -192,20 +168,26 @@ export async function clientLoader({ context }: Route.ClientLoaderArgs) {
     friendFreeTimes,
     overlappingFreeTimes,
     joinableMeetings: [],
+    selectedDateStr: formatDateForInput(selectedDate),
   } satisfies LoaderData;
 }
-
 
 function Section({
   title,
   itemsCount,
+  availableUsers,
+  selectedUser,
+  onUserChange,
   children,
 }: {
   title: string;
   itemsCount: number;
+  availableUsers?: { id: number; name: string }[];
+  selectedUser?: number | null;
+  onUserChange?: (userId: number | null) => void;
   children: () => React.ReactNode;
 }) {
-  const VISIBLE = 3;
+  const VISIBLE = 4;
   const [page, setPage] = useState(0);
 
   const nodes = React.Children.toArray(children());
@@ -218,7 +200,23 @@ function Section({
 
   return (
     <section className="mb-6">
+      <div className="flex items-center justify-between mb-2">
       <h2 className="text-lg font-semibold mb-2">{title}</h2>
+        {availableUsers && availableUsers.length > 0 && onUserChange && (
+            <select
+              value={selectedUser ?? ''}
+              onChange={(e) => onUserChange(e.target.value ? Number(e.target.value) : null)}
+              className="px-3 py-1 border border-gray-300 rounded-md text-sm hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Visi vartotojai</option>
+              {availableUsers.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+              ))}
+            </select>
+        )}
+      </div>
 
       {itemsCount === 0 ? (
         <div className="text-sm text-gray-500">Nėra duomenų</div>
@@ -270,7 +268,17 @@ function Section({
 }
 
 export default function Feed({ loaderData }: Route.ComponentProps) {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const revalidator = useRevalidator();
+
   const [selectedDate, setSelectedDate] = useState(() => {
+    const dateParam = searchParams.get('date');
+    if (dateParam) {
+      const date = new Date(dateParam);
+      date.setHours(0, 0, 0, 0);
+      return date;
+    }
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return today;
@@ -278,7 +286,22 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
   const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
   const [selectedInvitationId, setSelectedInvitationId] = useState<number | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [sentInvites, setSentInvites] = useState<Set<string>>(new Set());
+
+  const [invitationsUserFilter, setInvitationsUserFilter] = useState<number | null>(null);
+  const [overlappingUserFilter, setOverlappingUserFilter] = useState<number | null>(null);
+  const [joinableUserFilter, setJoinableUserFilter] = useState<number | null>(null);
+  const [friendFreeTimesUserFilter, setFriendFreeTimesUserFilter] = useState<number | null>(null);
+
+  useEffect(() => {
+    const dateParam = searchParams.get('date');
+    if (dateParam) {
+      const urlDate = new Date(dateParam);
+      urlDate.setHours(0, 0, 0, 0);
+      if (urlDate.getTime() !== selectedDate.getTime()) {
+        setSelectedDate(urlDate);
+      }
+    }
+  }, [searchParams]);
 
   const data = (loaderData ?? {}) as LoaderData;
 
@@ -294,6 +317,36 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
     })
   }
 
+  const getUniqueUsers = (items : { users: { firstName: string; lastName: string; friendId?: number }[] } []) => {
+    const usersMap = new Map<number, string>();
+    items.forEach(item => {
+      item.users.forEach(user => {
+        const id = user.friendId ?? 0;
+        if (id && !usersMap.has(id)) {
+          usersMap.set(id, `${user.firstName} ${user.lastName}`);
+        }
+      });
+    });
+    return Array.from(usersMap.entries()).map(([id, name]) => ({ id, name }));
+  }
+
+  const dateFilteredInvitations = filterByDate(allInvitations.map(item => ({
+    ...item,
+    startDateTime: item.meeting.startDateTime
+  }))).map(item => {
+    const { startDateTime, ...rest } = item;
+    return rest;
+  });
+
+  const invitationUsers = getUniqueUsers(
+      dateFilteredInvitations.map(item => {
+        const friend = getFriendForInvitation(item);
+        return {
+          users: friend ? [{ ...friend, friendId: Number(friend.id) }] : []
+        };
+      })
+  );
+
   const invitations = filterByDate(allInvitations.map(item => ({
     ...item,
     startDateTime: item.meeting.startDateTime
@@ -302,26 +355,37 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
     return rest;
   })
 
-  const overlappingFreeTimes = filterByDate(allOverlappingFreeTimes);
-  const friendFreeTimes = filterByDate(allFriendFreeTimes);
-  const joinableMeetings = filterByDate(allJoinableMeetings);
+  const dateFilteredOverlapping = filterByDate(allOverlappingFreeTimes);
+  const overlappingUsers = getUniqueUsers(dateFilteredOverlapping);
+  const overlappingFreeTimes = overlappingUserFilter
+        ? dateFilteredOverlapping.filter(item =>
+          item.users.some(u => u.friendId === overlappingUserFilter)
+      )
+      : dateFilteredOverlapping;
 
-  const getFriendForInvitation = (item: InvitationItem) => {
-    const inviterId = item.invitation.inviterId;
-    const meeting = item.meeting;
+  const dateFilteredFriendFreeTimes = filterByDate(allFriendFreeTimes)
+  const friendFreeTimesUsers = getUniqueUsers(dateFilteredFriendFreeTimes);
+  const friendFreeTimes = friendFreeTimesUserFilter
+        ? dateFilteredFriendFreeTimes.filter(item =>
+          item.users.some(u => u.friendId === friendFreeTimesUserFilter)
+      )
+      : dateFilteredFriendFreeTimes;
 
-    // Find the inviter in either owner or participants
-    if (meeting.owner.id === inviterId) {
-      return meeting.owner;
-    }
-
-    return meeting.participants.find((p) => Number(p.id) === inviterId) || null;
-  }
-
-  const getFriendForMeeting = (meeting: Meeting) =>
-    (meeting as any)?.owner?.id === data.userId
-        ? (meeting as any)?.participants?.find((u: any) => Number(u.id) !== data.userId)
-        : (meeting as any)?.owner;
+  const dateFilteredJoinable = filterByDate(allJoinableMeetings);
+  const joinableUsers = getUniqueUsers(
+      dateFilteredJoinable.map(m => {
+        const friend = getFriendForMeeting(m, data.userId);
+        return {
+          users: friend ? [{ ...friend, friendId: Number(friend.id) }] : []
+        };
+      })
+  );
+  const joinableMeetings = joinableUserFilter
+        ? dateFilteredJoinable.filter(m => {
+          const friend = getFriendForMeeting(m, data.userId);
+          return friend && Number(friend.id) === joinableUserFilter;
+      })
+      : dateFilteredJoinable;
 
   const handleSendInvite = async (cardKey: string, friendId: number, freeTimeId: number) => {
     try {
@@ -330,7 +394,7 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
         freeTimeId: freeTimeId,
       });
 
-      setSentInvites(prev => new Set(prev).add(cardKey));
+      revalidator.revalidate();
     } catch (error) {
         console.error("Failed to send invite:", error);
     }
@@ -343,6 +407,10 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
       const newDate = new Date(year, month - 1, day);
       newDate.setHours(0, 0, 0, 0);
       setSelectedDate(newDate);
+
+      navigate(`?date=${value}`, { replace: true });
+
+      revalidator.revalidate();
     }
   };
 
@@ -368,7 +436,13 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
         </label>
       </div>
 
-      <Section title="Kvietimai į susitikimus" itemsCount={invitations.length}>
+      <Section
+          title="Kvietimai į susitikimus"
+          itemsCount={invitations.length}
+          availableUsers={invitationUsers}
+          selectedUser={invitationsUserFilter}
+          onUserChange={setInvitationsUserFilter}
+      >
         {() =>
           invitations.map((item) => {
             const friend = getFriendForInvitation(item);
@@ -394,14 +468,20 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
         }
       </Section>
 
-      <Section title="Laisvų laikų sutapimai" itemsCount={overlappingFreeTimes.length}>
+      <Section
+          title="Laisvų laikų sutapimai"
+          itemsCount={overlappingFreeTimes.length}
+          availableUsers={overlappingUsers}
+          selectedUser={overlappingUserFilter}
+          onUserChange={setOverlappingUserFilter}
+      >
         {() => overlappingFreeTimes.map((c) => (
             <EventCard
                 key={c.key}
                 {...c}
                 onClick={() => {}}
                 onButtonClick={() => handleSendInvite(c.key, c.users[0].friendId, c.freeTimeId)}
-                inviteSent={sentInvites.has(c.key)}
+                inviteSent={c.invitationSent}
             />
         ))}
       </Section>
@@ -409,10 +489,13 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
       <Section
         title="Susitikimai, prie kurių galima prisijungti"
         itemsCount={joinableMeetings.length}
+        availableUsers={joinableUsers}
+        selectedUser={joinableUserFilter}
+        onUserChange={setJoinableUserFilter}
       >
         {() =>
           joinableMeetings.map((m) => {
-            const friend = getFriendForMeeting(m);
+            const friend = getFriendForMeeting(m, data.userId);
 
             return (
               <EventCard
@@ -429,14 +512,20 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
         }
       </Section>
 
-      <Section title="Draugų laisvi laikai" itemsCount={friendFreeTimes.length}>
+      <Section
+          title="Draugų laisvi laikai"
+          itemsCount={friendFreeTimes.length}
+          availableUsers={friendFreeTimesUsers}
+          selectedUser={friendFreeTimesUserFilter}
+          onUserChange={setFriendFreeTimesUserFilter}
+      >
         {() => friendFreeTimes.map((c) => (
             <EventCard
                 key={c.key}
                 {...c}
                 onClick={() => {}}
                 onButtonClick={() => handleSendInvite(c.key, c.users[0].friendId, c.freeTimeId)}
-                inviteSent={sentInvites.has(c.key)}
+                inviteSent={c.invitationSent}
             />
         ))}
       </Section>
