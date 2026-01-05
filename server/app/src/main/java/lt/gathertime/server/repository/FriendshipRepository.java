@@ -1,6 +1,7 @@
 package lt.gathertime.server.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,10 +12,19 @@ import lt.gathertime.server.entity.Friendship;
 
 @Repository
 public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
+
+    @Query("""
+    SELECT f FROM Friendship f
+    WHERE f.user.id = :userId
+        AND f.friend.id = :userId2
+    """)
+    Optional<Friendship> getFriendshipByUsers(
+        @Param("userId") Long userId,
+        @Param("userId2") Long userId2);
     
     @Query("""
     SELECT f FROM Friendship f
-    WHERE f.friend.id = :userId
+    WHERE f.user.id = :userId
         AND f.status = 'NOT_CONFIRMED'
     """)
     List<Friendship> getFriendshipRequests(

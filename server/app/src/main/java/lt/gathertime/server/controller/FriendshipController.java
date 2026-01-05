@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lt.gathertime.server.dto.friendship.CreateFriendshipRequestDTO;
-import lt.gathertime.server.dto.friendship.FriendshipDTO;
+import lt.gathertime.server.dto.friendship.FriendDTO;
 import lt.gathertime.server.dto.friendship.FriendshipRequestDTO;
+import lt.gathertime.server.dto.friendship.FriendshipStatusDTO;
 import lt.gathertime.server.service.FriendshipService;
 
 @RestController
@@ -46,8 +47,16 @@ public class FriendshipController {
 
     @GetMapping("/user/{userId}") 
     @ResponseStatus(HttpStatus.OK)
-    public List<FriendshipDTO> getFriendships(@PathVariable final Long userId) {
+    public List<FriendDTO> getFriendships(@PathVariable final Long userId) {
         return this.friendshipService.getFriendships(userId);
+    }
+
+    @GetMapping("/user/{userId}/second-user/{userId2}")
+    @ResponseStatus(HttpStatus.OK)
+    public FriendshipStatusDTO getRelationshipStatus(
+        @PathVariable final Long userId,
+        @PathVariable final Long userId2) {
+        return new FriendshipStatusDTO(this.friendshipService.getFriendshipStatus(userId, userId2));
     }
 
     @GetMapping("/user/{userId}/requests") 
