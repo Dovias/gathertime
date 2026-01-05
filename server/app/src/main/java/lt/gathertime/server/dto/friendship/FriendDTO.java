@@ -9,8 +9,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class FriendshipDTO {
-    
+public class FriendDTO {
+
     private Long friendshipId;
 
     private Long friendId;
