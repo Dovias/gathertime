@@ -14,27 +14,32 @@ import lt.gathertime.server.entity.Friendship;
 public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
 
     @Query("""
-    SELECT f FROM Friendship f
-    WHERE f.user.id = :userId
-        AND f.friend.id = :userId2
+        SELECT f FROM Friendship f
+        WHERE f.user.id = :userId
+          AND f.friend.id = :userId2
+        ORDER BY f.starDateTime DESC
     """)
-    Optional<Friendship> getFriendshipByUsers(
-        @Param("userId") Long userId,
-        @Param("userId2") Long userId2);
-    
-    @Query("""
-    SELECT f FROM Friendship f
-    WHERE f.user.id = :userId
-        AND f.status = 'NOT_CONFIRMED'
-    """)
-    List<Friendship> getFriendshipRequests(
-            @Param("userId") Long userId);
+    List<Friendship> getFriendshipsByUsersOrdered(
+            @Param("userId") Long userId,
+            @Param("userId2") Long userId2
+    );
+
+    default Optional<Friendship> getLatestFriendshipByUsers(Long userId, Long userId2) {
+        return getFriendshipsByUsersOrdered(userId, userId2).stream().findFirst();
+    }
 
     @Query("""
-    SELECT f FROM Friendship f
-    WHERE f.friend.id = :userId
-        AND f.status = 'CONFIRMED'
+        SELECT f FROM Friendship f
+        WHERE f.user.id = :userId
+          AND f.status = 'NOT_CONFIRMED'
+        ORDER BY f.starDateTime DESC
     """)
-    List<Friendship> getFriendships(
-            @Param("userId") Long userId);
+    List<Friendship> getFriendshipRequests(@Param("userId") Long userId);
+
+    @Query("""
+        SELECT f FROM Friendship f
+        WHERE f.friend.id = :userId
+          AND f.status = 'CONFIRMED'
+    """)
+    List<Friendship> getFriendships(@Param("userId") Long userId);
 }
