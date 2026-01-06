@@ -84,7 +84,7 @@ public class FriendshipService {
                 final User user2 = this.userRepository.findById(userId2)
                                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
-                 return friendshipRepository.getFriendshipByUsers(user.getId(), user2.getId())
+                 return friendshipRepository.getLatestFriendshipByUsers(user.getId(), user2.getId())
                                 .map(Friendship::getStatus)
                                 .orElse(FriendshipStatus.NOT_FOUND);
         }
@@ -94,7 +94,7 @@ public class FriendshipService {
                 final Friendship friendshipToConfirm = this.friendshipRepository.findById(friendshipId)
                                 .orElseThrow(() -> new RuntimeException(
                                                 "Friendship to confirm not found with ID: " + friendshipId));
-                final Friendship friendshipRequest = this.friendshipRepository.getFriendshipByUsers(
+                final Friendship friendshipRequest = this.friendshipRepository.getLatestFriendshipByUsers(
                         friendshipToConfirm.getFriend().getId(),
                         friendshipToConfirm.getUser().getId())
                                 .orElseThrow(() -> new RuntimeException(
@@ -119,7 +119,7 @@ public class FriendshipService {
                 final Friendship friendshipToConfirm = this.friendshipRepository.findById(friendshipId)
                                 .orElseThrow(() -> new RuntimeException(
                                                 "Friendship to confirm not found with ID: " + friendshipId));
-                final Friendship friendshipRequest = this.friendshipRepository.getFriendshipByUsers(
+                final Friendship friendshipRequest = this.friendshipRepository.getLatestFriendshipByUsers(
                         friendshipToConfirm.getFriend().getId(),
                         friendshipToConfirm.getUser().getId())
                                 .orElseThrow(() -> new RuntimeException(

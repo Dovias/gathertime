@@ -12,3 +12,19 @@ export interface FriendshipRequest {
   lastName: string;
   requestDateTime: string;
 }
+
+export type FriendshipStatus =
+  | "NOT_FOUND"
+  | "REQUESTED"
+  | "NOT_CONFIRMED"
+  | "CONFIRMED"
+  | "DECLINED";
+
+export type CreateFriendshipRequestDTO = {
+  userId: number;
+  friendId: number;
+};
+
+export type FriendshipStatusDTO = {
+  friendshipStatus: FriendshipStatus;
+};
