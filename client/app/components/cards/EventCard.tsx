@@ -1,4 +1,5 @@
-import { FaUserCircle } from "react-icons/fa";
+import {UiAvatar} from "../ui/UiAvatar.tsx";
+import {UiButton} from "../ui/UiButton.tsx";
 
 export default function EventCard({
   title,
@@ -7,38 +8,37 @@ export default function EventCard({
   endDateTime,
   users,
   onClick,
+  onButtonClick,
+  inviteSent = false,
 }: {
   title: string;
   subtitle?: string;
   startDateTime: string;
   endDateTime: string;
-  users: { name: string; avatar?: string | null }[];
+  users: { firstName: string; lastName:string; avatar?: string | null }[];
   onClick?: () => void;
+  onButtonClick? : () => void;
+  inviteSent?: boolean;
 }) {
   const inviter = users[0];
 
   return (
+      <div className="px-4 py-3 w-64 rounded-xl shadow flex flex-col gap-3 border bg-white border-gray-200 hover:shadow-lg transition">
     <button
       type="button"
       onClick={onClick}
       onKeyDown={(e) => e.key === "Enter" && onClick?.()}
-      className="px-4 py-3 w-64 rounded-xl shadow flex gap-4 border bg-white border-gray-200 cursor-pointer hover:shadow-lg transition text-left"
+      className="flex gap-4 text-left cursor-pointer"
     >
       <div className="flex flex-col items-center w-16">
-        {inviter?.avatar ? (
-          <img
-            src={inviter.avatar}
-            alt={`${inviter.name} avatar`}
-            className="w-8 h-8 rounded-full mb-1"
-          />
-        ) : (
-          <FaUserCircle
-            className="w-8 h-8 text-gray-400 mb-1"
-            aria-hidden="true"
-          />
-        )}
+        <UiAvatar
+            firstName={inviter.firstName}
+            lastName={inviter.lastName}
+            size="sm"
+            className="mb-1"
+        />
         <span className="text-xs text-gray-600 text-center">
-          {inviter.name}
+          {inviter.firstName} {inviter.lastName}
         </span>
       </div>
 
@@ -50,5 +50,17 @@ export default function EventCard({
         </span>
       </div>
     </button>
+        {onButtonClick && (
+          inviteSent ? (
+            <div className="text-center text-sm text-green-600 font-medium py-2">
+              Kvietimas išsiųstas
+            </div>
+        ) : (
+          <UiButton onClick={onButtonClick} >
+            Susitikti
+          </UiButton>
+          )
+        )}
+      </div>
   );
 }
