@@ -11,7 +11,7 @@ import lt.gathertime.server.entity.User;
 import lt.gathertime.server.mapper.CommentMapper;
 import lt.gathertime.server.repository.ChatRepository;
 import lt.gathertime.server.repository.CommentRepository;
-import lt.gathertime.server.repository.UserRepository;
+import lt.gathertime.server.repository.UserJpaRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class ChatService {
 
   private final CommentRepository commentRepository;
   private final ChatRepository chatRepository;
-  private final UserRepository userRepository;
+  private final UserJpaRepository userJpaRepository;
 
   @Transactional
   public CommentDTO createComment(
@@ -34,7 +34,7 @@ public class ChatService {
       new RuntimeException("Chat not found with id " + chatId)
     );
 
-    final User user = this.userRepository.findById(userId).orElseThrow(() ->
+    final User user = this.userJpaRepository.findById(userId).orElseThrow(() ->
       new RuntimeException("User not found with id " + userId)
     );
 
@@ -74,7 +74,7 @@ public class ChatService {
       new RuntimeException("Chat not found with id " + chatId)
     );
 
-    final User user = this.userRepository.findById(userId).orElseThrow(() ->
+    final User user = this.userJpaRepository.findById(userId).orElseThrow(() ->
       new RuntimeException("User not found with id " + userId)
     );
 
@@ -101,7 +101,7 @@ public class ChatService {
       new RuntimeException("Chat not found with id " + chatId)
     );
 
-    final User user = this.userRepository.findById(userId).orElseThrow(() ->
+    final User user = this.userJpaRepository.findById(userId).orElseThrow(() ->
       new RuntimeException("User not found with id " + userId)
     );
 

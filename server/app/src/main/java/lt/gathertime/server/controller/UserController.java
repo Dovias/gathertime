@@ -41,6 +41,6 @@ public class UserController {
 
     @PutMapping("/change-password")
     public void changePassword(@RequestBody final PasswordChangeDTO request) {
-        this.userService.changePassword(request.getId(), request.getPassword());
+        this.userService.changePassword(request);
     }
 }

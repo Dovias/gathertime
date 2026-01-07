@@ -1,6 +1,6 @@
 package lt.gathertime.server.configuration;
 
-import lt.gathertime.server.repository.UserRepository;
+import lt.gathertime.server.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,11 +17,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationConfiguration {
 
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
 
     @Bean
     public UserDetailsService userDetailsService(){
-        return username -> this.userRepository.findByEmail(username)
+        return username -> this.userJpaRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 

@@ -7,7 +7,7 @@ import lt.gathertime.server.dto.user.*;
 import lt.gathertime.server.entity.EmailVerificationCode;
 import lt.gathertime.server.entity.User;
 import lt.gathertime.server.repository.EmailVerificationCodeRepository;
-import lt.gathertime.server.repository.UserRepository;
+import lt.gathertime.server.repository.UserJpaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -23,7 +23,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
     private final EmailVerificationCodeRepository codeRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -71,7 +71,7 @@ public class AuthenticationService {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .build();
-        this.userRepository.save(user);
+        this.userJpaRepository.save(user);
 
         final var jwtToken = this.jwtService.generateToken(user);
 
@@ -92,7 +92,7 @@ public class AuthenticationService {
                 )
         );
 
-        final var user = this.userRepository.findByEmail(request.getEmail())
+        final var user = this.userJpaRepository.findByEmail(request.getEmail())
                 .orElseThrow();
 
         final var jwtToken = this.jwtService.generateToken(user);

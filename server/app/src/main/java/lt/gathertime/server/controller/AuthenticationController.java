@@ -1,7 +1,7 @@
 package lt.gathertime.server.controller;
 
 import lt.gathertime.server.dto.user.*;
-import lt.gathertime.server.repository.UserRepository;
+import lt.gathertime.server.repository.UserJpaRepository;
 import lt.gathertime.server.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
 
     @PostMapping("/send-code")
     public ResponseEntity<Void> sendCode(@RequestBody final SendCodeRequestDTO request) {
@@ -38,7 +38,7 @@ public class AuthenticationController {
     @GetMapping("/check-email/{email}")
     public ResponseEntity<?> checkEmail(@PathVariable("email") final String email) {
         return ResponseEntity.ofNullable(
-                this.userRepository.findByEmail(email).orElse(null)
+                this.userJpaRepository.findByEmail(email).orElse(null)
         );
     }
 }

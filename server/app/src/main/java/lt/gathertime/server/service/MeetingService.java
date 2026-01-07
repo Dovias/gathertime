@@ -22,14 +22,14 @@ import lt.gathertime.server.mapper.MeetingMapper;
 import lt.gathertime.server.repository.FreeTimeRepository;
 import lt.gathertime.server.repository.InvitationRepository;
 import lt.gathertime.server.repository.MeetingRepository;
-import lt.gathertime.server.repository.UserRepository;
+import lt.gathertime.server.repository.UserJpaRepository;
 
 @Service
 @RequiredArgsConstructor
 public class MeetingService {
 
         private final FreeTimeRepository freeTimeRepository;
-        private final UserRepository userRepository;
+        private final UserJpaRepository userJpaRepository;
         private final MeetingRepository meetingRepository;
         private final InvitationRepository invitationRepository;
 
@@ -37,7 +37,7 @@ public class MeetingService {
         public void initMeeting(final InitMeetingRequestDTO requestDto) {
                 final LocalDateTime createdDateTime = LocalDateTime.now();
 
-                final User inviter = this.userRepository.findById(requestDto.getUserId())
+                final User inviter = this.userJpaRepository.findById(requestDto.getUserId())
                                 .orElseThrow(() -> new RuntimeException(
                                                 "User not found with ID: " + requestDto.getUserId()));
 

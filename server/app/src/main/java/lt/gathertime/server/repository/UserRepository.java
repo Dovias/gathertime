@@ -1,17 +1,32 @@
 package lt.gathertime.server.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
+import jakarta.annotation.Nullable;
+import lt.gathertime.server.data.Hash;
 import lt.gathertime.server.entity.User;
+import lt.gathertime.server.exception.UserNotFoundException;
+import org.jspecify.annotations.NullMarked;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+@Service
+@NullMarked
+public final class UserRepository {
+    private final UserJpaRepository repository;
 
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+    public UserRepository(final UserJpaRepository repository) {
+        this.repository = repository;
+    }
 
-    Optional<User> findByEmail(String email);
+    public @Nullable Hash findPasswordHashById(final long id) {
+        return this.repository.findById(id).map(User::getPassword).map(Hash::of).orElse(null);
+    }
 
-    List<User> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(String firstName, String lastName);
+    public void updatePasswordHashById(final long id, final Hash password) {
+        this.repository.save(
+            this.repository.findById(id).map(user -> {
+                user.setPassword(password.value());
+
+                return user;
+            }).orElseThrow(() -> new UserNotFoundException("user with id: " + id + " was not found"))
+        );
+    }
 }

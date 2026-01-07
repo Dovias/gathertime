@@ -17,21 +17,21 @@ import lt.gathertime.server.enums.FriendshipStatus;
 import lt.gathertime.server.mapper.FriendshipMapper;
 import lt.gathertime.server.repository.ChatRepository;
 import lt.gathertime.server.repository.FriendshipRepository;
-import lt.gathertime.server.repository.UserRepository;
+import lt.gathertime.server.repository.UserJpaRepository;
 
 @Service
 @RequiredArgsConstructor
 public class FriendshipService {
 
         private final FriendshipRepository friendshipRepository;
-        private final UserRepository userRepository;
+        private final UserJpaRepository userJpaRepository;
         private final ChatRepository chatRepository;
 
         public void createFriendship(final CreateFriendshipRequestDTO payload) {
-                final User user = this.userRepository.findById(payload.getUserId())
+                final User user = this.userJpaRepository.findById(payload.getUserId())
                                 .orElseThrow(() -> new RuntimeException(
                                                 "User not found with ID: " + payload.getUserId()));
-                final User friend = this.userRepository.findById(payload.getFriendId())
+                final User friend = this.userJpaRepository.findById(payload.getFriendId())
                                 .orElseThrow(() -> new RuntimeException(
                                                 "User not found with ID: " + payload.getFriendId()));
 
@@ -57,7 +57,7 @@ public class FriendshipService {
         }
 
         public List<FriendshipRequestDTO> getFriendshipRequests(final Long userId) {
-                final User user = this.userRepository.findById(userId)
+                final User user = this.userJpaRepository.findById(userId)
                                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
                 final List<Friendship> friendshipRequests = this.friendshipRepository.getFriendshipRequests(userId);
@@ -68,7 +68,7 @@ public class FriendshipService {
         }
 
         public List<FriendDTO> getFriendships(final Long userId) {
-                final User user = this.userRepository.findById(userId)
+                final User user = this.userJpaRepository.findById(userId)
                                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
                 final List<Friendship> friendships = this.friendshipRepository.getFriendships(userId);
@@ -79,9 +79,9 @@ public class FriendshipService {
         }
 
         public FriendshipStatus getFriendshipStatus(final Long userId, final Long userId2) {
-                final User user = this.userRepository.findById(userId)
+                final User user = this.userJpaRepository.findById(userId)
                                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
-                final User user2 = this.userRepository.findById(userId2)
+                final User user2 = this.userJpaRepository.findById(userId2)
                                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
                  return friendshipRepository.getLatestFriendshipByUsers(user.getId(), user2.getId())

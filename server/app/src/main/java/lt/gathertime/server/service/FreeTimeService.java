@@ -18,19 +18,19 @@ import lt.gathertime.server.mapper.FreeTimeMapper;
 import lt.gathertime.server.repository.ActivityRepository;
 import lt.gathertime.server.repository.FreeTimeRepository;
 import lt.gathertime.server.repository.FriendshipRepository;
-import lt.gathertime.server.repository.UserRepository;
+import lt.gathertime.server.repository.UserJpaRepository;
 
 @Service
 @RequiredArgsConstructor
 public class FreeTimeService {
 
     private final FreeTimeRepository freeTimeRepository;
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
     private final ActivityRepository activityRepository;
     private final FriendshipRepository friendshipRepository;
 
     public void createFreeTime(final CreateFreeTimeRequestDTO requestDto) {
-        final User user = this.userRepository.findById(requestDto.getUserId())
+        final User user = this.userJpaRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + requestDto.getUserId()));
 
         final List<Activity> activities = requestDto.getActivityIds().isEmpty()

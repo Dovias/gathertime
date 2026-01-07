@@ -1,5 +1,7 @@
 package lt.gathertime.server.data;
 
+import lt.gathertime.server.exception.EquivalentHashException;
+import lt.gathertime.server.exception.HashViolationException;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -46,6 +48,18 @@ public final class Hash {
         return this.encoder.matches(value.value(), this.value);
     }
 
+    public Hash change(final Digestible value) {
+        if (value == null) {
+            throw new NullPointerException("provided value is null");
+        }
+
+        if (this.matches(value)) {
+            throw new EquivalentHashException("provided value matches the hash computed value");
+        }
+
+        return Hash.from(value);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(this.value);
@@ -69,16 +83,16 @@ public final class Hash {
      * @param value representative value
      * @return newly created {@link Hash}
      * @throws NullPointerException representative value is null
-     * @throws IllegalArgumentException representative value is not valid
+     * @throws HashViolationException representative value is not valid
      */
     public static Hash of(final String value) {
         if (value == null) {
-            throw new NullPointerException("provided value cannot be null");
+            throw new NullPointerException("provided value is null");
         }
 
         final Matcher matcher = Hash.PATTERN.matcher(value);
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("provided value is not valid");
+            throw new HashViolationException("provided value is not valid");
         }
 
         return new Hash(Hash.ENCODER, value);
@@ -93,7 +107,7 @@ public final class Hash {
      */
     public static Hash from(final Digestible value) {
         if (value == null) {
-            throw new NullPointerException("provided value cannot be null");
+            throw new NullPointerException("provided value is null");
         }
 
         return new Hash(Hash.ENCODER, Hash.ENCODER.encode(value.value()));
