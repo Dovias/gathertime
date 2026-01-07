@@ -31,6 +31,14 @@ export default function CreateFreeTimeModal({ isOpen, userId, onClose, onSubmit 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isValidTimeRange = useMemo(() => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    return endDate > startDate;
+  }, [start, end])
+
+  const minDateTime = useMemo(() => toBackendLocalDateTimeNoSeconds(now), [now]);
+
   if (!isOpen) return null;
 
   return (
@@ -60,6 +68,7 @@ export default function CreateFreeTimeModal({ isOpen, userId, onClose, onSubmit 
               className="w-full border rounded px-3 py-2"
               type="datetime-local"
               value={start.replace("T", "T")} // keep as is
+              min={minDateTime}
               onChange={(e) => setStart(e.target.value)}
             />
           </div>
@@ -70,6 +79,7 @@ export default function CreateFreeTimeModal({ isOpen, userId, onClose, onSubmit 
               className="w-full border rounded px-3 py-2"
               type="datetime-local"
               value={end}
+              min={start}
               onChange={(e) => setEnd(e.target.value)}
             />
           </div>
@@ -89,6 +99,12 @@ export default function CreateFreeTimeModal({ isOpen, userId, onClose, onSubmit 
             </select>
           </div>
 
+          {!isValidTimeRange && (
+              <div className="text-sm text-amber-600">
+                Pabaigos laikas turi būti vėlesnis nei pradžios laikas
+              </div>
+          )}
+
           {error && <div className="text-sm text-red-600">{error}</div>}
 
           <div className="flex justify-end gap-2 pt-2">
@@ -103,7 +119,7 @@ export default function CreateFreeTimeModal({ isOpen, userId, onClose, onSubmit 
             <button
               type="button"
               className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60"
-              disabled={saving}
+              disabled={saving || ! isValidTimeRange}
               onClick={async () => {
                 setSaving(true);
                 setError(null);
