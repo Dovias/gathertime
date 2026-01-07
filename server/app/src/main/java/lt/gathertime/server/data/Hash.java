@@ -57,7 +57,7 @@ public final class Hash {
             throw new EquivalentHashException("provided value matches the hash computed value");
         }
 
-        return Hash.from(value);
+        return Hash.compute(value);
     }
 
     @Override
@@ -105,7 +105,7 @@ public final class Hash {
      * @return newly computed {@link Hash}
      * @throws NullPointerException representative value is null
      */
-    public static Hash from(final Digestible value) {
+    public static Hash compute(final Digestible value) {
         if (value == null) {
             throw new NullPointerException("provided value is null");
         }

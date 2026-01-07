@@ -67,7 +67,7 @@ public class AuthenticationService {
 
         final User user = User.builder()
                 .email(request.getEmail())
-                .password(Hash.from(Digestible.of(Password.of(request.getPassword()).value())).value())
+                .password(Hash.compute(Digestible.of(Password.of(request.getPassword()).value())).value())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .build();
