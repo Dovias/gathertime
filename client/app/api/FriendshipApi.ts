@@ -32,8 +32,6 @@ export const getRelationshipStatus = async (
   const response = await axios.get<FriendshipStatusDTO>(
     `/friendship/user/${userId}/second-user/${userId2}`,
   );
-  console.log("getRelationshipStatus raw response:", response);
-  console.log("getRelationshipStatus response.data:", response.data);
   return response.data;
 };
 

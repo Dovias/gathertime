@@ -5,7 +5,8 @@ import { getUserProfileInfo } from "../../api/UserApi";
 import {
   confirmFriendship,
   createFriendship,
-  declineFriendship, deleteFriendship,
+  declineFriendship,
+  deleteFriendship,
   getFriendshipRequests,
   getRelationshipStatus,
 } from "../../api/FriendshipApi";
@@ -268,8 +269,6 @@ const UserProfilePage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
   }
 
   const rightSide = useMemo(() => {
-    console.log("Current relationship status:", relationshipStatus); // Add this debug line
-
     if (!canShowFriendActions) return null;
 
     if (relationshipLoading) {
