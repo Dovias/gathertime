@@ -3,14 +3,7 @@ package lt.gathertime.server.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -56,12 +49,18 @@ public class FriendshipController {
     public FriendshipStatusDTO getRelationshipStatus(
         @PathVariable final Long userId,
         @PathVariable final Long userId2) {
-        return new FriendshipStatusDTO(this.friendshipService.getFriendshipStatus(userId, userId2));
+        return this.friendshipService.getFriendshipStatus(userId, userId2);
     }
 
     @GetMapping("/user/{userId}/requests") 
     @ResponseStatus(HttpStatus.OK)
     public List<FriendshipRequestDTO> getFriendshipRequests(@PathVariable final Long userId) {
         return this.friendshipService.getFriendshipRequests(userId);
+    }
+
+    @DeleteMapping("/{friendshipId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteFriendship(@PathVariable final Long friendshipId) {
+        this.friendshipService.deleteFriendship(friendshipId);
     }
 }

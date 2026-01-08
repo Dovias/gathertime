@@ -6,6 +6,7 @@ import {
   confirmFriendship,
   createFriendship,
   declineFriendship,
+  deleteFriendship,
   getFriendshipRequests,
   getRelationshipStatus,
 } from "../../api/FriendshipApi";
@@ -53,6 +54,9 @@ const UserProfilePage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
 
   const [incomingRequestId, setIncomingRequestId] = useState<number | null>(null);
   const [decisionLoading, setDecisionLoading] = useState(false);
+
+  const [friendshipId, setFriendshipId] = useState<number | null>(null);
+  const [unfriending, setUnfriending] = useState(false);
 
   const myUserId = useMemo(() => {
     const fromMatches = pickUserIdFromMatches(matches as any[]);
@@ -105,6 +109,7 @@ const UserProfilePage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
     if (!myUserId || !profileUserId || myUserId === profileUserId) {
       setRelationshipStatus(null);
       setIncomingRequestId(null);
+      setFriendshipId(null);
       return;
     }
 
@@ -112,6 +117,7 @@ const UserProfilePage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
     try {
       const dto = await getRelationshipStatus(myUserId, profileUserId);
       setRelationshipStatus(dto.friendshipStatus);
+      setFriendshipId(dto.friendshipId);
 
       if (dto.friendshipStatus === "NOT_CONFIRMED") {
         try {
@@ -128,6 +134,7 @@ const UserProfilePage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
       console.error(e);
       setRelationshipStatus((prev) => prev ?? null);
       setIncomingRequestId((prev) => prev ?? null);
+      setFriendshipId((prev) => prev ?? null);
     } finally {
       setRelationshipLoading(false);
     }
@@ -238,6 +245,29 @@ const UserProfilePage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
     }
   };
 
+  const onUnfriend = async () => {
+    if (!window.confirm("Ar tikrai norite pašalinti šį draugą?")) return;
+
+    if (!friendshipId) {
+      setErrorMsg("Nepavyko rasti draugystės įrašo.");
+      return;
+    }
+
+    setUnfriending(true);
+    setErrorMsg(null);
+
+    try {
+      await deleteFriendship(friendshipId);
+      setRelationshipStatus("NOT_FOUND");
+      await refreshRelationship();
+    } catch (e) {
+      console.error(e);
+      setErrorMsg("Nepavyko pašalinti draugo. Bandykite dar kartą.");
+    } finally {
+      setUnfriending(false);
+    }
+  }
+
   const rightSide = useMemo(() => {
     if (!canShowFriendActions) return null;
 
@@ -273,15 +303,23 @@ const UserProfilePage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
       );
     }
 
-    const disabled =
-      inviteSending ||
-      relationshipStatus === "CONFIRMED" ||
-      relationshipStatus === "REQUESTED";
+   if (relationshipStatus === "CONFIRMED") {
+      return (
+          <button
+              type="button"
+              onClick={onUnfriend}
+              disabled={unfriending}
+              className="px-4 py-2 rounded-xl border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed transform font-medium text-sm"
+              >
+              {unfriending ? "Šalinama..." : "Pašalinti draugą"}
+            </button>
+      );
+    }
+
+    const disabled = inviteSending || relationshipStatus === "REQUESTED";
 
     const label =
-      relationshipStatus === "CONFIRMED"
-        ? "Draugai"
-        : relationshipStatus === "REQUESTED"
+        relationshipStatus === "REQUESTED"
           ? "Pakvietimas išsiųstas"
           : relationshipStatus === "DECLINED"
             ? "Pakviesti iš naujo"
@@ -310,8 +348,11 @@ const UserProfilePage: React.FC<Route.ComponentProps> = ({ loaderData }) => {
     relationshipStatus,
     inviteSending,
     decisionLoading,
+    unfriending,
     onAccept,
     onDecline,
+    onUnfriend,
+    onInvite,
   ]);
 
   if (loading) {

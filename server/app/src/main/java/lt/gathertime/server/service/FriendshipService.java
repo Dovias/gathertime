@@ -2,7 +2,9 @@ package lt.gathertime.server.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
+import lt.gathertime.server.dto.friendship.FriendshipStatusDTO;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -78,15 +80,22 @@ public class FriendshipService {
                                 .toList();
         }
 
-        public FriendshipStatus getFriendshipStatus(final Long userId, final Long userId2) {
+        public FriendshipStatusDTO getFriendshipStatus(final Long userId, final Long userId2) {
                 final User user = this.userJpaRepository.findById(userId)
                                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
                 final User user2 = this.userJpaRepository.findById(userId2)
                                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
-                 return friendshipRepository.getLatestFriendshipByUsers(user.getId(), user2.getId())
-                                .map(Friendship::getStatus)
-                                .orElse(FriendshipStatus.NOT_FOUND);
+                Optional<Friendship> friendship = friendshipRepository.getLatestFriendshipByUsers(user.getId(), user2.getId());
+
+                if (friendship.isPresent()) {
+                        return new FriendshipStatusDTO(
+                                friendship.get().getStatus(),
+                                friendship.get().getId()
+                        );
+                }
+
+                return new FriendshipStatusDTO(FriendshipStatus.NOT_FOUND, null);
         }
 
         @Transactional
@@ -127,5 +136,27 @@ public class FriendshipService {
                 
                 friendshipToConfirm.setStatus(FriendshipStatus.DECLINED);
                 friendshipRequest.setStatus(FriendshipStatus.DECLINED);
+        }
+
+        @Transactional
+        public void deleteFriendship(final Long friendshipId) {
+                final Friendship friendship = this.friendshipRepository.findById(friendshipId)
+                        .orElseThrow(() -> new RuntimeException(
+                                "Friendship not found with ID: " + friendshipId));
+
+                final Optional<Friendship> pairedFriendship = this.friendshipRepository
+                        .getLatestFriendshipByUsers(
+                                friendship.getFriend().getId(),
+                                friendship.getUser().getId()
+                        );
+
+                this.friendshipRepository.delete(friendship);
+                pairedFriendship.ifPresent(this.friendshipRepository::delete);
+
+                if (friendship.getChat() != null && pairedFriendship.isPresent()
+                        && pairedFriendship.get().getChat() != null
+                        && friendship.getChat().getId().equals(pairedFriendship.get().getChat().getId())) {
+                        this.chatRepository.delete(friendship.getChat());
+                }
         }
 }

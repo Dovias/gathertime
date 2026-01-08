@@ -43,3 +43,7 @@ export const getFriendshipRequests = async (
   );
   return response.data;
 };
+
+export const deleteFriendship = async (friendshipId: number): Promise<void> => {
+  await axios.delete(`/friendship/${friendshipId}`);
+}
