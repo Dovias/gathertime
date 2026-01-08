@@ -13,8 +13,9 @@ public final class PasswordTests {
     @ParameterizedTest
     @ValueSource(strings = {"Abc123", "Password147!", "{\"Key\":1}", "^[a-zA-Z0-9]$", "\"B0'b`,🔑" })
     public void successInCreatingPasswordWithValidValue(final String value) {
-        final Password password = Assertions.assertDoesNotThrow(() -> Password.of(value));
+        final Password password = Password.of(value);
         Assertions.assertNotNull(password);
+        Assertions.assertEquals(password.value(), value);
     }
 
     @ParameterizedTest
@@ -56,13 +57,6 @@ public final class PasswordTests {
         final String representation = Assertions.assertDoesNotThrow(password::toString);
 
         Assertions.assertNotNull(representation);
-    }
-
-    @Test
-    public void successInComparingIdenticalPasswords() {
-        final Password password = Password.of("?1&User=admin");
-
-        Assertions.assertEquals(password, password);
     }
 
     @Test
