@@ -135,6 +135,27 @@ export default function Profile() {
     e.preventDefault();
     if (emailError.errorType !== ErrorType.NoError) return;
 
+    try {
+      await axios.put("/user/update-profile", profileForm);
+
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        const updatedUser = {
+          ...user,
+          email: profileForm.email,
+          firstName: profileForm.firstName,
+          lastName: profileForm.lastName,
+        };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      }
+
+      setSuccessMessage("Duomenys atnaujinti sėkmingai!");
+      setTimeout(() => window.location.reload(), 1000);
+    } catch (error) {
+      console.error("Failed to update profile", error);
+    }
+
     await axios.put("/user/update-profile", profileForm);
     setSuccessMessage("Duomenys atnaujinti sėkmingai!");
   };
