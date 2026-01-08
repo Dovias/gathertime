@@ -11,4 +11,5 @@ import lt.gathertime.server.enums.FriendshipStatus;
 public class FriendshipStatusDTO {
     
     private FriendshipStatus friendshipStatus;
+    private Long friendshipId;
 }

@@ -27,4 +27,5 @@ export type CreateFriendshipRequestDTO = {
 
 export type FriendshipStatusDTO = {
   friendshipStatus: FriendshipStatus;
+  friendshipId: number | null;
 };

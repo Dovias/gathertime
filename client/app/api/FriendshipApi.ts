@@ -32,6 +32,8 @@ export const getRelationshipStatus = async (
   const response = await axios.get<FriendshipStatusDTO>(
     `/friendship/user/${userId}/second-user/${userId2}`,
   );
+  console.log("getRelationshipStatus raw response:", response);
+  console.log("getRelationshipStatus response.data:", response.data);
   return response.data;
 };
 
@@ -43,3 +45,7 @@ export const getFriendshipRequests = async (
   );
   return response.data;
 };
+
+export const deleteFriendship = async (friendshipId: number): Promise<void> => {
+  await axios.delete(`/friendship/${friendshipId}`);
+}
