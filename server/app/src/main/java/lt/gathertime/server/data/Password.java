@@ -1,7 +1,6 @@
 package lt.gathertime.server.data;
 
-import lt.gathertime.server.exception.PasswordViolationException;
-import lt.gathertime.server.type.PasswordViolation;
+import lt.gathertime.server.exception.InvalidDataException;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -57,7 +56,7 @@ public final class Password {
      * @param value representative value
      * @return newly created {@link Password}
      * @throws NullPointerException representative value is null
-     * @throws PasswordViolationException representative value is not valid
+     * @throws InvalidDataException representative value is not valid
      */
     public static Password of(final String value) {
         if (value == null) {
@@ -66,7 +65,7 @@ public final class Password {
 
         final Matcher matcher = Password.PATTERN.matcher(value);
         if (!matcher.matches()) {
-            throw new PasswordViolationException("provided value is not acceptable", PasswordViolation.INVALID);
+            throw new InvalidDataException("provided value is not valid");
         }
 
         return new Password(value);

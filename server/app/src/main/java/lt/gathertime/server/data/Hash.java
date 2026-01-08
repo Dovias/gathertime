@@ -1,7 +1,7 @@
 package lt.gathertime.server.data;
 
-import lt.gathertime.server.exception.EquivalentHashException;
-import lt.gathertime.server.exception.HashViolationException;
+import lt.gathertime.server.exception.DataConflictException;
+import lt.gathertime.server.exception.InvalidDataException;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -54,7 +54,7 @@ public final class Hash {
         }
 
         if (this.matches(value)) {
-            throw new EquivalentHashException("provided value matches the hash computed value");
+            throw new DataConflictException("provided value is equivalent");
         }
 
         return Hash.compute(value);
@@ -83,7 +83,7 @@ public final class Hash {
      * @param value representative value
      * @return newly created {@link Hash}
      * @throws NullPointerException representative value is null
-     * @throws HashViolationException representative value is not valid
+     * @throws InvalidDataException representative value is not valid
      */
     public static Hash of(final String value) {
         if (value == null) {
@@ -92,7 +92,7 @@ public final class Hash {
 
         final Matcher matcher = Hash.PATTERN.matcher(value);
         if (!matcher.matches()) {
-            throw new HashViolationException("provided value is not valid");
+            throw new InvalidDataException("provided value is not valid");
         }
 
         return new Hash(Hash.ENCODER, value);

@@ -3,9 +3,9 @@ package lt.gathertime.server.data;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+import lt.gathertime.server.exception.InvalidDataException;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-import lt.gathertime.server.exception.DigestibleViolationException;
 
 @NullMarked
 public final class Digestible {
@@ -48,14 +48,14 @@ public final class Digestible {
    * @param value representative value
    * @return newly created {@link Digestible}
    * @throws NullPointerException if the provided value is null
-   * @throws DigestibleViolationException if the provided value is not valid
+   * @throws InvalidDataException if the provided value is not valid
    */
   public static Digestible of(final String value) {
       if (value == null) {
         throw new NullPointerException("provided value is null");
       }
       if (value.getBytes(StandardCharsets.UTF_8).length > 72) {
-        throw new DigestibleViolationException("provided value is not valid");
+        throw new InvalidDataException("provided value is not valid");
       }
 
       return new Digestible(value);

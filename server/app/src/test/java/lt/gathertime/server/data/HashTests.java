@@ -1,6 +1,6 @@
 package lt.gathertime.server.data;
 
-import lt.gathertime.server.exception.EquivalentHashException;
+import lt.gathertime.server.exception.DataConflictException;
 import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -97,7 +97,7 @@ public final class HashTests {
         final Digestible digestible2 = Digestible.of(value);
 
         final Hash current = Hash.compute(digestible1);
-        Assertions.assertThrows(EquivalentHashException.class, () -> current.change(digestible2));
+        Assertions.assertThrows(DataConflictException.class, () -> current.change(digestible2));
     }
 
     @Test

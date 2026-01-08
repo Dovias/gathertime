@@ -3,7 +3,7 @@ package lt.gathertime.server.repository;
 import jakarta.annotation.Nullable;
 import lt.gathertime.server.data.Hash;
 import lt.gathertime.server.entity.User;
-import lt.gathertime.server.exception.UserNotFoundException;
+import lt.gathertime.server.exception.DataNotFoundException;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ public final class UserRepository {
                 user.setPassword(password.value());
 
                 return user;
-            }).orElseThrow(() -> new UserNotFoundException("user with id: " + id + " was not found"))
+            }).orElseThrow(() -> new DataNotFoundException("user with id: " + id + " was not found"))
         );
     }
 }

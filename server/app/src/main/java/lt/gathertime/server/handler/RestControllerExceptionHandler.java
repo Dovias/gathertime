@@ -1,23 +1,28 @@
 package lt.gathertime.server.handler;
 
-import lt.gathertime.server.exception.PasswordViolationException;
-import lt.gathertime.server.exception.ResourceNotFoundException;
+import lt.gathertime.server.exception.DomainViolationException;
+import lt.gathertime.server.type.DomainViolation;
+import lt.gathertime.server.type.DomainViolationCategory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class RestControllerExceptionHandler {
-@ResponseStatus(HttpStatus.NOT_FOUND)
-@ExceptionHandler(ResourceNotFoundException.class)
-public void handleNotFound() {}
+public record RestControllerError(String code, String message) {}
 
-public record RestControllerError(String code) {}
+@ExceptionHandler(DomainViolationException.class)
+public ResponseEntity<RestControllerError> handleViolation(final DomainViolationException exception) {
+    final DomainViolation violation = exception.violation();
+    final DomainViolationCategory category = violation.category();
+    final HttpStatusCode status = switch (category) {
+        case INVALID -> HttpStatus.BAD_REQUEST;
+        case CONFLICT -> HttpStatus.CONFLICT;
+        case NOT_FOUND -> HttpStatus.NOT_FOUND;
+    };
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-@ExceptionHandler(PasswordViolationException.class)
-public RestControllerError handleViolation(final PasswordViolationException exception) {
-    return new RestControllerError(exception.value().name());
+    return ResponseEntity.status(status).body(new RestControllerError(violation.name(), exception.getMessage()));
 }
 }

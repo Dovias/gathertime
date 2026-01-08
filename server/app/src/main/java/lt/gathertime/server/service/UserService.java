@@ -7,17 +7,14 @@ import lt.gathertime.server.data.Hash;
 import lt.gathertime.server.data.Password;
 import lt.gathertime.server.dto.user.*;
 import lt.gathertime.server.entity.User;
-import lt.gathertime.server.exception.DigestibleViolationException;
-import lt.gathertime.server.exception.EquivalentHashException;
-import lt.gathertime.server.exception.PasswordViolationException;
-import lt.gathertime.server.exception.UserNotFoundException;
+import lt.gathertime.server.exception.*;
 import lt.gathertime.server.mapper.UserMapper;
 import lt.gathertime.server.repository.UserJpaRepository;
 
 import java.util.List;
 
 import lt.gathertime.server.repository.UserRepository;
-import lt.gathertime.server.type.PasswordViolation;
+import lt.gathertime.server.type.DomainViolation;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -52,7 +49,6 @@ public class UserService {
     }
 
     public UserResponseDTO updateUserProfile(final UpdateInfoDTO request) {
-
         final User user = this.userJpaRepository.findById(request.getId())
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + request.getId()));
 
@@ -67,22 +63,24 @@ public class UserService {
 
     @Transactional
     public void changePassword(final PasswordChangeDTO request) {
+        final long id = request.getId();
         try {
             final Password password = Password.of(request.getPassword());
             final Digestible digestible = Digestible.of(password.value());
 
-            final long id = request.getId();
             final Hash current = this.repository.findPasswordHashById(id);
             if (current == null) {
-                throw new UserNotFoundException("user with id: " + id + " was not found");
+                throw DomainViolationException.of("user with id: " + id + " was not found", DomainViolation.USER_NOT_FOUND);
             }
 
             final Hash changed = current.change(digestible);
             this.repository.updatePasswordHashById(id, changed);
-        } catch (final DigestibleViolationException exception) {
-            throw new PasswordViolationException("provided password is not valid", PasswordViolation.INVALID);
-        } catch (final EquivalentHashException exception) {
-            throw new PasswordViolationException("provided password is identical", PasswordViolation.IDENTICAL);
+        } catch (final DataNotFoundException exception) {
+            throw DomainViolationException.of("user with id: " + id + " was not found", DomainViolation.USER_NOT_FOUND);
+        } catch (final DataConflictException exception) {
+            throw DomainViolationException.of("password matches the previous one", DomainViolation.PASSWORD_CONFLICT);
+        } catch (final InvalidDataException exception) {
+            throw DomainViolationException.of(exception.getMessage(), DomainViolation.PASSWORD_INVALID);
         }
     }
 
