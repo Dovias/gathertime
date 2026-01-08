@@ -1,5 +1,6 @@
 package lt.gathertime.server.data;
 
+import lt.gathertime.server.exception.InvalidDataException;
 import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ public final class DigestibleTests {
   @Test
   public void failureInCreatingDigestibleWithTooLongValue() {
     // 73 bytes of garbage data (16 emojis * 4 bytes + 1 dot * 1 byte = 73 bytes)
-    Assertions.assertThrows(IllegalArgumentException.class, () ->
+    Assertions.assertThrows(InvalidDataException.class, () ->
       Digestible.of("🌈🎨🎭🎪🎤🎧🎼🎹🥁🎷🎺🎸🎻🪕🎬🎮🎯🎲.")
     );
   }

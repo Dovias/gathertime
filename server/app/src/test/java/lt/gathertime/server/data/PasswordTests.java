@@ -1,5 +1,6 @@
 package lt.gathertime.server.data;
 
+import lt.gathertime.server.exception.InvalidDataException;
 import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ public final class PasswordTests {
         "' OR '1'='1", "cat /etc/passwd", "ssh://root@localhost"
     })
     public void failureInCreatingPasswordWithInvalidValue(final String value) {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> Password.of(value));
+        Assertions.assertThrows(InvalidDataException.class, () -> Password.of(value));
     }
 
     @Test
