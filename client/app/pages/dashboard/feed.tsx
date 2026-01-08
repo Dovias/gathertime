@@ -291,6 +291,7 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
   const [overlappingUserFilter, setOverlappingUserFilter] = useState<number | null>(null);
   const [joinableUserFilter, setJoinableUserFilter] = useState<number | null>(null);
   const [friendFreeTimesUserFilter, setFriendFreeTimesUserFilter] = useState<number | null>(null);
+  const [locallySentInvites, setLocallySentInvites] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const dateParam = searchParams.get('date');
@@ -389,14 +390,19 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
 
   const handleSendInvite = async (cardKey: string, friendId: number, freeTimeId: number) => {
     try {
+      setLocallySentInvites(prev => new Set(prev).add(freeTimeId));
+
       await initMeeting({
         userId: friendId,
         freeTimeId: freeTimeId,
       });
-
-      revalidator.revalidate();
     } catch (error) {
         console.error("Failed to send invite:", error);
+        setLocallySentInvites(prev => {
+          const next = new Set(prev);
+          next.delete(freeTimeId);
+          return next;
+        })
     }
   }
 
@@ -481,7 +487,7 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
                 {...c}
                 onClick={() => {}}
                 onButtonClick={() => handleSendInvite(c.key, c.users[0].friendId, c.freeTimeId)}
-                inviteSent={c.invitationSent}
+                inviteSent={c.invitationSent || locallySentInvites.has(c.freeTimeId)}
             />
         ))}
       </Section>
@@ -525,7 +531,7 @@ export default function Feed({ loaderData }: Route.ComponentProps) {
                 {...c}
                 onClick={() => {}}
                 onButtonClick={() => handleSendInvite(c.key, c.users[0].friendId, c.freeTimeId)}
-                inviteSent={c.invitationSent}
+                inviteSent={c.invitationSent || locallySentInvites.has(c.freeTimeId)}
             />
         ))}
       </Section>
